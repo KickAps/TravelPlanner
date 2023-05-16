@@ -4,20 +4,25 @@
 {% endblock %}
 
 {% block body %}
-	<div class="bg-white">
-		<div class="mx-auto max-w-7xl py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-			<div class="text-center">
-				<p class="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">Ceci est une démo de React dans une application Symfony</p>
-				<p class="mx-auto mt-5 max-w-xl text-xl text-gray-500">Ceci est une démo de React dans une application Symfony</p>
-                {# <div {{ react_component('my', { 'fullName': 'FLO' }) }}></div>
-                <div {{ react_component('modal', { 'btn1': 'Ouvrir', 'btn2': 'Fermer'}) }}></div> #}
+    <div class="bg-white">
+        <div class="mx-auto max-w-7xl">
+            <div class="text-center">
+                <p class="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl mb-4">Trip Planner</p>
 
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box"/>
-                <div id="map"></div>
-                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41zGgZI6zGStNZxw6y_v1dCKM1wkyxwE&callback=initAutocomplete&libraries=places" defer></script>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <div {{ react_component('Steps') }}></div>
+                    </div>
+
+                    <div class="flex-auto">
+                        <div id="map"></div>
+                    </div>
+                </div>
             </div>
-		</div>
-	</div>
+        </div>
+    </div>
+
+    <script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ api_key ~ '&callback=initAutocomplete&libraries=places' }}" defer></script>
 {% endblock %}
 
 

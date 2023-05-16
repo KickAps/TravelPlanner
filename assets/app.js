@@ -14,15 +14,26 @@ import './bootstrap';
 import { registerReactControllerComponents } from '@symfony/ux-react';
 registerReactControllerComponents(require.context('./react/controllers', true, /\.(j|t)sx?$/));
 
+let map;
+
 function initAutocomplete() {
-    const map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -33.8688, lng: 151.2195 },
         zoom: 13,
         mapTypeId: "roadmap",
     });
+
+    initInputSearch();
+}
+
+export function initInputSearch() {
     // Create the search box and link it to the UI element.
-    const input = document.getElementById("pac-input");
-    const searchBox = new google.maps.places.SearchBox(input);
+    const inputs = document.getElementsByClassName("pac-input");
+
+    let input = inputs[inputs.length - 1];
+    console.log(input);
+
+    let searchBox = new google.maps.places.SearchBox(input);
 
     // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     // Bias the SearchBox results towards current map's viewport.
@@ -83,5 +94,6 @@ function initAutocomplete() {
         map.fitBounds(bounds);
     });
 }
+
 
 window.initAutocomplete = initAutocomplete;
