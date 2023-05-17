@@ -1,5 +1,5 @@
 import React from 'react';
-import * as app from '../../app'
+import * as app from '../../js/maps'
 
 class Steps extends React.Component {
     constructor(props) {
