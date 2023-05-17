@@ -1,4 +1,5 @@
 let map;
+let global_markers = [];
 
 function initAutocomplete() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -8,7 +9,7 @@ function initAutocomplete() {
     });
 }
 
-export function initInputSearch() {
+export function initInputSearch(index) {
     // Create the search box and link it to the UI element.
     const inputs = document.getElementsByClassName("pac-input");
 
@@ -16,7 +17,6 @@ export function initInputSearch() {
 
     let searchBox = new google.maps.places.SearchBox(input);
 
-    // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     // Bias the SearchBox results towards current map's viewport.
     map.addListener("bounds_changed", () => {
         searchBox.setBounds(map.getBounds());
@@ -72,8 +72,19 @@ export function initInputSearch() {
                 bounds.extend(place.geometry.location);
             }
         });
+
+        global_markers[index] = markers;
         map.fitBounds(bounds);
     });
+}
+
+export function removeMarkers(index) {
+    let markers = global_markers[index];
+
+    markers.forEach((marker) => {
+        marker.setMap(null);
+    });
+    markers = [];
 }
 
 

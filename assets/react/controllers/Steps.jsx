@@ -1,5 +1,5 @@
 import React from 'react';
-import * as app from '../../js/maps'
+import * as maps from '../../js/maps'
 
 class Steps extends React.Component {
     constructor(props) {
@@ -25,14 +25,24 @@ class Steps extends React.Component {
         this.step_count++;
         const step = document.querySelector('#step');
         let stepContent = step.cloneNode(true).innerHTML;
-        stepContent = stepContent.replace('#i#', this.step_count);
+        stepContent = stepContent.replaceAll('#i#', this.step_count);
 
         this.setState((prevState) => ({
             divs: [...prevState.divs, <div dangerouslySetInnerHTML={{ __html: stepContent }} />],
         }));
 
+        // Init events
         setTimeout(() => {
-            app.initInputSearch();
+            let step_count = this.step_count;
+            maps.initInputSearch(step_count);
+
+            const closeButton = document.getElementById('delete_card_' + this.step_count);
+            const card = document.getElementById('card_' + this.step_count);
+
+            closeButton.addEventListener('click', function () {
+                card.remove();
+                maps.removeMarkers(step_count);
+            });
         }, 100);
     };
 }
