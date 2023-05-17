@@ -22,8 +22,6 @@ function initAutocomplete() {
         zoom: 13,
         mapTypeId: "roadmap",
     });
-
-    initInputSearch();
 }
 
 export function initInputSearch() {
@@ -31,7 +29,6 @@ export function initInputSearch() {
     const inputs = document.getElementsByClassName("pac-input");
 
     let input = inputs[inputs.length - 1];
-    console.log(input);
 
     let searchBox = new google.maps.places.SearchBox(input);
 

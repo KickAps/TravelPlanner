@@ -4,26 +4,50 @@
 {% endblock %}
 
 {% block body %}
-    <div class="bg-white">
-        <div class="mx-auto max-w-7xl">
-            <div class="text-center">
-                <p class="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl mb-4">Trip Planner</p>
+	<div class="bg-white">
+		<div class="mx-auto max-w-7xl">
+			<div class="text-center">
+				<p class="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl mb-4">Trip Planner</p>
 
-                <div class="flex">
-                    <div class="flex-auto">
-                        <div {{ react_component('Steps') }}></div>
-                    </div>
+				<div class="flex">
+					<div class="flex-auto">
+						<div {{ react_component('Steps') }}></div>
+					</div>
 
-                    <div class="flex-auto">
-                        <div id="map"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+					<div class="flex-auto">
+						<div id="map"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ api_key ~ '&callback=initAutocomplete&libraries=places' }}" defer></script>
+	<template id="step">
+		<div class="max-w-sm rounded overflow-hidden shadow-lg">
+			<div>
+				<button class="delete-step relative top-0 right-0 p-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+			</div>
+
+			<div class="px-6 py-4">
+				<div class="font-bold text-xl mb-2">
+					<span>Étape</span>
+					<span class="step_index">#i#</span>
+				</div>
+				<p class="text-gray-700 text-base">Nom</p>
+				<input class="controls pac-input" type="text" placeholder="Rechercher..."/>
+				<p class="text-gray-700 text-base">Date</p>
+				<p class="text-gray-700 text-base">Commentaire</p>
+			</div>
+			<div class="px-6 pt-4 pb-2">
+				<span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
+				<span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
+				<span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
+			</div>
+		</div>
+	</template>
+
+
+	<script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ api_key ~ '&callback=initAutocomplete&libraries=places' }}" defer></script>
 {% endblock %}
-
-
-
