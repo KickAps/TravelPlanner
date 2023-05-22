@@ -81,6 +81,9 @@ export function initInputSearch(index) {
 export function removeMarkers(index) {
     let markers = global_markers[index];
 
+    if (!markers) {
+        return;
+    }
     markers.forEach((marker) => {
         marker.setMap(null);
     });
