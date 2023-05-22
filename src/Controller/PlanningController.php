@@ -11,8 +11,26 @@ class PlanningController extends AbstractController
     #[Route('/planning', name: 'app_planning')]
     public function index(): Response
     {
+        $data = [
+            '0' => [
+                'place' => "Paris, France",
+                'date' => "",
+                'comment' => "",
+            ],
+            '1' => [
+                'place' => "Lyon, France",
+                'date' => "",
+                'comment' => "",
+            ],
+            '2' => [
+                'place' => "Nantes, France",
+                'date' => "",
+                'comment' => "",
+            ],
+        ];
+
         return $this->render('planning/index.html.twig', [
-            'controller_name' => 'PlanningController',
+            'data' => $data,
         ]);
     }
 }

@@ -5,26 +5,31 @@ class Steps extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            divs: [],
+            steps: [],
             stepCount: 0,
+            data: props.data || [],
         };
     }
 
     componentDidMount() {
-        this.addDiv();
+        for (const [key, value] of Object.entries(this.state.data)) {
+            setTimeout(() => {
+                this.addStep(null, key, value.place);
+            }, key * 500);
+        }
     }
 
     deleteStep = (id) => {
-        const updatedDivs = this.state.divs.filter(div => div.props.id !== id);
-        this.setState({ divs: updatedDivs }, () => {
+        const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
+        this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id.replace('card_', ''));
         });
     };
 
-    addDiv = (event) => {
+    addStep = (event, index, place) => {
         const newStepCount = this.state.stepCount + 1;
 
-        let insertIndex = 0;
+        let insertIndex = index ?? 0;
 
         if (event) {
             let target = event.target;
@@ -64,21 +69,31 @@ class Steps extends React.Component {
                 </div>
                 <button
                     className="btn_add bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={this.addDiv}
+                    onClick={this.addStep}
                 >
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>
         );
 
-        const updatedDivs = [...this.state.divs];
-        updatedDivs.splice(insertIndex, 0, newStep);
+        const updatedSteps = [...this.state.steps];
+        updatedSteps.splice(insertIndex, 0, newStep);
 
         this.setState(prevState => ({
-            divs: updatedDivs,
+            steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
             maps.initInputSearch(newStepCount, insertIndex);
+
+            if (place) {
+                const inputs = document.getElementsByClassName("pac-input");
+                let input = inputs[insertIndex];
+                setTimeout(() => {
+                    input.value = place;
+                    google.maps.event.trigger(input, 'focus', {});
+                    google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
+                }, 500);
+            }
         });
     };
 
@@ -87,11 +102,11 @@ class Steps extends React.Component {
             <div>
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={this.addDiv}
+                    onClick={this.addStep}
                 >
                     <i className="fa-solid fa-plus"></i>
                 </button>
-                {this.state.divs.map(div => div)}
+                {this.state.steps.map(step => step)}
             </div>
         );
     }
