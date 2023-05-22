@@ -9,11 +9,11 @@ function initAutocomplete() {
     });
 }
 
-export function initInputSearch(index) {
+export function initInputSearch(step_count, input_index) {
     // Create the search box and link it to the UI element.
     const inputs = document.getElementsByClassName("pac-input");
 
-    let input = inputs[inputs.length - 1];
+    let input = inputs[input_index];
 
     let searchBox = new google.maps.places.SearchBox(input);
 
@@ -73,7 +73,7 @@ export function initInputSearch(index) {
             }
         });
 
-        global_markers[index] = markers;
+        global_markers[step_count] = markers;
         map.fitBounds(bounds);
     });
 }

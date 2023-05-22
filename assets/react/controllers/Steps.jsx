@@ -36,9 +36,6 @@ class Steps extends React.Component {
             insertIndex = addButtonArray.indexOf(target) + 1;
         }
 
-        console.log(insertIndex);
-
-
         const newStep = (
             <div key={newStepCount} id={`card_${newStepCount}`}>
                 <div className="max-w-sm rounded overflow-hidden shadow-lg">
@@ -81,7 +78,7 @@ class Steps extends React.Component {
             divs: updatedDivs,
             stepCount: newStepCount,
         }), () => {
-            maps.initInputSearch(newStepCount);
+            maps.initInputSearch(newStepCount, insertIndex);
         });
     };
 
