@@ -11,11 +11,13 @@ body {
     padding: 0;
 }
 
+.container-height {
+    height: calc(100% - 80px);
+}
+
 #map {
-    height: 400px;
-    /* The height is 400 pixels */
+    height: 600px;
     width: 100%;
-    /* The width is the width of the web page */
 }
 
 #description {
