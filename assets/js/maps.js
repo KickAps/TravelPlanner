@@ -1,12 +1,15 @@
 let map;
 let global_markers = [];
+let bounds;
 
 function initAutocomplete() {
     map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -33.8688, lng: 151.2195 },
-        zoom: 13,
+        center: { lat: 46.62825131575064, lng: 2.264533130591902 },
+        zoom: 6,
         mapTypeId: "roadmap",
     });
+
+    bounds = new google.maps.LatLngBounds();
 }
 
 export function initInputSearch(step_count, input_index) {
@@ -40,8 +43,6 @@ export function initInputSearch(step_count, input_index) {
         markers = [];
 
         // For each place, get the icon, name and location.
-        const bounds = new google.maps.LatLngBounds();
-
         places.forEach((place) => {
             if (!place.geometry || !place.geometry.location) {
                 console.log("Returned place contains no geometry");
