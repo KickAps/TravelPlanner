@@ -23,6 +23,7 @@ class Steps extends React.Component {
         const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
         this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id.replace('card_', ''));
+            this.updateOrder();
         });
     };
 
@@ -53,7 +54,7 @@ class Steps extends React.Component {
                         </button>
                     </div>
 
-                    <div className="relative p-4">
+                    <div className="relative px-3 py-4">
                         <div className="absolute -left-16 top-2 font-bold text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
                             <span className="step_index">{newStepCount}</span>
                         </div>
@@ -137,8 +138,18 @@ class Steps extends React.Component {
                     google.maps.event.trigger(input, 'focus', {});
                     google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
                 }, 1000);
+            } else {
+                this.updateOrder();
             }
         });
+    };
+
+    updateOrder = () => {
+        const steps = document.getElementsByClassName('step_index');
+
+        for (let i = 0; i < steps.length; i++) {
+            steps[i].textContent = i + 1;
+        }
     };
 
     render() {
