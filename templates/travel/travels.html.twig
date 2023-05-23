@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ReactController!
+{% endblock %}
+
+{% block body %}
+    <div class="container-height bg-blue-100">
+        <div class="flex h-full mx-7">
+            <div class="w-1/2">
+                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Steps', {'data': data} ) }}></div>
+            </div>
+
+            <div class="w-1/2">
+                <div id="map" class="container-height w-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ api_key ~ '&callback=initAutocomplete&libraries=places' }}" defer></script>
+{% endblock %}

@@ -6,4 +6,4 @@ controllers:
 
 app_home:
     path: /
-    controller: App\Controller\PlanningController::index
+    controller: App\Controller\TravelController::travels

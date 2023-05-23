@@ -156,7 +156,7 @@ class Steps extends React.Component {
         return (
             <div>
                 <button
-                    className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto"
+                    className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"
                     onClick={this.addStep}
                 >
                     <i className="fa-solid fa-plus"></i>
