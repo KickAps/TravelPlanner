@@ -7,10 +7,11 @@
     <div class="container-height bg-blue-100">
         <div class="flex h-full mx-7">
             <div class="w-1/2">
-                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Steps', {'data': data} ) }}></div>
+                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Steps') }}></div>
             </div>
 
             <div class="w-1/2">
+                <button type="submit" form="steps_form" class="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto my-2">Sauvegarder</button>
                 <div id="map" class="container-height w-full"></div>
             </div>
         </div>

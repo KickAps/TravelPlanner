@@ -9,6 +9,7 @@ class Steps extends React.Component {
             stepCount: 0,
             data: props.data || [],
         };
+        this.order = {};
     }
 
     componentDidMount() {
@@ -22,7 +23,7 @@ class Steps extends React.Component {
     deleteStep = (id) => {
         const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
         this.setState({ steps: updatedSteps }, () => {
-            maps.removeMarkers(id.replace('card_', ''));
+            maps.removeMarkers(id.replace('step_', ''));
             this.updateOrder();
         });
     };
@@ -43,12 +44,12 @@ class Steps extends React.Component {
         }
 
         const newStep = (
-            <div key={newStepCount} id={`card_${newStepCount}`}>
+            <div key={newStepCount} id={`step_${newStepCount}`} className="step">
                 <div className="w-4/5 mx-auto my-2 rounded shadow-lg bg-white">
                     <div className="relative z-10">
                         <button
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.deleteStep(`card_${newStepCount}`)}
+                            onClick={() => this.deleteStep(`step_${newStepCount}`)}
                         >
                             <i className="fa-solid fa-xmark"></i>
                         </button>
@@ -56,63 +57,71 @@ class Steps extends React.Component {
 
                     <div className="relative px-3 py-4">
                         <div className="absolute -left-16 top-2 font-bold text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
-                            <span className="step_index">{newStepCount}</span>
+                            <span className="step_order">{newStepCount}</span>
                         </div>
-                        <form>
-                            <div className="flex mb-2">
-                                <div className="w-full md:w-1/2 px-3 md:mb-0">
-                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={`input_${newStepCount}`}>
-                                        Lieux
-                                    </label>
-                                    <input
-                                        id={`input_${newStepCount}`}
-                                        name={`input_${newStepCount}`}
-                                        className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                        type="text"
-                                        placeholder="Rechercher..."
-                                    />
-                                </div>
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">
-                                        Date
-                                    </label>
-                                    <input
-                                        id="date"
-                                        type="date"
-                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    />
-                                </div>
+                        <div className="flex mb-2">
+                            <div className="w-full md:w-1/2 px-3 md:mb-0">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={`place_${newStepCount}`}>
+                                    Lieux
+                                </label>
+                                <input
+                                    id={`place_${newStepCount}`}
+                                    name={`place_${newStepCount}`}
+                                    className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    type="text"
+                                    placeholder="Rechercher..."
+                                    form="steps_form"
+                                />
                             </div>
-                            <div className="flex flex-wrap mb-2">
-                                <div className="w-full px-3">
-                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        id="description"
-                                        rows="4"
-                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                        placeholder="Nous allons...">
-                                    </textarea>
-                                </div>
+                            <div className="w-full md:w-1/2 px-3">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">
+                                    Date
+                                </label>
+                                <input
+                                    id="date"
+                                    name={`date_${newStepCount}`}
+                                    type="date"
+                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    form="steps_form"
+                                />
                             </div>
-                            <div className="flex flex-wrap mb-2">
-                                <div className="w-full px-3">
-                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="notes">
-                                        Notes
-                                    </label>
-                                    <textarea
-                                        id="notes"
-                                        rows="2"
-                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                        placeholder="Quelques notes...">
-                                    </textarea>
-                                </div>
+                        </div>
+                        <div className="flex flex-wrap mb-2">
+                            <div className="w-full px-3">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                    Description
+                                </label>
+                                <textarea
+                                    id="description"
+                                    name={`description_${newStepCount}`}
+                                    rows="4"
+                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    placeholder="Nous allons..."
+                                    form="steps_form"
+                                >
+                                </textarea>
                             </div>
-                        </form>
+                        </div>
+                        <div className="flex flex-wrap mb-2">
+                            <div className="w-full px-3">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="notes">
+                                    Notes
+                                </label>
+                                <textarea
+                                    id="notes"
+                                    name={`notes_${newStepCount}`}
+                                    rows="2"
+                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    placeholder="Quelques notes..."
+                                    form="steps_form"
+                                >
+                                </textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button
+                    type="button"
                     className="btn_add block bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto"
                     onClick={this.addStep}
                 >
@@ -142,14 +151,48 @@ class Steps extends React.Component {
                 this.updateOrder();
             }
         });
-    };
+    }
 
     updateOrder = () => {
-        const steps = document.getElementsByClassName('step_index');
+        const steps_order = document.getElementsByClassName('step_order');
+        const steps = document.getElementsByClassName('step');
 
         for (let i = 0; i < steps.length; i++) {
-            steps[i].textContent = i + 1;
+            steps_order[i].textContent = i + 1;
+            this.order[steps[i].id] = i;
         }
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        formData.append('order', JSON.stringify(this.order));
+
+        const formJson = Object.fromEntries(formData.entries());
+
+        fetch(window.location.origin + '/new_travel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formJson),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la requête.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Traiter la réponse si nécessaire
+                console.log(data);
+            })
+            .catch(error => {
+                // Gérer les erreurs de la requête
+                console.error(error);
+            });
     };
 
     render() {
@@ -161,7 +204,9 @@ class Steps extends React.Component {
                 >
                     <i className="fa-solid fa-plus"></i>
                 </button>
-                {this.state.steps.map(step => step)}
+                <form id="steps_form" onSubmit={this.handleSubmit}>
+                    {this.state.steps.map(step => step)}
+                </form>
             </div>
         );
     }
