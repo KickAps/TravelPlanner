@@ -80,7 +80,7 @@ class Steps extends React.Component {
                                 <input
                                     id="date"
                                     name={`date_${newStepCount}`}
-                                    value={data && data.date}
+                                    defaultValue={data && data.date}
                                     type="date"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     form="steps_form"
@@ -95,7 +95,7 @@ class Steps extends React.Component {
                                 <textarea
                                     id="desc"
                                     name={`desc_${newStepCount}`}
-                                    value={data && data.desc}
+                                    defaultValue={data && data.desc}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
@@ -112,7 +112,7 @@ class Steps extends React.Component {
                                 <textarea
                                     id="notes"
                                     name={`notes_${newStepCount}`}
-                                    value={data && data.notes}
+                                    defaultValue={data && data.notes}
                                     rows="2"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Quelques notes..."
