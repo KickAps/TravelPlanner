@@ -23,8 +23,9 @@ class Steps extends React.Component {
     deleteStep = (id) => {
         const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
         this.setState({ steps: updatedSteps }, () => {
-            maps.removeMarkers(id.replace('step_', ''));
             this.updateOrder();
+            maps.removeMarkers(id.replace('step_', ''));
+            maps.removePath(id, this.order);
         });
     };
 
@@ -140,7 +141,9 @@ class Steps extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            maps.initInputSearch(newStepCount, insertIndex);
+            this.updateOrder();
+
+            maps.initInputSearch(newStepCount, insertIndex, this.order);
 
             if (data) {
                 const inputs = document.getElementsByClassName("pac-input");
@@ -151,8 +154,6 @@ class Steps extends React.Component {
                     google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
                 }, 1000);
             }
-
-            this.updateOrder();
         });
     }
 

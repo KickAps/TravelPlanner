@@ -1,8 +1,10 @@
 let map;
 let global_markers = [];
 let bounds;
+let global_path = {};
+let polyline;
 
-function initAutocomplete() {
+function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 46.62825131575064, lng: 2.264533130591902 },
         zoom: 6,
@@ -10,9 +12,10 @@ function initAutocomplete() {
     });
 
     bounds = new google.maps.LatLngBounds();
+    polyline = new google.maps.Polyline();
 }
 
-export function initInputSearch(step_count, input_index) {
+export function initInputSearch(step_count, input_index, order) {
     // Create the search box and link it to the UI element.
     const inputs = document.getElementsByClassName("pac-input");
 
@@ -58,14 +61,19 @@ export function initInputSearch(step_count, input_index) {
             };
 
             // Create a marker for each place.
-            markers.push(
-                new google.maps.Marker({
-                    map,
-                    icon,
-                    title: place.name,
-                    position: place.geometry.location,
-                })
-            );
+            const marker = new google.maps.Marker({
+                map,
+                icon,
+                title: place.name,
+                position: place.geometry.location,
+            });
+
+            markers.push(marker);
+
+            // Path
+            global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+            setGlobalPath(order);
+
             if (place.geometry.viewport) {
                 // Only geocodes have viewport.
                 bounds.union(place.geometry.viewport);
@@ -74,6 +82,7 @@ export function initInputSearch(step_count, input_index) {
             }
         });
 
+        // Zoom
         global_markers[step_count] = markers;
         map.fitBounds(bounds);
     });
@@ -91,5 +100,30 @@ export function removeMarkers(index) {
     markers = [];
 }
 
+function setGlobalPath(order) {
+    let path_ordered = [];
 
-window.initAutocomplete = initAutocomplete;
+    for (const key in order) {
+        path_ordered.push(global_path[order[key]]);
+    }
+
+    polyline.setMap(null);
+
+    polyline = new google.maps.Polyline({
+        path: path_ordered,
+        geodesic: true,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+    });
+
+    polyline.setMap(map);
+}
+
+export function removePath(index, order) {
+    delete global_path[index];
+    setGlobalPath(order);
+}
+
+
+window.initMap = initMap;
