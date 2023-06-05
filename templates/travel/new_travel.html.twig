@@ -7,11 +7,17 @@
     <div class="container-height bg-blue-100">
         <div class="flex h-full mx-7">
             <div class="w-1/2">
-                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Steps') }}></div>
+                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Steps', {'data': steps} ) }}></div>
             </div>
 
             <div class="w-1/2">
-                <button type="submit" form="steps_form" class="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto my-2">Sauvegarder</button>
+                <div class="text-center">
+                    <label class="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="travel_name">
+                        Nom du trajet
+                    </label>
+                    <input id="travel_name" name="travel_name" type="text" value={{ name }} class="bg-white border border-gray-500 rounded py-2 px-3 leading-tight focus:outline-none" form="steps_form" required/>
+                    <button type="submit" form="steps_form" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto my-2">Sauvegarder</button>
+                </div>
                 <div id="map" class="container-height w-full"></div>
             </div>
         </div>

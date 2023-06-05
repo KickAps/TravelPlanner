@@ -88,12 +88,12 @@ class Steps extends React.Component {
                         </div>
                         <div className="flex flex-wrap mb-2">
                             <div className="w-full px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="desc">
                                     Description
                                 </label>
                                 <textarea
-                                    id="description"
-                                    name={`description_${newStepCount}`}
+                                    id="desc"
+                                    name={`desc_${newStepCount}`}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
@@ -159,7 +159,7 @@ class Steps extends React.Component {
 
         for (let i = 0; i < steps.length; i++) {
             steps_order[i].textContent = i + 1;
-            this.order[steps[i].id] = i;
+            this.order[i] = steps[i].id;
         }
     }
 
