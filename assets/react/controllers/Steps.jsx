@@ -147,15 +147,17 @@ class Steps extends React.Component {
                     google.maps.event.trigger(input, 'focus', {});
                     google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
                 }, 1000);
-            } else {
-                this.updateOrder();
             }
+
+            this.updateOrder();
         });
     }
 
     updateOrder = () => {
         const steps_order = document.getElementsByClassName('step_order');
         const steps = document.getElementsByClassName('step');
+
+        this.order = {};
 
         for (let i = 0; i < steps.length; i++) {
             steps_order[i].textContent = i + 1;

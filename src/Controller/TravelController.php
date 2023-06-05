@@ -33,7 +33,12 @@ class TravelController extends AbstractController
                 ];
             }
 
-            $travel = new Travel();
+            if ($travel_id = $formData['travel_id']) {
+                $travel = $travelRepo->find($travel_id);
+            } else {
+                $travel = new Travel();
+            }
+
             $travel->setName($formData['travel_name']);
             $travel->setSteps($steps);
             $travelRepo->save($travel, true);
@@ -41,16 +46,19 @@ class TravelController extends AbstractController
             return new JsonResponse($formData);
         }
 
-        $steps = [];
+        $id = 0;
         $name = "";
+        $steps = [];
 
         if ($travel_id = $request->get('id')) {
             $travel = $travelRepo->find($travel_id);
+            $id = $travel->getId();
             $name = $travel->getName();
             $steps = $travel->getSteps();
         }
 
         return $this->render('travel/new_travel.html.twig', [
+            'id' => $id,
             'name' => $name,
             'steps' => $steps,
         ]);

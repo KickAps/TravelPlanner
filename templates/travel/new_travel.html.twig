@@ -15,7 +15,8 @@
                     <label class="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="travel_name">
                         Nom du trajet
                     </label>
-                    <input id="travel_name" name="travel_name" type="text" value={{ name }} class="bg-white border border-gray-500 rounded py-2 px-3 leading-tight focus:outline-none" form="steps_form" required/>
+                    <input id="travel_name" name="travel_name" type="text" value="{{ name }}" class="bg-white border border-gray-500 rounded py-2 px-3 leading-tight focus:outline-none" form="steps_form" required/>
+                    <input name="travel_id" type="hidden" value="{{ id }}" form="steps_form"/>
                     <button type="submit" form="steps_form" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto my-2">Sauvegarder</button>
                 </div>
                 <div id="map" class="container-height w-full"></div>

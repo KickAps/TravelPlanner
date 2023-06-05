@@ -43,7 +43,7 @@ class TravelRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->select('t.id', 't.name')
-            ->orderBy('t.id', 'ASC')
+            ->orderBy('t.id', 'DESC')
             ->getQuery()
             ->getArrayResult();
     }
