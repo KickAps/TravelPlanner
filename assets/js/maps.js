@@ -3,6 +3,7 @@ let global_markers = [];
 let bounds;
 let global_path = {};
 let polyline;
+const icon_url = "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png";
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -13,6 +14,24 @@ function initMap() {
 
     bounds = new google.maps.LatLngBounds();
     polyline = new google.maps.Polyline();
+}
+
+function createMarker(pos) {
+    const icon = {
+        url: icon_url,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(13, 34),
+        scaledSize: new google.maps.Size(25, 25),
+    };
+
+    const marker = new google.maps.Marker({
+        map,
+        icon,
+        position: pos,
+    });
+
+    return marker;
 }
 
 export function initInputSearch(step_count, input_index, order) {
@@ -52,23 +71,14 @@ export function initInputSearch(step_count, input_index, order) {
                 return;
             }
 
-            const icon = {
-                url: place.icon,
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(25, 25),
-            };
-
-            // Create a marker for each place.
-            const marker = new google.maps.Marker({
-                map,
-                icon,
-                title: place.name,
-                position: place.geometry.location,
-            });
+            const marker = createMarker(place.geometry.location);
 
             markers.push(marker);
+
+            let input_lat = document.getElementById("lat_" + step_count);
+            input_lat.value = marker.getPosition().lat();
+            let input_lng = document.getElementById("lng_" + step_count);
+            input_lng.value = marker.getPosition().lng();
 
             // Path
             global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
@@ -86,6 +96,29 @@ export function initInputSearch(step_count, input_index, order) {
         global_markers[step_count] = markers;
         map.fitBounds(bounds);
     });
+}
+
+export function initTravel(data) {
+    let order = [];
+    for (let i = 0; i < data.length; i++) {
+        let markers = [];
+        let step_count = i + 1;
+        let pos = { lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lng) };
+
+        const marker = createMarker(pos);
+
+        markers.push(marker);
+        global_markers[step_count] = markers;
+
+        // Path
+        global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+        order[i] = 'step_' + step_count;
+
+        bounds.union(new google.maps.LatLngBounds(pos));
+    }
+
+    setGlobalPath(order);
+    map.fitBounds(bounds);
 }
 
 export function removeMarkers(index) {

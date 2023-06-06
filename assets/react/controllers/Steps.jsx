@@ -13,10 +13,9 @@ class Steps extends React.Component {
     }
 
     componentDidMount() {
-        for (const [key, data] of Object.entries(this.state.data)) {
-            setTimeout(() => {
-                this.addStep(null, key, data);
-            }, key * 1000);
+        if (this.state.data.length !== 0) {
+            maps.initTravel(this.state.data);
+            this.addStep(null, 0, this.state.data);
         }
     }
 
@@ -29,11 +28,12 @@ class Steps extends React.Component {
         });
     };
 
-    addStep = (event, index, data = null) => {
+    addStep = (event, index = null, data = null) => {
         const newStepCount = this.state.stepCount + 1;
 
         let insertIndex = index ?? 0;
 
+        // Ajout via clic
         if (event) {
             let target = event.target;
             if (target.tagName === 'I') {
@@ -42,6 +42,12 @@ class Steps extends React.Component {
             const addButtonElements = document.getElementsByClassName('btn_add');
             const addButtonArray = Array.from(addButtonElements);
             insertIndex = addButtonArray.indexOf(target) + 1;
+        }
+
+        // Ajout auto - init avec data
+        let step_data = null;
+        if (data) {
+            step_data = data[index];
         }
 
         const newStep = (
@@ -68,9 +74,24 @@ class Steps extends React.Component {
                                 <input
                                     id={`place_${newStepCount}`}
                                     name={`place_${newStepCount}`}
+                                    defaultValue={step_data && step_data.place}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
                                     placeholder="Rechercher..."
+                                    form="steps_form"
+                                />
+                                <input
+                                    id={`lat_${newStepCount}`}
+                                    name={`lat_${newStepCount}`}
+                                    defaultValue={step_data && step_data.lat}
+                                    type="hidden"
+                                    form="steps_form"
+                                />
+                                <input
+                                    id={`lng_${newStepCount}`}
+                                    name={`lng_${newStepCount}`}
+                                    defaultValue={step_data && step_data.lng}
+                                    type="hidden"
                                     form="steps_form"
                                 />
                             </div>
@@ -81,7 +102,7 @@ class Steps extends React.Component {
                                 <input
                                     id="date"
                                     name={`date_${newStepCount}`}
-                                    defaultValue={data && data.date}
+                                    defaultValue={step_data && step_data.date}
                                     type="date"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     form="steps_form"
@@ -96,7 +117,7 @@ class Steps extends React.Component {
                                 <textarea
                                     id="desc"
                                     name={`desc_${newStepCount}`}
-                                    defaultValue={data && data.desc}
+                                    defaultValue={step_data && step_data.desc}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
@@ -113,7 +134,7 @@ class Steps extends React.Component {
                                 <textarea
                                     id="notes"
                                     name={`notes_${newStepCount}`}
-                                    defaultValue={data && data.notes}
+                                    defaultValue={step_data && step_data.notes}
                                     rows="2"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Quelques notes..."
@@ -142,17 +163,12 @@ class Steps extends React.Component {
             stepCount: newStepCount,
         }), () => {
             this.updateOrder();
-
             maps.initInputSearch(newStepCount, insertIndex, this.order);
 
-            if (data) {
-                const inputs = document.getElementsByClassName("pac-input");
-                let input = inputs[insertIndex];
-                setTimeout(() => {
-                    input.value = data.place;
-                    google.maps.event.trigger(input, 'focus', {});
-                    google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
-                }, 1000);
+            index++;
+            if (data && index < data.length) {
+                // Appel récursif tant qu'il y a des étapes à afficher
+                this.addStep(null, index, data);
             }
         });
     }
