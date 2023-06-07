@@ -3,6 +3,7 @@ let global_markers = [];
 let bounds;
 let global_path = {};
 let polyline;
+let infowindow;
 const icon_url = "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png";
 
 function initMap() {
@@ -72,6 +73,27 @@ export function initInputSearch(step_count, input_index, order) {
             }
 
             const marker = createMarker(place.geometry.location);
+
+            const contentString =
+                '<div>' +
+                '<b>' + place.formatted_address + '</b>' +
+                '</div>' +
+                '<a href="' + place.url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>';
+
+            marker.addListener("click", () => {
+                if (infowindow) {
+                    infowindow.close();
+                }
+
+                infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+
+                infowindow.open({
+                    anchor: marker,
+                    map,
+                });
+            });
 
             markers.push(marker);
 
