@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TravelController extends AbstractController
 {
-    #[Route('/new_travel', name: 'app_new_travel')]
-    public function new_travel(Request $request, TravelRepository $travelRepo): Response
+    #[Route('/edit_travel', name: 'app_edit_travel')]
+    public function edit_travel(Request $request, TravelRepository $travelRepo): Response
     {
         if ($request->isMethod('POST')) {
             $formData = json_decode($request->getContent(), true);
@@ -59,7 +59,7 @@ class TravelController extends AbstractController
             $steps = $travel->getSteps();
         }
 
-        return $this->render('travel/new_travel.html.twig', [
+        return $this->render('travel/edit_travel.html.twig', [
             'id' => $id,
             'name' => $name,
             'steps' => $steps,

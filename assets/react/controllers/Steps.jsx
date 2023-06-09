@@ -194,7 +194,7 @@ class Steps extends React.Component {
 
         const formJson = Object.fromEntries(formData.entries());
 
-        fetch(window.location.origin + '/new_travel', {
+        fetch(window.location.origin + '/edit_travel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -27,11 +27,11 @@ class Travel extends Component {
     };
 
     redirect_play = (travel_id) => {
-        window.location.href = window.location.origin + "/new_travel?id=" + travel_id;
+        window.location.href = window.location.origin + "/edit_travel?id=" + travel_id;
     }
 
     redirect_edit = (travel_id) => {
-        window.location.href = window.location.origin + "/new_travel?id=" + travel_id;
+        window.location.href = window.location.origin + "/edit_travel?id=" + travel_id;
     }
 
     deleteTravel = (travel_id) => {
