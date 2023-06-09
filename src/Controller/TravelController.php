@@ -29,6 +29,7 @@ class TravelController extends AbstractController
                     'place' => $formData['place_' . $step_number],
                     'lat' => $formData['lat_' . $step_number],
                     'lng' => $formData['lng_' . $step_number],
+                    'url' => $formData['url_' . $step_number],
                     'date' => $formData['date_' . $step_number],
                     'desc' => $formData['desc_' . $step_number],
                     'notes' => $formData['notes_' . $step_number],

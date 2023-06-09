@@ -94,6 +94,13 @@ class Steps extends React.Component {
                                     type="hidden"
                                     form="steps_form"
                                 />
+                                <input
+                                    id={`url_${newStepCount}`}
+                                    name={`url_${newStepCount}`}
+                                    defaultValue={step_data && step_data.url}
+                                    type="hidden"
+                                    form="steps_form"
+                                />
                             </div>
                             <div className="w-full md:w-1/2 px-3">
                                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">

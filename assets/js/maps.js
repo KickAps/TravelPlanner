@@ -17,7 +17,7 @@ function initMap() {
     polyline = new google.maps.Polyline();
 }
 
-function createMarker(pos) {
+function createMarker(pos, name, url) {
     const icon = {
         url: icon_url,
         size: new google.maps.Size(71, 71),
@@ -30,6 +30,27 @@ function createMarker(pos) {
         map,
         icon,
         position: pos,
+    });
+
+    const contentString =
+        '<div>' +
+        '<b>' + name + '</b>' +
+        '</div>' +
+        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>';
+
+    marker.addListener("click", () => {
+        if (infowindow) {
+            infowindow.close();
+        }
+
+        infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        infowindow.open({
+            anchor: marker,
+            map,
+        });
     });
 
     return marker;
@@ -72,28 +93,7 @@ export function initInputSearch(step_count, input_index, order) {
                 return;
             }
 
-            const marker = createMarker(place.geometry.location);
-
-            const contentString =
-                '<div>' +
-                '<b>' + place.formatted_address + '</b>' +
-                '</div>' +
-                '<a href="' + place.url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>';
-
-            marker.addListener("click", () => {
-                if (infowindow) {
-                    infowindow.close();
-                }
-
-                infowindow = new google.maps.InfoWindow({
-                    content: contentString
-                });
-
-                infowindow.open({
-                    anchor: marker,
-                    map,
-                });
-            });
+            const marker = createMarker(place.geometry.location, place.formatted_address, place.url);
 
             markers.push(marker);
 
@@ -101,6 +101,8 @@ export function initInputSearch(step_count, input_index, order) {
             input_lat.value = marker.getPosition().lat();
             let input_lng = document.getElementById("lng_" + step_count);
             input_lng.value = marker.getPosition().lng();
+            let input_url = document.getElementById("url_" + step_count);
+            input_url.value = place.url;
 
             // Path
             global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
@@ -127,7 +129,7 @@ export function initTravel(data) {
         let step_count = i + 1;
         let pos = { lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lng) };
 
-        const marker = createMarker(pos);
+        const marker = createMarker(pos, data[i].place, data[i].url);
 
         markers.push(marker);
         global_markers[step_count] = markers;
