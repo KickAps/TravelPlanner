@@ -75,4 +75,19 @@ class TravelController extends AbstractController
             'data' => $data,
         ]);
     }
+
+    #[Route('/delete_travel', name: 'app_delete_travel')]
+    public function delete_travel(Request $request, TravelRepository $travelRepo): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if ($travel_id = $data['id']) {
+            $travel = $travelRepo->find($travel_id);
+            $travelRepo->remove($travel, true);
+        }
+
+        return new JsonResponse([
+            'ok' => 'true'
+        ]);
+    }
 }

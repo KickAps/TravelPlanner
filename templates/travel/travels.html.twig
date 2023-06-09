@@ -4,15 +4,11 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-height bg-blue-100">
+    <div class="container-height">
         <div class="flex h-full mx-7">
             <div class="w-1/2">
-                {% for travel in data %}
-                    <a href="{{ path('app_new_travel', {'id': travel.id}) }}">{{ travel.name }}</a>
-                {% endfor %}
+                <div {{ react_component('Travel', {'data': data} ) }}></div>
             </div>
-
-            <div class="w-1/2"></div>
         </div>
     </div>
 {% endblock %}
