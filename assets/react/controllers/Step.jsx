@@ -1,7 +1,7 @@
 import React from 'react';
 import * as maps from '../../js/maps';
 
-class Steps extends React.Component {
+class Step extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,7 +22,7 @@ class Steps extends React.Component {
     deleteStep = (id) => {
         const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
         this.setState({ steps: updatedSteps }, () => {
-            this.updateOrder();
+            // this.updateOrder();
             maps.removeMarkers(id.replace('step_', ''));
             maps.removePath(id, this.order);
         });
@@ -39,7 +39,7 @@ class Steps extends React.Component {
             if (target.tagName === 'I') {
                 target = target.parentNode;
             }
-            const addButtonElements = document.getElementsByClassName('btn_add');
+            const addButtonElements = document.getElementsByClassName('btn_add_step');
             const addButtonArray = Array.from(addButtonElements);
             insertIndex = addButtonArray.indexOf(target) + 1;
         }
@@ -102,19 +102,6 @@ class Steps extends React.Component {
                                     form="steps_form"
                                 />
                             </div>
-                            <div className="w-full md:w-1/2 px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">
-                                    Date
-                                </label>
-                                <input
-                                    id="date"
-                                    name={`date_${newStepCount}`}
-                                    defaultValue={step_data && step_data.date}
-                                    type="date"
-                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    form="steps_form"
-                                />
-                            </div>
                         </div>
                         <div className="flex flex-wrap mb-2">
                             <div className="w-full px-3">
@@ -133,28 +120,11 @@ class Steps extends React.Component {
                                 </textarea>
                             </div>
                         </div>
-                        <div className="flex flex-wrap mb-2">
-                            <div className="w-full px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="notes">
-                                    Notes
-                                </label>
-                                <textarea
-                                    id="notes"
-                                    name={`notes_${newStepCount}`}
-                                    defaultValue={step_data && step_data.notes}
-                                    rows="2"
-                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    placeholder="Quelques notes..."
-                                    form="steps_form"
-                                >
-                                </textarea>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <button
                     type="button"
-                    className="btn_add block bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto"
+                    className="btn_add_step block bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded mx-auto"
                     onClick={this.addStep}
                 >
                     <i className="fa-solid fa-plus"></i>
@@ -169,7 +139,7 @@ class Steps extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            this.updateOrder();
+            // this.updateOrder();
             maps.initInputSearch(newStepCount, insertIndex, this.order);
 
             index++;
@@ -194,6 +164,8 @@ class Steps extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+
+        // updateOrder
 
         const form = e.target;
         const formData = new FormData(form);
@@ -241,4 +213,4 @@ class Steps extends React.Component {
     }
 }
 
-export default Steps;
+export default Step;
