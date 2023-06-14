@@ -1,5 +1,6 @@
 import React from 'react';
 import * as maps from '../../js/maps';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 class Step extends React.Component {
     constructor(props) {
@@ -20,12 +21,23 @@ class Step extends React.Component {
     }
 
     deleteStep = (id) => {
-        const updatedSteps = this.state.steps.filter(step => step.props.id !== id);
+        const updatedSteps = this.state.steps.filter(step => step.id !== id);
         this.setState({ steps: updatedSteps }, () => {
-            // this.updateOrder();
             maps.removeMarkers(id.replace('step_', ''));
             maps.removePath(id, this.order);
         });
+    };
+
+    onDragEnd = (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const steps = [...this.state.steps];
+        const [removed] = steps.splice(result.source.index, 1);
+        steps.splice(result.destination.index, 0, removed);
+
+        this.setState({ steps });
     };
 
     addStep = (event, index = null, data = null) => {
@@ -50,24 +62,23 @@ class Step extends React.Component {
             step_data = data[index];
         }
 
-        const newStep = (
-            <div key={newStepCount} id={`step_${newStepCount}`} className="step">
-                <div className="w-4/5 mx-auto my-2 rounded shadow-lg bg-white">
+        const id = "step_" + newStepCount;
+
+        const content = (
+            <div id={id} className="step">
+                <div className="w-11/12 mx-auto rounded shadow bg-white">
                     <div className="relative z-10">
                         <button
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.deleteStep(`step_${newStepCount}`)}
+                            onClick={() => this.deleteStep(id)}
                         >
-                            <i className="fa-solid fa-xmark"></i>
+                            <i className="fa-solid fa-trash"></i>
                         </button>
                     </div>
 
                     <div className="relative px-3 py-4">
-                        <div className="absolute -left-16 top-2 font-bold text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
-                            <span className="step_order">{newStepCount}</span>
-                        </div>
                         <div className="flex mb-2">
-                            <div className="w-full md:w-1/2 px-3 md:mb-0">
+                            <div className="w-full px-3 md:mb-0">
                                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={`place_${newStepCount}`}>
                                     Lieux
                                 </label>
@@ -122,15 +133,13 @@ class Step extends React.Component {
                         </div>
                     </div>
                 </div>
-                <button
-                    type="button"
-                    className="btn_add_step block bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded mx-auto"
-                    onClick={this.addStep}
-                >
-                    <i className="fa-solid fa-plus"></i>
-                </button>
             </div>
         );
+
+        const newStep = {
+            id: id,
+            content: content,
+        };
 
         const updatedSteps = [...this.state.steps];
         updatedSteps.splice(insertIndex, 0, newStep);
@@ -139,7 +148,6 @@ class Step extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            // this.updateOrder();
             maps.initInputSearch(newStepCount, insertIndex, this.order);
 
             index++;
@@ -149,65 +157,47 @@ class Step extends React.Component {
             }
         });
     }
-
-    updateOrder = () => {
-        const steps_order = document.getElementsByClassName('step_order');
-        const steps = document.getElementsByClassName('step');
-
-        this.order = {};
-
-        for (let i = 0; i < steps.length; i++) {
-            steps_order[i].textContent = i + 1;
-            this.order[i] = steps[i].id;
-        }
-    }
-
-    handleSubmit = (e) => {
-        e.preventDefault();
-
-        // updateOrder
-
-        const form = e.target;
-        const formData = new FormData(form);
-        formData.append('order', JSON.stringify(this.order));
-
-        const formJson = Object.fromEntries(formData.entries());
-
-        fetch(window.location.origin + '/edit_travel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formJson),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la requête.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Traiter la réponse si nécessaire
-                console.log(data);
-            })
-            .catch(error => {
-                // Gérer les erreurs de la requête
-                console.error(error);
-            });
-    };
-
     render() {
         return (
             <div>
+                <DragDropContext onDragEnd={this.onDragEnd} droppableId="group-input">
+                    <Droppable droppableId="droppable-input">
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                <ul>
+                                    {this.state.steps.map((step, index) => (
+                                        <Draggable key={step.id} draggableId={step.id.toString()} index={index}>
+                                            {(provided) => (
+                                                <li
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    className="draggable-item"
+                                                >
+                                                    <div className="h-2"></div>
+                                                    <div className="relative">
+                                                        <div {...provided.dragHandleProps} className="drag-handle absolute right-16 top-2 z-10 text-gray-500 hover:text-gray-700">
+                                                            {/* Icône de poignée */}
+                                                            <i className="fas fa-grip-vertical" />
+                                                        </div>
+                                                        {step.content}
+                                                    </div>
+                                                </li>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                </ul>
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext >
                 <button
+                    type="button"
                     className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"
                     onClick={this.addStep}
                 >
                     <i className="fa-solid fa-plus"></i>
                 </button>
-                <form id="steps_form" onSubmit={this.handleSubmit}>
-                    {this.state.steps.map(step => step)}
-                </form>
             </div>
         );
     }
