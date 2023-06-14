@@ -17,7 +17,7 @@ function initMap() {
     polyline = new google.maps.Polyline();
 }
 
-function createMarker(pos, name, url) {
+function createMarker(pos, name, address, url) {
     const icon = {
         url: icon_url,
         size: new google.maps.Size(71, 71),
@@ -34,9 +34,10 @@ function createMarker(pos, name, url) {
 
     const contentString =
         '<div>' +
-        '<b>' + name + '</b>' +
-        '</div>' +
-        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>';
+        '<p><b>' + name + '</b></p>' +
+        '<p>' + address + '</p>' +
+        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>' +
+        '</div>';
 
     marker.addListener("click", () => {
         if (infowindow) {
@@ -93,7 +94,7 @@ export function initInputSearch(step_count, input_index, order) {
                 return;
             }
 
-            const marker = createMarker(place.geometry.location, place.formatted_address, place.url);
+            const marker = createMarker(place.geometry.location, place.name, place.formatted_address, place.url);
 
             markers.push(marker);
 
@@ -129,7 +130,7 @@ export function initTravel(data) {
         let step_count = i + 1;
         let pos = { lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lng) };
 
-        const marker = createMarker(pos, data[i].place, data[i].url);
+        const marker = createMarker(pos, data[i].name, data[i].place, data[i].url);
 
         markers.push(marker);
         global_markers[step_count] = markers;
