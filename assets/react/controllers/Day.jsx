@@ -12,6 +12,7 @@ class Day extends React.Component {
             data: props.data || [],
         };
         this.order = {};
+        this.steps = {};
     }
 
     componentDidMount() {
@@ -22,12 +23,13 @@ class Day extends React.Component {
     }
 
     deleteDay = (id) => {
-        // TODO : Delete aussi steps associées
+        // Supprime les étapes associées
+        this.steps[id].deleteAllSteps();
+        delete this.steps[id];
+
         const updatedDays = this.state.days.filter(day => day.id !== id);
         this.setState({ days: updatedDays }, () => {
             this.updateOrder();
-            // maps.removeMarkers(id.replace('step_', ''));
-            // maps.removePath(id, this.order);
         });
     };
 
@@ -40,7 +42,9 @@ class Day extends React.Component {
         const [removed] = days.splice(result.source.index, 1);
         days.splice(result.destination.index, 0, removed);
 
-        this.setState({ days });
+        this.setState({ days }, () => {
+            this.updateOrder();
+        });
     };
 
     addDay = (index = null, data = null) => {
@@ -77,7 +81,7 @@ class Day extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <Step />
+                    <Step day_id={id} ref={(component) => (this.steps[id] = component)} />
                 </div>
             </div>
         );

@@ -57,11 +57,9 @@ function createMarker(pos, name, address, url) {
     return marker;
 }
 
-export function initInputSearch(step_count, input_index, order) {
+export function initInputSearch(step_count, day_id, order) {
     // Create the search box and link it to the UI element.
-    const inputs = document.getElementsByClassName("pac-input");
-
-    let input = inputs[input_index];
+    const input = document.getElementById(day_id + "_place_" + step_count);
 
     let searchBox = new google.maps.places.SearchBox(input);
 
@@ -87,6 +85,8 @@ export function initInputSearch(step_count, input_index, order) {
         });
         markers = [];
 
+        const step_id = day_id + "_step_" + step_count;
+
         // For each place, get the icon, name and location.
         places.forEach((place) => {
             if (!place.geometry || !place.geometry.location) {
@@ -98,15 +98,15 @@ export function initInputSearch(step_count, input_index, order) {
 
             markers.push(marker);
 
-            let input_lat = document.getElementById("lat_" + step_count);
+            let input_lat = document.getElementById(day_id + "_lat_" + step_count);
             input_lat.value = marker.getPosition().lat();
-            let input_lng = document.getElementById("lng_" + step_count);
+            let input_lng = document.getElementById(day_id + "_lng_" + step_count);
             input_lng.value = marker.getPosition().lng();
-            let input_url = document.getElementById("url_" + step_count);
+            let input_url = document.getElementById(day_id + "_url_" + step_count);
             input_url.value = place.url;
 
             // Path
-            global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+            global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
             setGlobalPath(order);
 
             if (place.geometry.viewport) {
@@ -118,7 +118,7 @@ export function initInputSearch(step_count, input_index, order) {
         });
 
         // Zoom
-        global_markers[step_count] = markers;
+        global_markers[step_id] = markers;
         map.fitBounds(bounds);
     });
 }

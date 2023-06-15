@@ -24,9 +24,17 @@ class Step extends React.Component {
     deleteStep = (id) => {
         const updatedSteps = this.state.steps.filter(step => step.id !== id);
         this.setState({ steps: updatedSteps }, () => {
-            maps.removeMarkers(id.replace('step_', ''));
+            maps.removeMarkers(id);
             maps.removePath(id, this.order);
         });
+    };
+
+    deleteAllSteps = () => {
+        this.state.steps.map(step => {
+            maps.removeMarkers(step.id);
+            maps.removePath(step.id, this.order);
+        });
+        this.setState({ steps: [] });
     };
 
     onDragEnd = (result) => {
@@ -69,15 +77,21 @@ class Step extends React.Component {
             step_data = data[index];
         }
 
-        const id = "step_" + newStepCount;
+        const step_id = this.props.day_id + "_step_" + newStepCount;
+        const place_id = this.props.day_id + "_place_" + newStepCount;
+        const lat_id = this.props.day_id + "_lat_" + newStepCount;
+        const lng_id = this.props.day_id + "_lng_" + newStepCount;
+        const url_id = this.props.day_id + "_url_" + newStepCount;
+        const desc_id = this.props.day_id + "_desc_" + newStepCount;
+
 
         const content = (
-            <div id={id} className="step">
+            <div id={step_id} className="step">
                 <div className="w-11/12 mx-auto rounded shadow bg-white">
                     <div className="relative z-10">
                         <button
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.deleteStep(id)}
+                            onClick={() => this.deleteStep(step_id)}
                         >
                             <i className="fa-solid fa-trash"></i>
                         </button>
@@ -86,12 +100,12 @@ class Step extends React.Component {
                     <div className="relative px-3 py-4">
                         <div className="flex mb-2">
                             <div className="w-full px-3 md:mb-0">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={`place_${newStepCount}`}>
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={place_id}>
                                     Lieux
                                 </label>
                                 <input
-                                    id={`place_${newStepCount}`}
-                                    name={`place_${newStepCount}`}
+                                    id={place_id}
+                                    name={place_id}
                                     defaultValue={step_data && step_data.place}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
@@ -99,22 +113,22 @@ class Step extends React.Component {
                                     form="steps_form"
                                 />
                                 <input
-                                    id={`lat_${newStepCount}`}
-                                    name={`lat_${newStepCount}`}
+                                    id={lat_id}
+                                    name={lat_id}
                                     defaultValue={step_data && step_data.lat}
                                     type="hidden"
                                     form="steps_form"
                                 />
                                 <input
-                                    id={`lng_${newStepCount}`}
-                                    name={`lng_${newStepCount}`}
+                                    id={lng_id}
+                                    name={lng_id}
                                     defaultValue={step_data && step_data.lng}
                                     type="hidden"
                                     form="steps_form"
                                 />
                                 <input
-                                    id={`url_${newStepCount}`}
-                                    name={`url_${newStepCount}`}
+                                    id={url_id}
+                                    name={url_id}
                                     defaultValue={step_data && step_data.url}
                                     type="hidden"
                                     form="steps_form"
@@ -123,12 +137,12 @@ class Step extends React.Component {
                         </div>
                         <div className="flex flex-wrap mb-2">
                             <div className="w-full px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="desc">
+                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={desc_id}>
                                     Description
                                 </label>
                                 <textarea
-                                    id="desc"
-                                    name={`desc_${newStepCount}`}
+                                    id={desc_id}
+                                    name={desc_id}
                                     defaultValue={step_data && step_data.desc}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -144,7 +158,7 @@ class Step extends React.Component {
         );
 
         const newStep = {
-            id: id,
+            id: step_id,
             content: content,
         };
 
@@ -154,7 +168,7 @@ class Step extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            maps.initInputSearch(newStepCount, insertIndex, this.order);
+            maps.initInputSearch(newStepCount, this.props.day_id, this.order);
 
             index++;
             if (data && index < data.length) {
