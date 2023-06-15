@@ -124,26 +124,27 @@ export function initInputSearch(step_count, day_id) {
 }
 
 export function initTravel(data) {
-    // TODO : fix
-    let order = [];
-    for (let i = 0; i < data.length; i++) {
-        let markers = [];
-        let step_count = i + 1;
-        let pos = { lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lng) };
+    let day_count = 0;
+    for (const [date, steps_data] of Object.entries(data)) {
+        day_count++;
+        for (let i = 0; i < steps_data.length; i++) {
+            let markers = [];
+            let step_count = i + 1;
+            const step_id = "day" + day_count + "_step" + step_count;
+            let pos = { lat: parseFloat(steps_data[i].lat), lng: parseFloat(steps_data[i].lng) };
 
-        const marker = createMarker(pos, data[i].name, data[i].place, data[i].url);
+            const marker = createMarker(pos, steps_data[i].name, steps_data[i].place, steps_data[i].url);
 
-        markers.push(marker);
-        global_markers[step_count] = markers;
+            markers.push(marker);
+            global_markers[step_id] = markers;
 
-        // Path
-        global_path['step_' + step_count] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
-        order[i] = 'step_' + step_count;
+            // Path
+            global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
 
-        bounds.union(new google.maps.LatLngBounds(pos));
+            bounds.union(new google.maps.LatLngBounds(pos));
+        }
     }
-
-    setGlobalPath(order);
+    setGlobalPath();
     map.fitBounds(bounds);
 }
 

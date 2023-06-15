@@ -8,15 +8,13 @@ class Step extends React.Component {
         this.state = {
             steps: [],
             stepCount: 0,
-            data: props.data || [],
             expanded: true,
         };
     }
 
     componentDidMount() {
-        if (this.state.data.length !== 0) {
-            maps.initTravel(this.state.data);
-            this.addStep(null, 0, this.state.data);
+        if (this.props.data) {
+            this.addStep(0, this.props.data);
         }
     }
 
@@ -56,21 +54,8 @@ class Step extends React.Component {
         }));
     };
 
-    addStep = (event, index = null, data = null) => {
+    addStep = (index = null, data = null) => {
         const newStepCount = this.state.stepCount + 1;
-
-        let insertIndex = index ?? 0;
-
-        // Ajout via clic
-        if (event) {
-            let target = event.target;
-            if (target.tagName === 'I') {
-                target = target.parentNode;
-            }
-            const addButtonElements = document.getElementsByClassName('btn_add_step');
-            const addButtonArray = Array.from(addButtonElements);
-            insertIndex = addButtonArray.indexOf(target) + 1;
-        }
 
         // Ajout auto - init avec data
         let step_data = null;
@@ -175,7 +160,7 @@ class Step extends React.Component {
             index++;
             if (data && index < data.length) {
                 // Appel récursif tant qu'il y a des étapes à afficher
-                this.addStep(null, index, data);
+                this.addStep(index, data);
             }
         });
     }

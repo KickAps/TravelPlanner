@@ -16,8 +16,7 @@ class Day extends React.Component {
 
     componentDidMount() {
         if (this.state.data.length !== 0) {
-            maps.initTravel(this.state.data);
-            this.addStep(null, 0, this.state.data);
+            this.addDay(0, this.state.data);
         }
     }
 
@@ -51,6 +50,14 @@ class Day extends React.Component {
         const newDayCount = this.state.dayCount + 1;
         const id = "day" + newDayCount;
 
+        // Ajout auto - init avec data
+        let date = null;
+        let steps_data = null;
+        if (data) {
+            date = Object.keys(data)[index];
+            steps_data = data[date];
+        }
+
         const content = (
             <div id={id} className="day">
                 <div className="w-4/5 mx-auto rounded shadow-lg bg-gray-100 px-3 py-2">
@@ -73,7 +80,7 @@ class Day extends React.Component {
                                 <input
                                     id="date"
                                     name={`date${newDayCount}`}
-                                    // defaultValue={step_data && step_data.date}
+                                    defaultValue={data && date}
                                     type="date"
                                     className="block w-full bg-white text-gray-700 shadow rounded py-2 px-3 leading-tight"
                                     form="steps_form"
@@ -82,7 +89,7 @@ class Day extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <Step day_id={id} ref={(component) => (this.steps[id] = component)} />
+                    <Step day_id={id} data={steps_data} ref={(component) => (this.steps[id] = component)} />
                 </div>
             </div>
         );
@@ -101,9 +108,15 @@ class Day extends React.Component {
             this.updateOrder();
 
             index++;
-            if (data && index < data.length) {
-                // Appel récursif tant qu'il y a des étapes à afficher
-                this.addDay(null, index, data);
+            if (data) {
+                if (index < Object.keys(data).length) {
+                    // Appel récursif tant qu'il y a des étapes à afficher
+                    this.addDay(index, data);
+                } else {
+                    setTimeout(() => {
+                        maps.initTravel(this.state.data);
+                    }, 500);
+                }
             }
         });
     };
