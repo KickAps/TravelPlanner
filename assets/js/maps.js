@@ -59,7 +59,7 @@ function createMarker(pos, name, address, url) {
 
 export function initInputSearch(step_count, day_id) {
     // Create the search box and link it to the UI element.
-    const input = document.getElementById(day_id + "_place_" + step_count);
+    const input = document.getElementById(day_id + "_place" + step_count);
 
     let searchBox = new google.maps.places.SearchBox(input);
 
@@ -85,7 +85,7 @@ export function initInputSearch(step_count, day_id) {
         });
         markers = [];
 
-        const step_id = day_id + "_step_" + step_count;
+        const step_id = day_id + "_step" + step_count;
 
         // For each place, get the icon, name and location.
         places.forEach((place) => {
@@ -98,11 +98,11 @@ export function initInputSearch(step_count, day_id) {
 
             markers.push(marker);
 
-            let input_lat = document.getElementById(day_id + "_lat_" + step_count);
+            let input_lat = document.getElementById(day_id + "_lat" + step_count);
             input_lat.value = marker.getPosition().lat();
-            let input_lng = document.getElementById(day_id + "_lng_" + step_count);
+            let input_lng = document.getElementById(day_id + "_lng" + step_count);
             input_lng.value = marker.getPosition().lng();
-            let input_url = document.getElementById(day_id + "_url_" + step_count);
+            let input_url = document.getElementById(day_id + "_url" + step_count);
             input_url.value = place.url;
 
             // Path

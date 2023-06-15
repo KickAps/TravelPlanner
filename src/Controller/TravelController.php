@@ -18,21 +18,29 @@ class TravelController extends AbstractController
         if ($request->isMethod('POST')) {
             $formData = json_decode($request->getContent(), true);
 
-            $order = json_decode($formData['order'], true);
+            $order = json_decode($formData['steps_order'], true);
 
             $steps = [];
 
             for ($i = 0; $i < count($order); $i++) {
-                $step_number = str_replace('step_', '', $order[$i]);
+                [$day_id, $step_id] = explode("_", $order[$i]);
 
-                $steps[$i] = [
-                    'place' => $formData['place_' . $step_number],
-                    'lat' => $formData['lat_' . $step_number],
-                    'lng' => $formData['lng_' . $step_number],
-                    'url' => $formData['url_' . $step_number],
-                    'date' => $formData['date_' . $step_number],
-                    'desc' => $formData['desc_' . $step_number],
+                $step_number = str_replace('step', '', $step_id);
+                $date = $formData['date' . str_replace('day', '', $day_id)];
+
+                $step = [
+                    'place' => $formData[$day_id . '_place' . $step_number],
+                    'lat' => $formData[$day_id . '_lat' . $step_number],
+                    'lng' => $formData[$day_id . '_lng' . $step_number],
+                    'url' => $formData[$day_id . '_url' . $step_number],
+                    'desc' => $formData[$day_id . '_desc' . $step_number],
                 ];
+
+                if (key_exists($date, $steps)) {
+                    array_push($steps[$date], $step);
+                } else {
+                    $steps[$date] = [$step];
+                }
             }
 
             if ($travel_id = $formData['travel_id']) {

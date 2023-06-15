@@ -78,12 +78,12 @@ class Step extends React.Component {
             step_data = data[index];
         }
 
-        const step_id = this.props.day_id + "_step_" + newStepCount;
-        const place_id = this.props.day_id + "_place_" + newStepCount;
-        const lat_id = this.props.day_id + "_lat_" + newStepCount;
-        const lng_id = this.props.day_id + "_lng_" + newStepCount;
-        const url_id = this.props.day_id + "_url_" + newStepCount;
-        const desc_id = this.props.day_id + "_desc_" + newStepCount;
+        const step_id = this.props.day_id + "_step" + newStepCount;
+        const place_id = this.props.day_id + "_place" + newStepCount;
+        const lat_id = this.props.day_id + "_lat" + newStepCount;
+        const lng_id = this.props.day_id + "_lng" + newStepCount;
+        const url_id = this.props.day_id + "_url" + newStepCount;
+        const desc_id = this.props.day_id + "_desc" + newStepCount;
 
 
         const content = (
@@ -112,6 +112,7 @@ class Step extends React.Component {
                                     type="text"
                                     placeholder="Rechercher..."
                                     form="steps_form"
+                                    required
                                 />
                                 <input
                                     id={lat_id}

@@ -11,7 +11,6 @@ class Day extends React.Component {
             dayCount: 0,
             data: props.data || [],
         };
-        this.order = {};
         this.steps = {};
     }
 
@@ -50,7 +49,7 @@ class Day extends React.Component {
 
     addDay = (index = null, data = null) => {
         const newDayCount = this.state.dayCount + 1;
-        const id = "day_" + newDayCount;
+        const id = "day" + newDayCount;
 
         const content = (
             <div id={id} className="day">
@@ -73,11 +72,12 @@ class Day extends React.Component {
                             <div className="w-64 px-3 mx-auto">
                                 <input
                                     id="date"
-                                    name={`date_${newDayCount}`}
+                                    name={`date${newDayCount}`}
                                     // defaultValue={step_data && step_data.date}
                                     type="date"
                                     className="block w-full bg-white text-gray-700 shadow rounded py-2 px-3 leading-tight"
                                     form="steps_form"
+                                    required
                                 />
                             </div>
                         </div>
@@ -109,15 +109,10 @@ class Day extends React.Component {
     };
 
     updateOrder = () => {
-        // Adapter avec les dates
         const days_order = document.getElementsByClassName('day_order');
-        const days = document.getElementsByClassName('day');
 
-        this.order = {};
-
-        for (let i = 0; i < days.length; i++) {
+        for (let i = 0; i < days_order.length; i++) {
             days_order[i].textContent = i + 1;
-            this.order[i] = days[i].id;
         }
     }
 
@@ -126,7 +121,15 @@ class Day extends React.Component {
 
         const form = e.target;
         const formData = new FormData(form);
-        formData.append('order', JSON.stringify(this.order));
+        const steps = document.getElementsByClassName('step');
+
+        let steps_order = {};
+
+        for (let i = 0; i < steps.length; i++) {
+            steps_order[i] = steps[i].id;
+        }
+
+        formData.append('steps_order', JSON.stringify(steps_order));
 
         const formJson = Object.fromEntries(formData.entries());
 
