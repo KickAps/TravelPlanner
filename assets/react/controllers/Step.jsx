@@ -1,6 +1,6 @@
 import React from 'react';
 import * as maps from '../../js/maps';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import DrapDrop from './DrapDrop';
 
 class Step extends React.Component {
     constructor(props) {
@@ -9,6 +9,7 @@ class Step extends React.Component {
             steps: [],
             stepCount: 0,
             data: props.data || [],
+            expanded: true,
         };
         this.order = {};
     }
@@ -38,6 +39,12 @@ class Step extends React.Component {
         steps.splice(result.destination.index, 0, removed);
 
         this.setState({ steps });
+    };
+
+    toggleCollapse = () => {
+        this.setState((prevState) => ({
+            expanded: !prevState.expanded, // Inverser l'état d'expansion
+        }));
     };
 
     addStep = (event, index = null, data = null) => {
@@ -141,8 +148,7 @@ class Step extends React.Component {
             content: content,
         };
 
-        const updatedSteps = [...this.state.steps];
-        updatedSteps.splice(insertIndex, 0, newStep);
+        const updatedSteps = [...this.state.steps, newStep];
 
         this.setState(prevState => ({
             steps: updatedSteps,
@@ -160,44 +166,30 @@ class Step extends React.Component {
     render() {
         return (
             <div>
-                <DragDropContext onDragEnd={this.onDragEnd} droppableId="group-input">
-                    <Droppable droppableId="droppable-input">
-                        {(provided) => (
-                            <div {...provided.droppableProps} ref={provided.innerRef}>
-                                <ul>
-                                    {this.state.steps.map((step, index) => (
-                                        <Draggable key={step.id} draggableId={step.id.toString()} index={index}>
-                                            {(provided) => (
-                                                <li
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    className="draggable-item"
-                                                >
-                                                    <div className="h-2"></div>
-                                                    <div className="relative">
-                                                        <div {...provided.dragHandleProps} className="drag-handle absolute right-16 top-2 z-10 text-gray-500 hover:text-gray-700">
-                                                            {/* Icône de poignée */}
-                                                            <i className="fas fa-grip-vertical" />
-                                                        </div>
-                                                        {step.content}
-                                                    </div>
-                                                </li>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                </ul>
-                                {provided.placeholder}
-                            </div>
+                <div className="relative z-10">
+                    <button
+                        type="button"
+                        className="absolute -top-10 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        onClick={this.toggleCollapse}
+                    >
+                        {this.state.expanded ? (
+                            <i className="fa-solid fa-chevron-up fa-lg"></i>
+                        ) : (
+                            <i className="fa-solid fa-chevron-down fa-lg"></i>
                         )}
-                    </Droppable>
-                </DragDropContext >
-                <button
-                    type="button"
-                    className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"
-                    onClick={this.addStep}
-                >
-                    <i className="fa-solid fa-plus"></i>
-                </button>
+                    </button>
+                </div>
+                <div className={this.state.expanded ? undefined : "hidden"}>
+                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} right="right-16"></DrapDrop>
+                    <div className="h-2"></div>
+                    <button
+                        type="button"
+                        className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto"
+                        onClick={this.addStep}
+                    >
+                        <i className="fa-solid fa-plus"></i>
+                    </button>
+                </div>
             </div>
         );
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import * as maps from '../../js/maps';
 import Step from './Step';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import DrapDrop from './DrapDrop';
 
 class Day extends React.Component {
     constructor(props) {
@@ -43,22 +43,8 @@ class Day extends React.Component {
         this.setState({ days });
     };
 
-    addDay = (event, index = null, data = null) => {
+    addDay = (index = null, data = null) => {
         const newDayCount = this.state.dayCount + 1;
-
-        let insertIndex = 0;
-
-        // Ajout via clic
-        if (event) {
-            let target = event.target;
-            if (target.tagName === 'I') {
-                target = target.parentNode;
-            }
-            const addButtonElements = document.getElementsByClassName('btn_add_day');
-            const addButtonArray = Array.from(addButtonElements);
-            insertIndex = addButtonArray.indexOf(target) + 1;
-        }
-
         const id = "day_" + newDayCount;
 
         const content = (
@@ -78,7 +64,7 @@ class Day extends React.Component {
                         <div className="absolute -left-16 top-1 font-bold text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
                             <span className="day_order">{newDayCount}</span>
                         </div>
-                        <div className="mb-2">
+                        <div>
                             <div className="w-64 px-3 mx-auto">
                                 <input
                                     id="date"
@@ -101,15 +87,13 @@ class Day extends React.Component {
             content: content,
         };
 
-        const updatedDays = [...this.state.days];
-        updatedDays.splice(insertIndex, 0, newDay);
+        const updatedDays = [...this.state.days, newDay];
 
         this.setState(prevState => ({
             days: updatedDays,
             dayCount: newDayCount,
         }), () => {
             this.updateOrder();
-            // maps.initInputSearch(newDayCount, insertIndex, this.order);
 
             index++;
             if (data && index < data.length) {
@@ -168,44 +152,13 @@ class Day extends React.Component {
         return (
             <div>
                 <form id="steps_form" onSubmit={this.handleSubmit}>
-                    <DragDropContext onDragEnd={this.onDragEnd} droppableId="group-input">
-                        <Droppable droppableId="droppable-input">
-                            {(provided) => (
-                                <div {...provided.droppableProps} ref={provided.innerRef}>
-                                    <ul>
-                                        {this.state.days.map((day, index) => (
-                                            <Draggable key={day.id} draggableId={day.id.toString()} index={index}>
-                                                {(provided) => (
-                                                    <li
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        className="draggable-item"
-                                                    >
-                                                        <div className="h-2"></div>
-                                                        <div className="relative">
-                                                            <div {...provided.dragHandleProps} className="drag-handle absolute right-32 top-2 z-10 text-gray-500 hover:text-gray-700">
-                                                                {/* Icône de poignée */}
-                                                                <i className="fas fa-grip-vertical" />
-                                                            </div>
-                                                            {day.content}
-                                                        </div>
-                                                    </li>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                    </ul>
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext >
+                    <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} right="right-32"></DrapDrop>
                 </form>
                 <button
                     className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"
                     onClick={this.addDay}
                 >
                     Ajouter une date
-                    {/* <i className="fa-solid fa-plus"></i> */}
                 </button>
             </div >
         );
