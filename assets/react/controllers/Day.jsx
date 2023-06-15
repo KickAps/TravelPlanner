@@ -44,6 +44,7 @@ class Day extends React.Component {
 
         this.setState({ days }, () => {
             this.updateOrder();
+            maps.setGlobalPath();
         });
     };
 

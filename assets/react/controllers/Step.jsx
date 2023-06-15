@@ -11,7 +11,6 @@ class Step extends React.Component {
             data: props.data || [],
             expanded: true,
         };
-        this.order = {};
     }
 
     componentDidMount() {
@@ -25,14 +24,14 @@ class Step extends React.Component {
         const updatedSteps = this.state.steps.filter(step => step.id !== id);
         this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id);
-            maps.removePath(id, this.order);
+            maps.removePath(id);
         });
     };
 
     deleteAllSteps = () => {
         this.state.steps.map(step => {
             maps.removeMarkers(step.id);
-            maps.removePath(step.id, this.order);
+            maps.removePath(step.id);
         });
         this.setState({ steps: [] });
     };
@@ -46,7 +45,9 @@ class Step extends React.Component {
         const [removed] = steps.splice(result.source.index, 1);
         steps.splice(result.destination.index, 0, removed);
 
-        this.setState({ steps });
+        this.setState({ steps }, () => {
+            maps.setGlobalPath();
+        });
     };
 
     toggleCollapse = () => {
@@ -168,7 +169,7 @@ class Step extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            maps.initInputSearch(newStepCount, this.props.day_id, this.order);
+            maps.initInputSearch(newStepCount, this.props.day_id);
 
             index++;
             if (data && index < data.length) {

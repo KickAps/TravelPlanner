@@ -57,7 +57,7 @@ function createMarker(pos, name, address, url) {
     return marker;
 }
 
-export function initInputSearch(step_count, day_id, order) {
+export function initInputSearch(step_count, day_id) {
     // Create the search box and link it to the UI element.
     const input = document.getElementById(day_id + "_place_" + step_count);
 
@@ -107,7 +107,7 @@ export function initInputSearch(step_count, day_id, order) {
 
             // Path
             global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
-            setGlobalPath(order);
+            setGlobalPath();
 
             if (place.geometry.viewport) {
                 // Only geocodes have viewport.
@@ -124,6 +124,7 @@ export function initInputSearch(step_count, day_id, order) {
 }
 
 export function initTravel(data) {
+    // TODO : fix
     let order = [];
     for (let i = 0; i < data.length; i++) {
         let markers = [];
@@ -158,12 +159,14 @@ export function removeMarkers(index) {
     markers = [];
 }
 
-function setGlobalPath(order) {
+export function setGlobalPath() {
     let path_ordered = [];
 
-    for (const key in order) {
-        path_ordered.push(global_path[order[key]]);
-    }
+    document.querySelectorAll(".step").forEach((step) => {
+        if (global_path[step.id]) {
+            path_ordered.push(global_path[step.id]);
+        }
+    });
 
     polyline.setMap(null);
 
@@ -178,9 +181,9 @@ function setGlobalPath(order) {
     polyline.setMap(map);
 }
 
-export function removePath(index, order) {
+export function removePath(index) {
     delete global_path[index];
-    setGlobalPath(order);
+    setGlobalPath();
 }
 
 
