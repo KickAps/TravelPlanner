@@ -27,7 +27,7 @@ class Travel extends Component {
     };
 
     redirect_play = (travel_id) => {
-        window.location.href = window.location.origin + "/edit_travel?id=" + travel_id;
+        window.location.href = window.location.origin + "/play_travel?id=" + travel_id;
     }
 
     redirect_edit = (travel_id) => {

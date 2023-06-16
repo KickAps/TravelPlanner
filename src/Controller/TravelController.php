@@ -84,6 +84,20 @@ class TravelController extends AbstractController
         ]);
     }
 
+    #[Route('/play_travel', name: 'app_play_travel')]
+    public function play_travel(Request $request, TravelRepository $travelRepo): Response
+    {
+        if ($travel_id = $request->get('id')) {
+            $travel = $travelRepo->find($travel_id);
+        }
+
+        return $this->render('travel/play_travel.html.twig', [
+            'id' => $travel_id,
+            'name' => $travel->getName(),
+            'steps' => $travel->getSteps(),
+        ]);
+    }
+
     #[Route('/delete_travel', name: 'app_delete_travel')]
     public function delete_travel(Request $request, TravelRepository $travelRepo): Response
     {
