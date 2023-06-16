@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 class DrapDrop extends React.Component {
     render() {
-        const { data, onDragEnd, right } = this.props;
+        const { data, onDragEnd, size } = this.props;
 
         return (
             <DragDropContext onDragEnd={onDragEnd} droppableId="group-input">
@@ -20,8 +20,8 @@ class DrapDrop extends React.Component {
                                                 className="draggable-item"
                                             >
                                                 <div className="h-2"></div>
-                                                <div className="relative">
-                                                    <div {...provided.dragHandleProps} className={"drag-handle absolute " + right + " top-2 z-10 text-gray-500 hover:text-gray-700"}>
+                                                <div className={"relative " + size}>
+                                                    <div {...provided.dragHandleProps} className={"drag-handle absolute right-10 lg:right-8 top-2 z-10 text-gray-500 hover:text-gray-700"}>
                                                         {/* Icône de poignée */}
                                                         <i className="fas fa-grip-vertical" />
                                                     </div>

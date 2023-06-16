@@ -60,7 +60,7 @@ class Day extends React.Component {
 
         const content = (
             <div id={id} className="day">
-                <div className="w-4/5 mx-auto rounded shadow-lg bg-gray-100 px-3 py-2">
+                <div className="w-full rounded shadow-lg bg-gray-100 px-3 py-2">
                     <div className="relative z-10">
                         <button
                             type="button"
@@ -173,7 +173,7 @@ class Day extends React.Component {
         return (
             <div>
                 <form id="steps_form" onSubmit={this.handleSubmit}>
-                    <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} right="right-32"></DrapDrop>
+                    <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
                 </form>
                 <button
                     className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"

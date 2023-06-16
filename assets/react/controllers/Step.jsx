@@ -1,6 +1,7 @@
 import React from 'react';
 import * as maps from '../../js/maps';
 import DrapDrop from './DrapDrop';
+import Button from './Button';
 
 class Step extends React.Component {
     constructor(props) {
@@ -73,7 +74,7 @@ class Step extends React.Component {
 
         const content = (
             <div id={step_id} className="step">
-                <div className="w-11/12 mx-auto rounded shadow bg-white">
+                <div className="w-full rounded shadow bg-white">
                     <div className="relative z-10">
                         <button
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -86,7 +87,7 @@ class Step extends React.Component {
                     <div className="relative px-3 py-4">
                         <div className="flex mb-2">
                             <div className="w-full px-3 md:mb-0">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={place_id}>
+                                <label className="block uppercase tracking-wide text-gray-700 text-xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
                                     Lieux
                                 </label>
                                 <input
@@ -124,7 +125,7 @@ class Step extends React.Component {
                         </div>
                         <div className="flex flex-wrap mb-2">
                             <div className="w-full px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor={desc_id}>
+                                <label className="block uppercase tracking-wide text-gray-700 text-xl lg:text-xs font-bold mb-2" htmlFor={desc_id}>
                                     Description
                                 </label>
                                 <textarea
@@ -174,22 +175,16 @@ class Step extends React.Component {
                         onClick={this.toggleCollapse}
                     >
                         {this.state.expanded ? (
-                            <i className="fa-solid fa-chevron-up fa-lg"></i>
+                            <i className="fa-solid fa-chevron-up text-3xl lg:text-lg"></i>
                         ) : (
-                            <i className="fa-solid fa-chevron-down fa-lg"></i>
+                            <i className="fa-solid fa-chevron-down text-3xl lg:text-lg"></i>
                         )}
                     </button>
                 </div>
                 <div className={this.state.expanded ? undefined : "hidden"}>
-                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} right="right-16"></DrapDrop>
+                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto"></DrapDrop>
                     <div className="h-2"></div>
-                    <button
-                        type="button"
-                        className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto"
-                        onClick={this.addStep}
-                    >
-                        <i className="fa-solid fa-plus"></i>
-                    </button>
+                    <Button type="plus" onClick={this.addStep} />
                 </div>
             </div>
         );

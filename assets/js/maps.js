@@ -187,5 +187,9 @@ export function removePath(index) {
     setGlobalPath();
 }
 
+export function forceFitBounds() {
+    map.fitBounds(bounds);
+}
+
 
 window.initMap = initMap;

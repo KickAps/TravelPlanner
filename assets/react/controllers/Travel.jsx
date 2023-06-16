@@ -57,8 +57,8 @@ class Travel extends Component {
             <div>
                 {this.data.map((travel, index) => (
                     <div id={travel.id} key={index}>
-                        <div className="rounded shadow-lg bg-white my-2 p-2 text-gray-700 font-bold w-1/2">
-                            <div>
+                        <div className="rounded-lg lg:rounded shadow-lg bg-white my-4 lg:my-2 p-2 text-gray-600 font-bold w-full lg:w-1/2 text-2xl lg:text-base">
+                            <div className="mb-3 lg:mb-1 ">
                                 {travel.name}
                             </div>
                             <div className="flex">

@@ -23,12 +23,19 @@ class Button extends React.Component {
                 bg_color_hover = "bg-red-700";
                 fa_class = "fa-trash";
                 break;
+
+            case "plus":
+                bg_color = "bg-blue-500";
+                bg_color_hover = "bg-blue-700";
+                fa_class = "fa-plus";
+                break;
         }
 
         return (
             <button
                 id={type + "_travel"}
-                className={bg_color + " hover:" + bg_color_hover + " text-white font-bold rounded mx-auto inline-block w-8 h-8"}
+                type="button"
+                className={bg_color + " hover:" + bg_color_hover + " text-white font-bold rounded-lg lg:rounded mx-auto block w-12 h-12 lg:w-8 lg:h-8"}
                 onClick={onClick}
             >
                 <i className={"fa-solid " + fa_class}></i>
