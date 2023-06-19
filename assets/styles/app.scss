@@ -88,3 +88,26 @@ body {
 #target {
     width: 345px;
 }
+
+.pac-item {
+    @extend .pac-item;
+    @apply text-3xl;
+    @apply py-3;
+}
+
+.pac-item-query {
+    @extend .pac-item-query;
+    @apply text-3xl;
+}
+
+.pac-matched {
+    @extend .pac-matched;
+    @apply text-3xl;
+}
+
+.gm-ui-hover-effect {
+    @extend .gm-ui-hover-effect;
+    transform: scale(1.7);
+    top: 2px !important;
+    right: 1px !important;
+}

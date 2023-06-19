@@ -87,7 +87,7 @@ class Step extends React.Component {
                     <div className="relative px-3 py-4">
                         <div className="flex mb-2">
                             <div className="w-full px-3 md:mb-0">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
+                                <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
                                     Lieux
                                 </label>
                                 <input
@@ -125,7 +125,7 @@ class Step extends React.Component {
                         </div>
                         <div className="flex flex-wrap mb-2">
                             <div className="w-full px-3">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xl lg:text-xs font-bold mb-2" htmlFor={desc_id}>
+                                <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={desc_id}>
                                     Description
                                 </label>
                                 <textarea
@@ -171,13 +171,13 @@ class Step extends React.Component {
                 <div className="relative z-10">
                     <button
                         type="button"
-                        className="absolute -top-10 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="absolute -top-14 lg:-top-10 text-gray-500 hover:text-gray-700 focus:outline-none"
                         onClick={this.toggleCollapse}
                     >
                         {this.state.expanded ? (
-                            <i className="fa-solid fa-chevron-up text-3xl lg:text-lg"></i>
+                            <i className="fa-solid fa-chevron-up text-4xl lg:text-lg"></i>
                         ) : (
-                            <i className="fa-solid fa-chevron-down text-3xl lg:text-lg"></i>
+                            <i className="fa-solid fa-chevron-down text-4xl lg:text-lg"></i>
                         )}
                     </button>
                 </div>

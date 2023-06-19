@@ -18,12 +18,19 @@ function initMap() {
 }
 
 function createMarker(pos, name, address, url) {
+    let scaledSize = new google.maps.Size(25, 25);
+    let anchor = new google.maps.Point(13, 34);
+    if (navigator.userAgentData.mobile) {
+        scaledSize = new google.maps.Size(60, 60);
+        anchor = new google.maps.Point(25, 80);
+    }
+
     const icon = {
         url: icon_url,
         size: new google.maps.Size(71, 71),
         origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(13, 34),
-        scaledSize: new google.maps.Size(25, 25),
+        anchor: anchor,
+        scaledSize: scaledSize,
     };
 
     const marker = new google.maps.Marker({
@@ -33,7 +40,7 @@ function createMarker(pos, name, address, url) {
     });
 
     const contentString =
-        '<div>' +
+        '<div class="text-3xl lg:text-base">' +
         '<p><b>' + name + '</b></p>' +
         '<p>' + address + '</p>' +
         '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>' +

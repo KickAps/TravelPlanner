@@ -12,6 +12,7 @@ class Day extends React.Component {
             data: props.data || [],
         };
         this.steps = {};
+        this.dateRefs = {};
     }
 
     componentDidMount() {
@@ -46,6 +47,10 @@ class Day extends React.Component {
         });
     };
 
+    triggerDatePicker = (id) => {
+        this.dateRefs[id].showPicker();
+    }
+
     addDay = (index = null, data = null) => {
         const newDayCount = this.state.dayCount + 1;
         const id = "day" + newDayCount;
@@ -72,7 +77,7 @@ class Day extends React.Component {
                     </div>
 
                     <div className="relative">
-                        <div className="absolute -left-16 top-1 font-bold text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
+                        <div className="absolute -left-16 top-1 font-bold text-2xl lg:text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
                             <span className="day_order">{newDayCount}</span>
                         </div>
                         <div>
@@ -82,6 +87,8 @@ class Day extends React.Component {
                                     name={`date${newDayCount}`}
                                     defaultValue={data && date}
                                     type="date"
+                                    ref={(input) => (this.dateRefs[id] = input)}
+                                    onClick={() => this.triggerDatePicker(id)}
                                     className="block w-full bg-white text-gray-700 shadow rounded py-2 px-3 leading-tight"
                                     form="steps_form"
                                     required
@@ -176,7 +183,7 @@ class Day extends React.Component {
                     <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
                 </form>
                 <button
-                    className="bg-blue-500 block hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto mt-2"
+                    className="bg-blue-500 block hover:bg-blue-700 text-3xl lg:text-base text-white font-bold py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto mt-2"
                     onClick={this.addDay}
                 >
                     Ajouter une date
