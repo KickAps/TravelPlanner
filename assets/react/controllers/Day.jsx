@@ -1,5 +1,6 @@
 import React from 'react';
 import * as maps from '../../js/maps';
+import * as utils from '../../js/utils';
 import Step from './Step';
 import DrapDrop from './DrapDrop';
 import Modal from './Modal';
@@ -33,6 +34,7 @@ class Day extends React.Component {
         this.setState({ days: updatedDays }, () => {
             this.updateOrder();
             this.closeModal();
+            utils.showUnsaved();
         });
     };
 
@@ -48,6 +50,7 @@ class Day extends React.Component {
         this.setState({ days }, () => {
             this.updateOrder();
             maps.setGlobalPath();
+            utils.showUnsaved();
         });
     };
 
@@ -93,6 +96,7 @@ class Day extends React.Component {
                                     type="date"
                                     ref={(input) => (this.dateRefs[id] = input)}
                                     onClick={() => this.triggerDatePicker(id)}
+                                    onChange={utils.showUnsaved}
                                     className="block w-full bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight"
                                     form="steps_form"
                                     required
@@ -117,6 +121,7 @@ class Day extends React.Component {
             dayCount: newDayCount,
         }), () => {
             this.updateOrder();
+            utils.showUnsaved();
 
             index++;
             if (data) {
@@ -126,6 +131,7 @@ class Day extends React.Component {
                 } else {
                     setTimeout(() => {
                         maps.initTravel(this.data);
+                        utils.showSaved();
                     }, 500);
                 }
             }
@@ -163,21 +169,12 @@ class Day extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formJson),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la requête.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Traiter la réponse si nécessaire
-                console.log(data);
-            })
-            .catch(error => {
-                // Gérer les erreurs de la requête
-                console.error(error);
-            });
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            utils.showSaved();
+        });
     };
 
     openModal = (day_id) => {
@@ -227,6 +224,10 @@ class Day extends React.Component {
                         >
                             Sauvegarder
                         </button>
+                        <div className="inline-block ml-2 text-2xl lg:text-lg w-4 p-auto">
+                            <i id="saved_icon" className="fa-solid fa-check text-green-500"></i>
+                            <i id="unsaved_icon" className="fa-solid fa-triangle-exclamation text-yellow-500 hidden"></i>
+                        </div>
                     </div>
                     <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
                 </form>

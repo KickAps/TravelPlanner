@@ -1,5 +1,6 @@
 import React from 'react';
 import * as maps from '../../js/maps';
+import * as utils from '../../js/utils';
 import DrapDrop from './DrapDrop';
 import Button from './Button';
 import Modal from './Modal';
@@ -28,6 +29,7 @@ class Step extends React.Component {
             maps.removeMarkers(id);
             maps.removePath(id);
             this.closeModal();
+            utils.showUnsaved();
         });
     };
 
@@ -50,6 +52,7 @@ class Step extends React.Component {
 
         this.setState({ steps }, () => {
             maps.setGlobalPath();
+            utils.showUnsaved();
         });
     };
 
@@ -100,6 +103,7 @@ class Step extends React.Component {
                                     id={place_id}
                                     name={place_id}
                                     defaultValue={step_data && step_data.place}
+                                    onChange={utils.showUnsaved}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
                                     placeholder="Rechercher..."
@@ -145,6 +149,7 @@ class Step extends React.Component {
                                     id={desc_id}
                                     name={desc_id}
                                     defaultValue={step_data && step_data.desc}
+                                    onChange={utils.showUnsaved}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
@@ -170,6 +175,7 @@ class Step extends React.Component {
             stepCount: newStepCount,
         }), () => {
             maps.initInputSearch(newStepCount, this.props.day_id);
+            utils.showUnsaved();
 
             index++;
             if (data && index < data.length) {
