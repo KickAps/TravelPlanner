@@ -207,6 +207,7 @@ class Day extends React.Component {
                             name="travel_name"
                             type="text"
                             defaultValue={project_name}
+                            onChange={utils.showUnsaved}
                             className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mx-2"
                             form="steps_form"
                             required
