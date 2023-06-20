@@ -2,10 +2,10 @@ import React from 'react';
 
 class Button extends React.Component {
     render() {
-        const { type, onClick } = this.props;
+        const { name, onClick } = this.props;
         let bg_color, bg_color_hover, fa_class;
 
-        switch (type) {
+        switch (name) {
             case "play":
                 bg_color = "bg-blue-500";
                 bg_color_hover = "bg-blue-700";
@@ -33,7 +33,7 @@ class Button extends React.Component {
 
         return (
             <button
-                id={type + "_travel"}
+                id={name + "_travel"}
                 type="button"
                 className={bg_color + " hover:" + bg_color_hover + " text-white font-bold rounded-lg lg:rounded mx-auto block w-12 h-12 lg:w-8 lg:h-8"}
                 onClick={onClick}

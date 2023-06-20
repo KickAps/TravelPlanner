@@ -2,6 +2,7 @@ import React from 'react';
 import * as maps from '../../js/maps';
 import DrapDrop from './DrapDrop';
 import Button from './Button';
+import Modal from './Modal';
 
 class Step extends React.Component {
     constructor(props) {
@@ -10,6 +11,8 @@ class Step extends React.Component {
             steps: [],
             stepCount: 0,
             expanded: true,
+            modalOpen: false,
+            step_id: 0,
         };
     }
 
@@ -24,6 +27,7 @@ class Step extends React.Component {
         this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id);
             maps.removePath(id);
+            this.closeModal();
         });
     };
 
@@ -78,8 +82,9 @@ class Step extends React.Component {
                 <div className="w-full rounded-lg lg:rounded shadow bg-white">
                     <div className="relative z-10">
                         <button
+                            type="button"
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.deleteStep(step_id)}
+                            onClick={() => this.openModal(step_id)}
                         >
                             <i className="fa-solid fa-trash"></i>
                         </button>
@@ -173,7 +178,24 @@ class Step extends React.Component {
             }
         });
     }
+
+    openModal = (step_id) => {
+        this.setState({
+            modalOpen: true,
+            step_id: step_id,
+        });
+    };
+
+    closeModal = () => {
+        this.setState({
+            modalOpen: false,
+            step_id: 0,
+        });
+    };
+
     render() {
+        const { modalOpen, step_id } = this.state;
+
         return (
             <div>
                 <div className="relative z-10">
@@ -192,8 +214,12 @@ class Step extends React.Component {
                 <div className={this.state.expanded ? undefined : "hidden"}>
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto"></DrapDrop>
                     <div className="h-2"></div>
-                    <Button type="plus" onClick={this.addStep} />
+                    <Button name="plus" onClick={this.addStep} />
                 </div>
+
+                {modalOpen && (
+                    <Modal label="Confirmer la suppression de l'étape" onConfirm={() => this.deleteStep(step_id)} onClose={this.closeModal} />
+                )}
             </div>
         );
     }

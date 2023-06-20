@@ -2,6 +2,7 @@ import React from 'react';
 import * as maps from '../../js/maps';
 import Step from './Step';
 import DrapDrop from './DrapDrop';
+import Modal from './Modal';
 
 class Day extends React.Component {
     constructor(props) {
@@ -9,6 +10,8 @@ class Day extends React.Component {
         this.state = {
             days: [],
             dayCount: 0,
+            modalOpen: false,
+            day_id: 0,
         };
         this.steps = {};
         this.dateRefs = {};
@@ -29,6 +32,7 @@ class Day extends React.Component {
         const updatedDays = this.state.days.filter(day => day.id !== id);
         this.setState({ days: updatedDays }, () => {
             this.updateOrder();
+            this.closeModal();
         });
     };
 
@@ -70,7 +74,7 @@ class Day extends React.Component {
                         <button
                             type="button"
                             className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.deleteDay(id)}
+                            onClick={() => this.openModal(id)}
                         >
                             <i className="fa-solid fa-trash"></i>
                         </button>
@@ -176,8 +180,24 @@ class Day extends React.Component {
             });
     };
 
+    openModal = (day_id) => {
+        this.setState({
+            modalOpen: true,
+            day_id: day_id,
+        });
+    };
+
+    closeModal = () => {
+        this.setState({
+            modalOpen: false,
+            day_id: 0,
+        });
+    };
+
     render() {
         const { project_name, project_id } = this.props;
+        const { modalOpen, day_id } = this.state;
+
         return (
             <div>
                 <form id="steps_form" onSubmit={this.handleSubmit}>
@@ -211,11 +231,16 @@ class Day extends React.Component {
                     <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
                 </form>
                 <button
+                    type="button"
                     className="bg-blue-500 block hover:bg-blue-700 text-3xl lg:text-base text-white font-bold py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto mt-2"
                     onClick={this.addDay}
                 >
                     Ajouter une date
                 </button>
+
+                {modalOpen && (
+                    <Modal label="Confirmer la suppression de la journée" onConfirm={() => this.deleteDay(day_id)} onClose={this.closeModal} />
+                )}
             </div >
         );
     }

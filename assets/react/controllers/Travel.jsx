@@ -62,16 +62,16 @@ class Travel extends Component {
                                 {travel.name}
                             </div>
                             <div className="flex">
-                                <Button type="play" onClick={() => this.redirect_play(travel.id)} />
-                                <Button type="edit" onClick={() => this.redirect_edit(travel.id)} />
-                                <Button type="delete" onClick={() => this.openModal(travel.id)} />
+                                <Button name="play" onClick={() => this.redirect_play(travel.id)} />
+                                <Button name="edit" onClick={() => this.redirect_edit(travel.id)} />
+                                <Button name="delete" onClick={() => this.openModal(travel.id)} />
                             </div >
                         </div >
                     </div >
                 ))}
 
                 {modalOpen && (
-                    <Modal onConfirm={() => this.deleteTravel(travel_id)} onClose={this.closeModal} />
+                    <Modal label="Confirmer la suppression du trajet" onConfirm={() => this.deleteTravel(travel_id)} onClose={this.closeModal} />
                 )}
             </div>
         );
