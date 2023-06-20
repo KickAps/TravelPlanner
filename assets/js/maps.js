@@ -111,6 +111,8 @@ export function initInputSearch(step_count, day_id) {
             input_lng.value = marker.getPosition().lng();
             let input_url = document.getElementById(day_id + "_url" + step_count);
             input_url.value = place.url;
+            let input_name = document.getElementById(day_id + "_name" + step_count);
+            input_name.value = place.name;
 
             // Path
             global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };

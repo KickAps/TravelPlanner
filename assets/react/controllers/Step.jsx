@@ -70,6 +70,7 @@ class Step extends React.Component {
         const lng_id = this.props.day_id + "_lng" + newStepCount;
         const url_id = this.props.day_id + "_url" + newStepCount;
         const desc_id = this.props.day_id + "_desc" + newStepCount;
+        const name_id = this.props.day_id + "_name" + newStepCount;
 
 
         const content = (
@@ -118,6 +119,13 @@ class Step extends React.Component {
                                     id={url_id}
                                     name={url_id}
                                     defaultValue={step_data && step_data.url}
+                                    type="hidden"
+                                    form="steps_form"
+                                />
+                                <input
+                                    id={name_id}
+                                    name={name_id}
+                                    defaultValue={step_data && step_data.name}
                                     type="hidden"
                                     form="steps_form"
                                 />

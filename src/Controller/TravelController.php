@@ -29,6 +29,7 @@ class TravelController extends AbstractController
                 $date = $formData['date' . str_replace('day', '', $day_id)];
 
                 $step = [
+                    'name' => $formData[$day_id . '_name' . $step_number],
                     'place' => $formData[$day_id . '_place' . $step_number],
                     'lat' => $formData[$day_id . '_lat' . $step_number],
                     'lng' => $formData[$day_id . '_lng' . $step_number],
