@@ -178,12 +178,17 @@ export function setGlobalPath() {
 
     polyline.setMap(null);
 
+    let strokeWeight = 2;
+    if (navigator.userAgentData.mobile) {
+        strokeWeight = 4;
+    }
+
     polyline = new google.maps.Polyline({
         path: path_ordered,
         geodesic: true,
-        strokeColor: "#FF0000",
+        strokeColor: "#DB5C51",
         strokeOpacity: 1.0,
-        strokeWeight: 2,
+        strokeWeight: strokeWeight,
     });
 
     polyline.setMap(map);

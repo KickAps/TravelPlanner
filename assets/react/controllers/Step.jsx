@@ -74,7 +74,7 @@ class Step extends React.Component {
 
         const content = (
             <div id={step_id} className="step">
-                <div className="w-full rounded shadow bg-white">
+                <div className="w-full rounded-lg lg:rounded shadow bg-white">
                     <div className="relative z-10">
                         <button
                             className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -94,7 +94,7 @@ class Step extends React.Component {
                                     id={place_id}
                                     name={place_id}
                                     defaultValue={step_data && step_data.place}
-                                    className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
                                     placeholder="Rechercher..."
                                     form="steps_form"
@@ -133,7 +133,7 @@ class Step extends React.Component {
                                     name={desc_id}
                                     defaultValue={step_data && step_data.desc}
                                     rows="4"
-                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
                                     form="steps_form"
                                 >

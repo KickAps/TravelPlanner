@@ -4,15 +4,24 @@
 
 @import '~@fortawesome/fontawesome-free/css/all.css';
 
+$small_size: 1024px;
+
 html,
 body {
     height: 100%;
     margin: 0;
     padding: 0;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .container-height {
     height: calc(100% - 84px);
+}
+
+@media screen and (max-width: $small_size) {
+    .container-height {
+        height: calc(100% - 184px);
+    }
 }
 
 #description {
@@ -89,25 +98,27 @@ body {
     width: 345px;
 }
 
-.pac-item {
-    @extend .pac-item;
-    @apply text-3xl;
-    @apply py-3;
-}
+@media screen and (max-width: $small_size) {
+    .pac-item {
+        @extend .pac-item;
+        @apply text-3xl;
+        @apply py-3;
+    }
 
-.pac-item-query {
-    @extend .pac-item-query;
-    @apply text-3xl;
-}
+    .pac-item-query {
+        @extend .pac-item-query;
+        @apply text-3xl;
+    }
 
-.pac-matched {
-    @extend .pac-matched;
-    @apply text-3xl;
-}
+    .pac-matched {
+        @extend .pac-matched;
+        @apply text-3xl;
+    }
 
-.gm-ui-hover-effect {
-    @extend .gm-ui-hover-effect;
-    transform: scale(1.7);
-    top: 2px !important;
-    right: 1px !important;
+    .gm-ui-hover-effect {
+        @extend .gm-ui-hover-effect;
+        transform: scale(1.7);
+        top: 2px !important;
+        right: 1px !important;
+    }
 }

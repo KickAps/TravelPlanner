@@ -9,15 +9,15 @@ class Day extends React.Component {
         this.state = {
             days: [],
             dayCount: 0,
-            data: props.data || [],
         };
         this.steps = {};
         this.dateRefs = {};
+        this.data = props.data || [];
     }
 
     componentDidMount() {
-        if (this.state.data.length !== 0) {
-            this.addDay(0, this.state.data);
+        if (this.data.length !== 0) {
+            this.addDay(0, this.data);
         }
     }
 
@@ -65,7 +65,7 @@ class Day extends React.Component {
 
         const content = (
             <div id={id} className="day">
-                <div className="w-full rounded shadow-lg bg-gray-100 px-3 py-2">
+                <div className="w-full rounded-lg lg:rounded shadow-lg bg-gray-100 px-3 py-2">
                     <div className="relative z-10">
                         <button
                             type="button"
@@ -89,7 +89,7 @@ class Day extends React.Component {
                                     type="date"
                                     ref={(input) => (this.dateRefs[id] = input)}
                                     onClick={() => this.triggerDatePicker(id)}
-                                    className="block w-full bg-white text-gray-700 shadow rounded py-2 px-3 leading-tight"
+                                    className="block w-full bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight"
                                     form="steps_form"
                                     required
                                 />
@@ -121,7 +121,7 @@ class Day extends React.Component {
                     this.addDay(index, data);
                 } else {
                     setTimeout(() => {
-                        maps.initTravel(this.state.data);
+                        maps.initTravel(this.data);
                     }, 500);
                 }
             }
@@ -177,9 +177,37 @@ class Day extends React.Component {
     };
 
     render() {
+        const { project_name, project_id } = this.props;
         return (
             <div>
                 <form id="steps_form" onSubmit={this.handleSubmit}>
+                    <div className="text-center bg-blue-100 border-solid border-b-2 border-blue-300 sticky top-0 z-20">
+                        <label className="uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="travel_name">
+                            Nom
+                        </label>
+                        <input
+                            id="travel_name"
+                            name="travel_name"
+                            type="text"
+                            defaultValue={project_name}
+                            className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mx-2"
+                            form="steps_form"
+                            required
+                        />
+                        <input
+                            name="travel_id"
+                            type="hidden"
+                            defaultValue={project_id}
+                            form="steps_form"
+                        />
+                        <button
+                            type="submit"
+                            form="steps_form"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto my-2"
+                        >
+                            Sauvegarder
+                        </button>
+                    </div>
                     <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
                 </form>
                 <button
