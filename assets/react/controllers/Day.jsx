@@ -225,7 +225,7 @@ class Day extends React.Component {
                         >
                             Sauvegarder
                         </button>
-                        <div className="inline-block ml-2 text-2xl lg:text-lg w-4 p-auto">
+                        <div className="inline-block text-5xl lg:text-2xl relative top-2 lg:top-1 left-4 lg:left-3 w-4">
                             <i id="saved_icon" className="fa-solid fa-check text-green-500"></i>
                             <i id="unsaved_icon" className="fa-solid fa-triangle-exclamation text-yellow-500 hidden"></i>
                         </div>
