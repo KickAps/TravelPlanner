@@ -5,14 +5,23 @@
             Travel Planner
         </span>
     </div>
-    <div class="flex flex-grow items-center w-auto pt-1">
-        <div class="text-4xl lg:text-lg flex-grow mt-1 lg:mt-0">
-            <a href="{{ path('app_edit_travel') }}" class="inline-block mt-0 text-blue-200 hover:text-white mr-4">
-                Nouveau trajet
-            </a>
-            <a href="{{ path('app_travels') }}" class="inline-block mt-0 text-blue-200 hover:text-white mr-4">
-                Liste des trajets
-            </a>
+    {% if navbar %}
+        <div class="flex flex-grow items-center pt-1">
+            <div class="text-4xl lg:text-lg mt-1 lg:mt-0 w-full flex justify-between">
+                <div>
+                    <a href="{{ path('app_edit_travel') }}" class="text-blue-200 hover:text-white mr-4">
+                        Nouveau trajet
+                    </a>
+                    <a href="{{ path('app_travels') }}" class="text-blue-200 hover:text-white">
+                        Liste des trajets
+                    </a>
+                </div>
+                <div>
+                    <a href="{{ path('app_logout') }}" class="text-blue-200 hover:text-white">
+                        Deconnexion
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+    {% endif %}
 </nav>
