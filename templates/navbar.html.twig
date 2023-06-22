@@ -1,4 +1,4 @@
-<nav class="flex items-center justify-between flex-wrap bg-blue-400 p-6">
+<nav class="flex items-center justify-between flex-wrap bg-blue-400 px-10 py-6">
     <div class="flex items-center flex-shrink-0 text-white mr-6">
         <i class="fa-solid text-5xl lg:text-2xl fa-earth-americas mr-2"></i>
         <span class="font-semibold text-5xl lg:text-2xl tracking-tight">
@@ -23,7 +23,7 @@
                         -
                     </span>
                     <a href="{{ path('app_logout') }}" class="hover:text-white">
-                        Deconnexion
+                        Déconnexion
                     </a>
                 </div>
             </div>
@@ -36,10 +36,10 @@
                 <ul>
                     <li>{{ app.user.username }}</li>
                     <hr class="my-4"/>
-                    <li class="my-4">
+                    <li class="mb-8">
                         <a href="{{path('app_edit_travel')}}">Nouveau trajet</a>
                     </li>
-                    <li class="my-4">
+                    <li class="mb-8">
                         <a href="{{path('app_travels')}}">Liste des trajets</a>
                     </li>
                     <li>
