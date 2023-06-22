@@ -7,7 +7,13 @@ let infowindow;
 const icon_url = "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png";
 
 function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
+    let map = document.getElementById("map");
+
+    if (!map) {
+        return;
+    }
+
+    map = new google.maps.Map(map, {
         center: { lat: 46.62825131575064, lng: 2.264533130591902 },
         zoom: 6,
         mapTypeId: "roadmap",
