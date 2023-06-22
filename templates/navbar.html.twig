@@ -6,7 +6,8 @@
         </span>
     </div>
     {% if navbar %}
-        <div class="flex flex-grow items-center pt-1">
+        {# PC #}
+        <div class="hidden lg:flex flex-grow items-center pt-1">
             <div class="text-4xl lg:text-lg mt-1 lg:mt-0 w-full flex justify-between text-blue-100">
                 <div>
                     <a href="{{ path('app_edit_travel') }}" class="hover:text-white mr-4">
@@ -25,6 +26,26 @@
                         Deconnexion
                     </a>
                 </div>
+            </div>
+        </div>
+        {# Mobile #}
+        <div class="flex justify-between relative lg:hidden text-4xl z-40">
+            <button id="dropdown_close" class="fixed top-0 right-0 w-full h-full bg-gray-100 opacity-50 hidden"></button>
+            <i id="dropdown_btn" class="fa-solid fa-bars text-blue-100 hover:text-white text-5xl z-50"></i>
+            <div id="dropdown_menu" class="bg-white rounded-lg absolute right-0 top-16 w-80 text-blue-400 p-4 hidden">
+                <ul>
+                    <li>{{ app.user.username }}</li>
+                    <hr class="my-4"/>
+                    <li class="my-4">
+                        <a href="{{path('app_edit_travel')}}">Nouveau trajet</a>
+                    </li>
+                    <li class="my-4">
+                        <a href="{{path('app_travels')}}">Liste des trajets</a>
+                    </li>
+                    <li>
+                        <a href="{{path('app_logout')}}">Deconnexion</a>
+                    </li>
+                </ul>
             </div>
         </div>
     {% endif %}
