@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Travel;
+use App\Entity\User;
 use App\Repository\TravelRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +16,11 @@ class TravelController extends AbstractController
     #[Route('/edit_travel', name: 'app_edit_travel')]
     public function edit_travel(Request $request, TravelRepository $travelRepo): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User $user */
+        $user = $this->getUser();
+
         if ($request->isMethod('POST')) {
             $formData = json_decode($request->getContent(), true);
 
@@ -52,6 +58,7 @@ class TravelController extends AbstractController
 
             $travel->setName($formData['travel_name']);
             $travel->setSteps($steps);
+            $travel->setUser($user);
             $travelRepo->save($travel, true);
 
             return new JsonResponse($formData);
@@ -78,7 +85,12 @@ class TravelController extends AbstractController
     #[Route('/travels', name: 'app_travels')]
     public function travels(TravelRepository $travelRepo): Response
     {
-        $data = $travelRepo->findAllNames();
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = $travelRepo->findByUser($user);
 
         return $this->render('travel/travels.html.twig', [
             'data' => $data,

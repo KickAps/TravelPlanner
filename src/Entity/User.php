@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,6 +34,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $google_id = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class)]
+    private Collection $travels;
+
+    public function __construct()
+    {
+        $this->travels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -123,6 +133,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGoogleId(?string $google_id): self
     {
         $this->google_id = $google_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Travel>
+     */
+    public function getTravels(): Collection
+    {
+        return $this->travels;
+    }
+
+    public function addTravel(Travel $travel): self
+    {
+        if (!$this->travels->contains($travel)) {
+            $this->travels->add($travel);
+            $travel->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTravel(Travel $travel): self
+    {
+        if ($this->travels->removeElement($travel)) {
+            // set the owning side to null (unless already changed)
+            if ($travel->getUser() === $this) {
+                $travel->setUser(null);
+            }
+        }
 
         return $this;
     }
