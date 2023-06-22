@@ -7,17 +7,21 @@
     </div>
     {% if navbar %}
         <div class="flex flex-grow items-center pt-1">
-            <div class="text-4xl lg:text-lg mt-1 lg:mt-0 w-full flex justify-between">
+            <div class="text-4xl lg:text-lg mt-1 lg:mt-0 w-full flex justify-between text-blue-100">
                 <div>
-                    <a href="{{ path('app_edit_travel') }}" class="text-blue-200 hover:text-white mr-4">
+                    <a href="{{ path('app_edit_travel') }}" class="hover:text-white mr-4">
                         Nouveau trajet
                     </a>
-                    <a href="{{ path('app_travels') }}" class="text-blue-200 hover:text-white">
+                    <a href="{{ path('app_travels') }}" class="hover:text-white">
                         Liste des trajets
                     </a>
                 </div>
                 <div>
-                    <a href="{{ path('app_logout') }}" class="text-blue-200 hover:text-white">
+                    <span>
+                        {{ app.user.username }}
+                        -
+                    </span>
+                    <a href="{{ path('app_logout') }}" class="hover:text-white">
                         Deconnexion
                     </a>
                 </div>

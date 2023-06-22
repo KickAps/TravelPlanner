@@ -98,6 +98,10 @@ body {
     width: 345px;
 }
 
+.google-logo {
+    background: white center/cover url('../logo/google-logo.svg') no-repeat;
+}
+
 @media screen and (max-width: $small_size) {
     .pac-item {
         @extend .pac-item;
