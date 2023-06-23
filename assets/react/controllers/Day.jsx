@@ -17,6 +17,7 @@ class Day extends React.Component {
         this.steps = {};
         this.dateRefs = {};
         this.data = props.data || [];
+        this.edit = props.edit || false;
     }
 
     componentDidMount() {
@@ -55,7 +56,9 @@ class Day extends React.Component {
     };
 
     triggerDatePicker = (id) => {
-        this.dateRefs[id].showPicker();
+        if (this.edit) {
+            this.dateRefs[id].showPicker();
+        }
     }
 
     addDay = (index = null, data = null) => {
@@ -73,18 +76,20 @@ class Day extends React.Component {
         const content = (
             <div id={id} className="day">
                 <div className="w-full rounded-lg lg:rounded shadow-lg bg-gray-100 px-3 py-2">
-                    <div className="relative z-10">
-                        <button
-                            type="button"
-                            className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.openModal(id)}
-                        >
-                            <i className="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
+                    {this.edit && (
+                        <div className="relative z-10">
+                            <button
+                                type="button"
+                                className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                onClick={() => this.openModal(id)}
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    )}
 
                     <div className="relative">
-                        <div className="absolute -left-16 top-1 font-bold text-2xl lg:text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
+                        <div className="absolute -left-16 -top-1 font-bold text-2xl lg:text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
                             <span className="day_order">{newDayCount}</span>
                         </div>
                         <div>
@@ -97,14 +102,15 @@ class Day extends React.Component {
                                     ref={(input) => (this.dateRefs[id] = input)}
                                     onClick={() => this.triggerDatePicker(id)}
                                     onChange={utils.showUnsaved}
-                                    className="block w-full bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight"
+                                    readOnly={!this.edit}
+                                    className="block w-full bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight w-auto mx-auto"
                                     form="steps_form"
                                     required
                                 />
                             </div>
                         </div>
                     </div>
-                    <Step day_id={id} data={steps_data} ref={(component) => (this.steps[id] = component)} />
+                    <Step day_id={id} data={steps_data} edit={this.edit} ref={(component) => (this.steps[id] = component)} />
                 </div>
             </div>
         );
@@ -208,6 +214,7 @@ class Day extends React.Component {
                             type="text"
                             defaultValue={project_name}
                             onChange={utils.showUnsaved}
+                            readOnly={!this.edit}
                             className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mx-2"
                             form="steps_form"
                             required
@@ -218,27 +225,31 @@ class Day extends React.Component {
                             defaultValue={project_id}
                             form="steps_form"
                         />
-                        <button
-                            type="submit"
-                            form="steps_form"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto my-2"
-                        >
-                            Sauvegarder
-                        </button>
+                        {this.edit && (
+                            <button
+                                type="submit"
+                                form="steps_form"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto my-2"
+                            >
+                                Sauvegarder
+                            </button>
+                        )}
                         <div className="inline-block text-5xl lg:text-2xl relative top-2 lg:top-1 left-4 lg:left-3 w-4">
                             <i id="saved_icon" className="fa-solid fa-check text-green-500"></i>
                             <i id="unsaved_icon" className="fa-solid fa-triangle-exclamation text-yellow-500 hidden"></i>
                         </div>
                     </div>
-                    <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto"></DrapDrop>
+                    <DrapDrop data={this.state.days} onDragEnd={this.onDragEnd} size="w-5/6 lg:w-4/5 mx-auto" edit={this.edit}></DrapDrop>
                 </form>
-                <button
-                    type="button"
-                    className="bg-blue-500 block hover:bg-blue-700 text-3xl lg:text-base text-white font-bold py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto mt-2"
-                    onClick={this.addDay}
-                >
-                    Ajouter une date
-                </button>
+                {this.edit && (
+                    <button
+                        type="button"
+                        className="bg-blue-500 block hover:bg-blue-700 text-3xl lg:text-base text-white font-bold py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto mt-2"
+                        onClick={this.addDay}
+                    >
+                        Ajouter une date
+                    </button>
+                )}
 
                 {modalOpen && (
                     <Modal label="Confirmer la suppression de la journée" onConfirm={() => this.deleteDay(day_id)} onClose={this.closeModal} />

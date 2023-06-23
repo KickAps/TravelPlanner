@@ -1,29 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ReactController!
+{% block title %}
+    Hello ReactController!
 {% endblock %}
 
 {% block body %}
-<div class="container-height text-2xl lg:text-base">
-    <div class="w-full lg:hidden" {{ react_component('Tab') }}></div>
-    <div class="flex h-full mx-2 lg:mx-7">
-        <div id="tab_steps" class="w-full lg:w-1/2 block">
-            <div class="h-full lg:overflow-y-scroll pb-2" {{ react_component('Day', {'data': steps} ) }}></div>
-        </div>
-
-        <div id="tab_map" class="w-full lg:w-1/2 hidden lg:block">
-            <div class="text-center">
-                <label class="uppercase tracking-wide text-gray-700 text-xl lg:text-xs font-bold mb-2" for="travel_name">
-                    Nom du trajet
-                </label>
-                <input id="travel_name" name="travel_name" type="text" value="{{ name }}" class="bg-white border border-gray-500 rounded px-2 py-1 leading-tight focus:outline-none" form="steps_form" required />
-                <input name="travel_id" type="hidden" value="{{ id }}" form="steps_form" />
-                <button type="submit" form="steps_form" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mx-auto my-2">Sauvegarder</button>
+    <div class="container-height text-3xl lg:text-base">
+        <div class="w-full lg:hidden" {{ react_component('Tab') }}></div>
+        <div class="flex h-full">
+            <div id="tab_steps" class="w-full lg:w-1/2 block">
+                <div class="h-full overflow-y-scroll pb-2" {{ react_component('Day', {'data': steps, 'project_name': name, 'project_id': id} ) }}></div>
             </div>
-            <div id="map" class="container-height w-full"></div>
+            <div id="tab_map" class="w-full lg:w-1/2 hidden lg:block">
+                <div id="map" class="h-full w-full"></div>
+            </div>
         </div>
     </div>
-</div>
-
-<script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ api_key ~ '&callback=initMap&libraries=places' }}" defer></script>
 {% endblock %}

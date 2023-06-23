@@ -15,6 +15,7 @@ class Step extends React.Component {
             modalOpen: false,
             step_id: 0,
         };
+        this.edit = props.edit || false;
     }
 
     componentDidMount() {
@@ -83,15 +84,17 @@ class Step extends React.Component {
         const content = (
             <div id={step_id} className="step">
                 <div className="w-full rounded-lg lg:rounded shadow bg-white">
-                    <div className="relative z-10">
-                        <button
-                            type="button"
-                            className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            onClick={() => this.openModal(step_id)}
-                        >
-                            <i className="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
+                    {this.edit && (
+                        <div className="relative z-10">
+                            <button
+                                type="button"
+                                className="absolute top-0 right-0 pt-2 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                onClick={() => this.openModal(step_id)}
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    )}
 
                     <div className="relative px-3 py-4">
                         <div className="flex mb-2">
@@ -104,6 +107,7 @@ class Step extends React.Component {
                                     name={place_id}
                                     defaultValue={step_data && step_data.place}
                                     onChange={utils.showUnsaved}
+                                    readOnly={!this.edit}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
                                     placeholder="Rechercher..."
@@ -150,6 +154,7 @@ class Step extends React.Component {
                                     name={desc_id}
                                     defaultValue={step_data && step_data.desc}
                                     onChange={utils.showUnsaved}
+                                    readOnly={!this.edit}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     placeholder="Nous allons..."
@@ -174,8 +179,10 @@ class Step extends React.Component {
             steps: updatedSteps,
             stepCount: newStepCount,
         }), () => {
-            maps.initInputSearch(newStepCount, this.props.day_id);
-            utils.showUnsaved();
+            if (this.edit) {
+                maps.initInputSearch(newStepCount, this.props.day_id);
+                utils.showUnsaved();
+            }
 
             index++;
             if (data && index < data.length) {
@@ -207,20 +214,21 @@ class Step extends React.Component {
                 <div className="relative z-10">
                     <button
                         type="button"
-                        className="absolute -top-14 lg:-top-10 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="absolute -top-12 lg:-top-8 text-gray-500 hover:text-gray-700 focus:outline-none"
                         onClick={this.toggleCollapse}
                     >
                         {this.state.expanded ? (
-                            <i className="fa-solid fa-chevron-up text-4xl lg:text-lg"></i>
+                            <i className="fa-solid fa-chevron-up text-4xl lg:text-xl"></i>
                         ) : (
-                            <i className="fa-solid fa-chevron-down text-4xl lg:text-lg"></i>
+                            <i className="fa-solid fa-chevron-down text-4xl lg:text-xl"></i>
                         )}
                     </button>
                 </div>
                 <div className={this.state.expanded ? undefined : "hidden"}>
-                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto"></DrapDrop>
-                    <div className="h-2"></div>
-                    <Button name="plus" onClick={this.addStep} />
+                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
+                    {this.edit && (
+                        <Button name="plus" onClick={this.addStep} />
+                    )}
                 </div>
 
                 {modalOpen && (
