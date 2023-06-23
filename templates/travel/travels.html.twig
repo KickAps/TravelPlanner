@@ -7,7 +7,13 @@
     <div class="container-height">
         <div class="flex h-full mx-7">
             <div class="w-full lg:w-1/2">
-                <div {{ react_component('Travel', {'data': data} ) }}></div>
+                {% if data %}
+                    <div {{ react_component('Travel', {'data': data} ) }}></div>
+                {% else %}
+                    <div class="text-gray-700 mt-2 ml-2">
+                        <p>Aucun trajet à afficher</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
