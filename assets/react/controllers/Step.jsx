@@ -83,6 +83,7 @@ class Step extends React.Component {
 
         const content = (
             <div id={step_id} className="step">
+                <div className="h-4 lg:h-2"></div>
                 <div className="w-full rounded-lg lg:rounded shadow bg-white">
                     {this.edit && (
                         <div className="relative z-10">
@@ -96,9 +97,9 @@ class Step extends React.Component {
                         </div>
                     )}
 
-                    <div className="relative px-3 py-4">
+                    <div className="relative px-5 py-6 lg:px-3 lg:py-4">
                         <div className="flex mb-2">
-                            <div className="w-full px-3 md:mb-0">
+                            <div className="w-full md:mb-0">
                                 <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
                                     Lieux
                                 </label>
@@ -144,8 +145,8 @@ class Step extends React.Component {
                                 />
                             </div>
                         </div>
-                        <div className="flex flex-wrap mb-2">
-                            <div className="w-full px-3">
+                        <div className="flex flex-wrap">
+                            <div className="w-full">
                                 <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={desc_id}>
                                     Description
                                 </label>
@@ -227,7 +228,9 @@ class Step extends React.Component {
                 <div className={this.state.expanded ? undefined : "hidden"}>
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
                     {this.edit && (
-                        <Button name="plus" onClick={this.addStep} />
+                        <div className="mt-2">
+                            <Button name="plus" onClick={this.addStep} />
+                        </div>
                     )}
                 </div>
 

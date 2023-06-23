@@ -4,6 +4,7 @@ import * as utils from '../../js/utils';
 import Step from './Step';
 import DrapDrop from './DrapDrop';
 import Modal from './Modal';
+import { format } from 'date-fns';
 
 class Day extends React.Component {
     constructor(props) {
@@ -64,6 +65,7 @@ class Day extends React.Component {
     addDay = (index = null, data = null) => {
         const newDayCount = this.state.dayCount + 1;
         const id = "day" + newDayCount;
+        const dateId = "date" + newDayCount;
 
         // Ajout auto - init avec data
         let date = null;
@@ -74,13 +76,13 @@ class Day extends React.Component {
         }
 
         const content = (
-            <div id={id} className="day">
-                <div className="w-full rounded-lg lg:rounded shadow-lg bg-gray-100 px-3 py-2">
+            <div id={id} className="day mt-3">
+                <div className="w-full rounded-lg lg:rounded shadow-lg bg-gray-100 px-5 py-4 lg:px-3 lg:py-2">
                     {this.edit && (
                         <div className="relative z-10">
                             <button
                                 type="button"
-                                className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                className="absolute top-1 lg:top-2 right-1 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 onClick={() => this.openModal(id)}
                             >
                                 <i className="fa-solid fa-trash"></i>
@@ -89,21 +91,21 @@ class Day extends React.Component {
                     )}
 
                     <div className="relative">
-                        <div className="absolute -left-16 -top-1 font-bold text-2xl lg:text-lg text-center px-4 p-2 rounded-full border-2 border-gray-300 bg-white">
+                        <div className="absolute -left-24 lg:-left-16 -top-1 font-bold text-3xl lg:text-lg text-center px-6 py-4 lg:px-4 lg:py-2 rounded-full border-2 border-gray-300 bg-white">
                             <span className="day_order">{newDayCount}</span>
                         </div>
                         <div>
                             <div className="w-64 px-3 mx-auto">
                                 <input
-                                    id="date"
-                                    name={`date${newDayCount}`}
+                                    id={dateId}
+                                    name={dateId}
                                     defaultValue={data && date}
                                     type="date"
                                     ref={(input) => (this.dateRefs[id] = input)}
                                     onClick={() => this.triggerDatePicker(id)}
                                     onChange={utils.showUnsaved}
                                     readOnly={!this.edit}
-                                    className="block w-full bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight w-auto mx-auto"
+                                    className="block bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight w-auto mx-auto"
                                     form="steps_form"
                                     required
                                 />
@@ -118,6 +120,7 @@ class Day extends React.Component {
         const newDay = {
             id: id,
             content: content,
+            dateId: dateId,
         };
 
         const updatedDays = [...this.state.days, newDay];
@@ -138,8 +141,25 @@ class Day extends React.Component {
                     setTimeout(() => {
                         maps.initTravel(this.data);
                         utils.showSaved();
+                        if (!this.edit) {
+                            this.targetToday();
+                        }
                     }, 500);
                 }
+            }
+        });
+    };
+
+    targetToday = () => {
+        const currentDate = new Date();
+        const formattedDate = format(currentDate, 'yyyy-MM-dd');
+
+        this.state.days.map((day, index) => {
+            const inputDate = document.getElementById(day.dateId);
+            if (formattedDate === inputDate.value) {
+                inputDate.classList.add("font-bold");
+            } else {
+                this.steps[day.id].toggleCollapse();
             }
         });
     };
@@ -150,7 +170,7 @@ class Day extends React.Component {
         for (let i = 0; i < days_order.length; i++) {
             days_order[i].textContent = i + 1;
         }
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -215,7 +235,7 @@ class Day extends React.Component {
                             defaultValue={project_name}
                             onChange={utils.showUnsaved}
                             readOnly={!this.edit}
-                            className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mx-2"
+                            className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none m-2"
                             form="steps_form"
                             required
                         />

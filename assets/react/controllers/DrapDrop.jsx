@@ -19,8 +19,8 @@ class DrapDrop extends React.Component {
                                                 {...provided.draggableProps}
                                                 className="draggable-item"
                                             >
-                                                <div className={"p-2 relative " + size}>
-                                                    <div {...provided.dragHandleProps} className={"drag-handle absolute right-20 lg:right-14 top-3 z-10 text-5xl lg:text-2xl text-gray-500 hover:text-gray-700"}>
+                                                <div className={"relative " + size}>
+                                                    <div {...provided.dragHandleProps} className={"drag-handle absolute right-20 lg:right-14 top-5 lg:top-3 z-10 text-5xl lg:text-2xl text-gray-500 hover:text-gray-700"}>
                                                         {/* Icône de poignée */}
                                                         <i className="fas fa-grip-lines" />
                                                     </div>
@@ -39,7 +39,7 @@ class DrapDrop extends React.Component {
         ) : (
             <div>
                 {data.map((item, index) => (
-                    <div key={item.id} index={index} className={"p-2 relative " + size}>
+                    <div key={item.id} index={index} className={"relative " + size}>
                         {item.content}
                     </div>
                 ))}
