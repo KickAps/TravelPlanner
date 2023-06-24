@@ -172,6 +172,22 @@ class Day extends React.Component {
         }
     };
 
+    submitForm = () => {
+        const inputs = document.getElementsByClassName("pac-input");
+
+        for (let i = 0; i < inputs.length; i++) {
+            if (!inputs[i].value) {
+                let day_id = inputs[i].closest('.day').id;
+                this.steps[day_id].toggleCollapse(null, true);
+            }
+        }
+
+        const form = document.getElementById('steps_form');
+        setTimeout(() => {
+            form.requestSubmit();
+        }, 200);
+    };
+
     handleSubmit = (e) => {
         e.preventDefault();
 
@@ -247,8 +263,8 @@ class Day extends React.Component {
                         />
                         {this.edit && (
                             <button
-                                type="submit"
-                                form="steps_form"
+                                type="button"
+                                onClick={this.submitForm}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto my-2"
                             >
                                 Sauvegarder

@@ -57,9 +57,9 @@ class Step extends React.Component {
         });
     };
 
-    toggleCollapse = () => {
+    toggleCollapse = (event, forceOpen = false) => {
         this.setState((prevState) => ({
-            expanded: !prevState.expanded, // Inverser l'état d'expansion
+            expanded: forceOpen || !prevState.expanded, // Inverser l'état d'expansion
         }));
     };
 
