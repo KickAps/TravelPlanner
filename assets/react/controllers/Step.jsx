@@ -228,7 +228,8 @@ class Step extends React.Component {
                 <div className={this.state.expanded ? undefined : "hidden"}>
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
                     {this.edit && (
-                        <div className="mt-2">
+                        <div>
+                            <div className="h-4 lg:h-2"></div>
                             <Button name="plus" onClick={this.addStep} />
                         </div>
                     )}
