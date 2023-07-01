@@ -13,18 +13,20 @@ window.addEventListener('load', function () {
     const dropdown_menu = document.getElementById("dropdown_menu");
     const dropdown_close = document.getElementById("dropdown_close");
 
-    dropdown_btn.addEventListener('click', function () {
-        if (dropdown_menu.classList.contains("hidden")) {
-            dropdown_menu.classList.remove("hidden");
-            dropdown_close.classList.remove("hidden");
-        } else {
+    if (dropdown_btn && dropdown_close && dropdown_menu) {
+        dropdown_btn.addEventListener('click', function () {
+            if (dropdown_menu.classList.contains("hidden")) {
+                dropdown_menu.classList.remove("hidden");
+                dropdown_close.classList.remove("hidden");
+            } else {
+                dropdown_menu.classList.add("hidden");
+                dropdown_close.classList.add("hidden");
+            }
+        });
+
+        dropdown_close.addEventListener('click', function () {
             dropdown_menu.classList.add("hidden");
             dropdown_close.classList.add("hidden");
-        }
-    });
-
-    dropdown_close.addEventListener('click', function () {
-        dropdown_menu.classList.add("hidden");
-        dropdown_close.classList.add("hidden");
-    });
+        });
+    }
 });
