@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ReactController!
+{% block title %}
+    {{ label.app_name ~ " - Liste des trajets" }}
 {% endblock %}
 
 {% block body %}
     <div class="container-height">
         <div class="flex h-full mx-7">
-            <div class="w-full lg:w-1/2">
+            <div class="w-full">
                 {% if data %}
                     <div {{ react_component('Travel', {'data': data} ) }}></div>
                 {% else %}

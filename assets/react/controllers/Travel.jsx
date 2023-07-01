@@ -34,6 +34,10 @@ class Travel extends Component {
         window.location.href = window.location.origin + "/edit_travel?id=" + travel_id;
     }
 
+    redirect_budget = (travel_id) => {
+        window.location.href = window.location.origin + "/budget?id=" + travel_id;
+    }
+
     deleteTravel = (travel_id) => {
         fetch(window.location.origin + '/delete_travel', {
             method: 'POST',
@@ -54,16 +58,20 @@ class Travel extends Component {
         const { modalOpen, travel_id } = this.state;
 
         return (
-            <div>
+            <div className="grid gap-8 grid-cols-3 mt-8 mx-8">
                 {this.data.map((travel, index) => (
                     <div id={travel.id} key={index}>
-                        <div className="rounded-lg lg:rounded shadow-lg bg-white my-4 lg:my-2 p-2 text-gray-600 font-bold w-full lg:w-1/2 text-2xl lg:text-base">
-                            <div className="mb-3 lg:mb-1 ">
+                        <div className="rounded-lg lg:rounded shadow-lg bg-white p-3 text-gray-600 font-bold w-full text-2xl lg:text-base">
+                            <div className="text-center mb-3 lg:mb-1">
                                 {travel.name}
                             </div>
-                            <div className="flex">
+                            <div>
+                                <img src={window.location.origin + '/uploads/default.jpg'} className="w-full" />
+                            </div>
+                            <div className="flex mt-3">
                                 <Button name="play" onClick={() => this.redirect_play(travel.id)} />
                                 <Button name="edit" onClick={() => this.redirect_edit(travel.id)} />
+                                <Button name="budget" onClick={() => this.redirect_budget(travel.id)} />
                                 <Button name="delete" onClick={() => this.openModal(travel.id)} />
                             </div >
                         </div >

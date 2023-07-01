@@ -3,6 +3,8 @@ twig:
     globals:
         api_key: '%env(API_KEY)%'
         navbar: true
+        label:
+            app_name: 'Travel Planner'
 
 when@test:
     twig:
