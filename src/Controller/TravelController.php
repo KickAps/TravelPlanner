@@ -61,7 +61,7 @@ class TravelController extends AbstractController
             $travel->setUser($user);
             $travelRepo->save($travel, true);
 
-            return new JsonResponse($formData);
+            return new JsonResponse(['travel_id' => $travel->getId()]);
         }
 
         $id = 0;

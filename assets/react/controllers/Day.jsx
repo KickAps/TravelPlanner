@@ -173,6 +173,10 @@ class Day extends React.Component {
     };
 
     submitForm = () => {
+        let btn_submit_form = document.getElementById('submit_form');
+        btn_submit_form.disabled = true;
+        btn_submit_form.classList.add('cursor-wait');
+
         const inputs = document.getElementsByClassName("pac-input");
 
         for (let i = 0; i < inputs.length; i++) {
@@ -215,7 +219,17 @@ class Day extends React.Component {
             if (!response.ok) {
                 throw new Error('Erreur lors de la requête.');
             }
+            return response.json();
+        }).then((data) => {
+            document.getElementById('travel_id').value = data['travel_id'];
+
+            let btn_submit_form = document.getElementById('submit_form');
+            btn_submit_form.disabled = false;
+            btn_submit_form.classList.remove('cursor-wait');
+
             utils.showSaved();
+        }).catch((error) => {
+            console.error(error);
         });
     };
 
@@ -256,6 +270,7 @@ class Day extends React.Component {
                             required
                         />
                         <input
+                            id="travel_id"
                             name="travel_id"
                             type="hidden"
                             defaultValue={project_id}
@@ -263,6 +278,7 @@ class Day extends React.Component {
                         />
                         {this.edit && (
                             <button
+                                id="submit_form"
                                 type="button"
                                 onClick={this.submitForm}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto my-2"
