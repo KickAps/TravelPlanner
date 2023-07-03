@@ -78,7 +78,7 @@ class Travel extends Component {
                 ))}
 
                 {modalOpen && (
-                    <Modal label="Confirmer la suppression du trajet" onConfirm={() => this.deleteTravel(travel_id)} onClose={this.closeModal} />
+                    <Modal label="Confirmer la suppression du voyage" onConfirm={() => this.deleteTravel(travel_id)} onClose={this.closeModal} />
                 )}
             </div>
         );

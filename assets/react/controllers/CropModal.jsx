@@ -64,7 +64,7 @@ class CropModal extends Component {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-30">
                 <div className="bg-white rounded-lg shadow-lg text-3xl lg:text-base p-6 w-1/2 mx-auto">
-                    <h2 className="text-4xl lg:text-xl font-bold mb-4">Modifier l'image du trajet</h2>
+                    <h2 className="text-4xl lg:text-xl font-bold mb-4">Modifier l'image du voyage</h2>
                     <div className="flex mb-4">
                         <div className="w-1/2">
                             <div>Recadrage</div>

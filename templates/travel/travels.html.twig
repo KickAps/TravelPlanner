@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ label.app_name ~ " - Liste des trajets" }}
+    {{ label.app_name ~ " - Liste des voyages" }}
 {% endblock %}
 
 {% block body %}
@@ -12,7 +12,7 @@
                     <div {{ react_component('Travel', {'data': data} ) }}></div>
                 {% else %}
                     <div class="text-gray-700 mt-2 ml-2">
-                        <p>Aucun trajet à afficher</p>
+                        <p>Aucun voyage à afficher</p>
                     </div>
                 {% endif %}
             </div>

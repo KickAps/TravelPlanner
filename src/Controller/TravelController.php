@@ -51,10 +51,10 @@ class TravelController extends AbstractController
             }
 
             if ($travel_id = $formData['travel_id']) {
-                // Mise à jour d'un trajet existant
+                // Mise à jour d'un voyage existant
                 $travel = $travelRepo->find($travel_id);
             } else {
-                // Création d'un nouveau trajet
+                // Création d'un nouveau voyage
                 $travel = new Travel();
                 $travel->setImage(null);
                 $travel->setUser($user);
@@ -122,7 +122,7 @@ class TravelController extends AbstractController
         if ($travel_id = $data['id']) {
             $travel = $travelRepo->find($travel_id);
             $travel->deleteImage($this->getParameter('images_dir'));
-            // Supprimer le trajet en base
+            // Supprimer le voyage en base
             $travelRepo->remove($travel, true);
         }
 
