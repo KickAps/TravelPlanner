@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from './Button';
 import Modal from './Modal';
+import CropOverlay from './CropOverlay';
 
 class Travel extends Component {
     constructor(props) {
@@ -65,9 +66,7 @@ class Travel extends Component {
                             <div className="text-center mb-3 lg:mb-1">
                                 {travel.name}
                             </div>
-                            <div>
-                                <img src={window.location.origin + '/uploads/default.jpg'} className="w-full" />
-                            </div>
+                            <CropOverlay travel_id={travel.id} image_name={travel.image} />
                             <div className="flex mt-3">
                                 <Button name="play" onClick={() => this.redirect_play(travel.id)} />
                                 <Button name="edit" onClick={() => this.redirect_edit(travel.id)} />

@@ -51,14 +51,17 @@ class TravelController extends AbstractController
             }
 
             if ($travel_id = $formData['travel_id']) {
+                // Mise à jour d'un trajet existant
                 $travel = $travelRepo->find($travel_id);
             } else {
+                // Création d'un nouveau trajet
                 $travel = new Travel();
+                $travel->setImage(null);
+                $travel->setUser($user);
             }
 
             $travel->setName($formData['travel_name']);
             $travel->setSteps($steps);
-            $travel->setUser($user);
             $travelRepo->save($travel, true);
 
             return new JsonResponse(['travel_id' => $travel->getId()]);
@@ -118,11 +121,28 @@ class TravelController extends AbstractController
 
         if ($travel_id = $data['id']) {
             $travel = $travelRepo->find($travel_id);
+            $travel->deleteImage($this->getParameter('images_dir'));
+            // Supprimer le trajet en base
             $travelRepo->remove($travel, true);
         }
 
         return new JsonResponse([
             'ok' => 'true'
         ]);
+    }
+
+    #[Route('/save_image', name: 'app_save_image')]
+    public function avatarUpload(Request $request, TravelRepository $travelRepo)
+    {
+        $travel = $travelRepo->find($request->request->get('travel_id'));
+        $travel->deleteImage($this->getParameter('images_dir'));
+
+        $filename = hash("md5", $travel->getName() . uniqid()) . '.jpg';
+        $request->files->get('blob')->move($this->getParameter('images_dir'), $filename);
+
+        $travel->setImage($filename);
+        $travelRepo->save($travel, true);
+
+        return new Response();
     }
 }

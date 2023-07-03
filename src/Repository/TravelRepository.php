@@ -43,7 +43,7 @@ class TravelRepository extends ServiceEntityRepository
     public function findByUser(User $user): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t.id', 't.name')
+            ->select('t.id', 't.name', 't.image')
             ->where('t.user = :user')
             ->setParameter('user', $user)
             ->orderBy('t.id', 'DESC')

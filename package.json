@@ -34,6 +34,7 @@
     "dependencies": {
         "@headlessui/react": "^1.7.14",
         "date-fns": "^2.30.0",
-        "react-beautiful-dnd": "^13.1.1"
+        "react-beautiful-dnd": "^13.1.1",
+        "react-cropper": "^2.3.3"
     }
 }

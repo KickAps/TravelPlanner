@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
 class Travel
 {
+    const DEFAULT_JPG = "default.jpg";
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,6 +27,9 @@ class Travel
     #[ORM\ManyToOne(inversedBy: 'travels')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -75,6 +80,28 @@ class Travel
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image = null): self
+    {
+        $this->image = $image ?? $this::DEFAULT_JPG;
+
+        return $this;
+    }
+
+    public function deleteImage(string $folder): self
+    {
+        // Supprime l'image associée dans le dossier des images
+        if ($this->getImage() !== $this::DEFAULT_JPG) {
+            unlink($folder . $this->getImage());
+        }
 
         return $this;
     }

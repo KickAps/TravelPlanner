@@ -102,6 +102,33 @@ body {
     background: white center/cover url('../logo/google-logo.svg') no-repeat;
 }
 
+.btn-crop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: grey;
+    color: white;
+    font-size: 25px;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+        background-color: #555;
+    }
+}
+
+.img-preview {
+    overflow: hidden;
+    height: 250px;
+}
+
+// 
+// RESPONSIVE
+// 
 @media screen and (max-width: $small_size) {
     .pac-item {
         @extend .pac-item;
