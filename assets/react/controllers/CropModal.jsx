@@ -94,17 +94,17 @@ class CropModal extends Component {
                     <div className="flex mt-4">
                         <button
                             type="button"
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
-                            onClick={() => this.getCropData(travel_id)}
-                        >
-                            Confirmer
-                        </button>
-                        <button
-                            type="button"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
                             onClick={() => onClose(null)}
                         >
                             Fermer
+                        </button>
+                        <button
+                            type="button"
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                            onClick={() => this.getCropData(travel_id)}
+                        >
+                            Confirmer
                         </button>
                     </div>
                 </div>

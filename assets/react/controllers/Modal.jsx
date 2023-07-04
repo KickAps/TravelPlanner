@@ -12,19 +12,18 @@ class Modal extends Component {
                     <div className="flex">
                         <button
                             type="button"
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
-                            onClick={onConfirm}
-                        >
-                            Confirmer
-                        </button>
-                        <button
-                            type="button"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
                             onClick={onClose}
                         >
                             Fermer
                         </button>
-
+                        <button
+                            type="button"
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                            onClick={onConfirm}
+                        >
+                            Confirmer
+                        </button>
                     </div>
                 </div>
             </div>
