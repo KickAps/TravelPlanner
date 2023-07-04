@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TravelController extends AbstractController
 {
-    #[Route('/edit_travel', name: 'app_edit_travel')]
+    #[Route('/travel/edit', name: 'app_edit_travel')]
     public function edit_travel(Request $request, TravelRepository $travelRepo): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -100,7 +100,7 @@ class TravelController extends AbstractController
         ]);
     }
 
-    #[Route('/play_travel', name: 'app_play_travel')]
+    #[Route('/travel/play', name: 'app_play_travel')]
     public function play_travel(Request $request, TravelRepository $travelRepo): Response
     {
         if ($travel_id = $request->get('id')) {
@@ -114,7 +114,7 @@ class TravelController extends AbstractController
         ]);
     }
 
-    #[Route('/delete_travel', name: 'app_delete_travel')]
+    #[Route('/travel/delete', name: 'app_delete_travel')]
     public function delete_travel(Request $request, TravelRepository $travelRepo): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -131,8 +131,8 @@ class TravelController extends AbstractController
         ]);
     }
 
-    #[Route('/save_image', name: 'app_save_image')]
-    public function avatarUpload(Request $request, TravelRepository $travelRepo)
+    #[Route('/image/save', name: 'app_save_image')]
+    public function save_image(Request $request, TravelRepository $travelRepo)
     {
         $travel = $travelRepo->find($request->request->get('travel_id'));
         $travel->deleteImage($this->getParameter('images_dir'));

@@ -209,7 +209,7 @@ class Day extends React.Component {
 
         const formJson = Object.fromEntries(formData.entries());
 
-        fetch(window.location.origin + '/edit_travel', {
+        fetch(window.location.origin + '/travel/edit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

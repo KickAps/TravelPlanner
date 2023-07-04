@@ -28,11 +28,11 @@ class Travel extends Component {
     };
 
     redirect_play = (travel_id) => {
-        window.location.href = window.location.origin + "/play_travel?id=" + travel_id;
+        window.location.href = window.location.origin + "/travel/play?id=" + travel_id;
     }
 
     redirect_edit = (travel_id) => {
-        window.location.href = window.location.origin + "/edit_travel?id=" + travel_id;
+        window.location.href = window.location.origin + "/travel/edit?id=" + travel_id;
     }
 
     redirect_budget = (travel_id) => {
@@ -40,7 +40,7 @@ class Travel extends Component {
     }
 
     deleteTravel = (travel_id) => {
-        fetch(window.location.origin + '/delete_travel', {
+        fetch(window.location.origin + '/travel/delete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

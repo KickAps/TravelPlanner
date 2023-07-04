@@ -27,7 +27,7 @@ class CropModal extends Component {
                     form_data.append('travel_id', travel_id);
                     form_data.append('blob', blob);
 
-                    fetch(window.location.origin + '/save_image', {
+                    fetch(window.location.origin + '/image/save', {
                         method: 'POST',
                         body: form_data,
                     }).then(response => {
