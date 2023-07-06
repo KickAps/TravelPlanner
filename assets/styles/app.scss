@@ -2,7 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+@import "primereact/resources/themes/lara-light-blue/theme.css";
+@import "primereact/resources/primereact.min.css";
 
 $small_size: 1024px;
 
@@ -126,6 +129,25 @@ body {
     height: 250px;
 }
 
+.p-datatable-wrapper {
+    @extend .p-datatable-wrapper;
+    @apply rounded-lg;
+}
+
+.p-datatable .p-datatable-tbody>tr>td {
+    padding: 0.75rem;
+}
+
+.p-progressbar {
+    @extend .p-progressbar;
+    min-width: 700px;
+}
+
+.p-chip {
+    @extend .p-chip;
+    @apply bg-white;
+}
+
 // 
 // RESPONSIVE
 // 
@@ -151,5 +173,10 @@ body {
         transform: scale(1.7);
         top: 2px !important;
         right: 1px !important;
+    }
+
+    .p-progressbar {
+        @extend .p-progressbar;
+        min-width: 300px;
     }
 }
