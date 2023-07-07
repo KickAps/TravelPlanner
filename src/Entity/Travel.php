@@ -31,6 +31,9 @@ class Travel
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
+    #[ORM\Column(nullable: true)]
+    private array $travelers = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +105,18 @@ class Travel
         if ($this->getImage() !== $this::DEFAULT_JPG) {
             unlink($folder . $this->getImage());
         }
+
+        return $this;
+    }
+
+    public function getTravelers(): array
+    {
+        return $this->travelers;
+    }
+
+    public function setTravelers(?array $travelers): self
+    {
+        $this->travelers = $travelers;
 
         return $this;
     }

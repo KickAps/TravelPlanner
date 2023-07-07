@@ -4,19 +4,22 @@ import { ProgressBar } from 'primereact/progressbar';
 import { Chip } from 'primereact/chip';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
+import { Dialog } from 'primereact/dialog';
 import { format } from 'date-fns';
+import Button from './Button';
 
 class Budget extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            travelers: props.travelers,
+            travelers_modal: false,
         };
     }
 
-    openModal = (travel_id) => {
+    openTravelersModal = (state) => {
         this.setState({
-            modalOpen: true,
-            travel_id: travel_id,
+            travelers_modal: state,
         });
     };
 
@@ -75,18 +78,106 @@ class Budget extends Component {
         console.log(e);
     }
 
+    addNewTraveler = () => {
+        const { travelers } = this.state;
+        const new_traveler = { name: "", id: travelers.length + 1 };
+
+        this.setState({
+            travelers: [...travelers, new_traveler],
+        });
+    }
+
+    submitTravelersForm = () => {
+        const { travel_id } = this.props;
+        const form = document.getElementById('travelers_form');
+        let form_data = new FormData(form);
+
+        let traveler = {};
+        let new_travelers = [];
+
+        for (var data of form_data.entries()) {
+            if (data[0].startsWith("traveler_name_")) {
+                traveler = {};
+                traveler['name'] = data[1];
+            } else {
+                traveler['id'] = data[1];
+                new_travelers.push(traveler);
+            }
+        }
+
+        this.setState({
+            travelers: new_travelers,
+        });
+
+        this.openTravelersModal(false);
+
+        form_data = new FormData();
+        form_data.append('travel_id', travel_id);
+        form_data.append('travelers', JSON.stringify(new_travelers));
+
+        fetch(window.location.origin + '/edit/travelers', {
+            method: 'POST',
+            body: form_data,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+        });
+    }
+
     render() {
         const { budgets, expenses } = this.props;
+        const { travelers, travelers_modal } = this.state;
+
+        const footerContent = (
+            <div>
+                <button
+                    type="button"
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                    onClick={this.submitTravelersForm}
+                >
+                    Confirmer
+                </button>
+            </div>
+        );
 
         return (
             <div className="p-8">
                 <div className="text-2xl ml-3 mb-2">
                     <i className="fa-solid fa-user-group text-gray-500"></i>
                     <span className="ml-2">Voyageurs</span>
+                    <i
+                        onClick={() => this.openTravelersModal(true)}
+                        className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
+                    ></i>
                 </div>
                 <div className="card flex flex-wrap gap-2">
-                    <Chip label="Florian" removable={false} />
-                    <Chip label="Camille" removable={false} />
+                    {travelers.map((traveler, index) => (
+                        <div id={traveler.id} key={index}>
+                            <Chip label={traveler.name} removable={false} />
+                        </div>
+                    ))}
+                    <Dialog header="Nom des voyageurs" visible={travelers_modal} className="w-1/2" onHide={() => this.openTravelersModal(false)} footer={footerContent}>
+                        <form id="travelers_form">
+                            {travelers.map((traveler, index) => (
+                                <div id={traveler.id} key={index}>
+                                    <input
+                                        name={"traveler_name_" + index}
+                                        type="text"
+                                        defaultValue={traveler.name}
+                                        className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mb-2"
+                                        required
+                                    />
+                                    <input
+                                        name={"traveler_id_" + index}
+                                        type="hidden"
+                                        defaultValue={traveler.id}
+                                    />
+                                </div>
+                            ))}
+                            <Button name="plus" onClick={this.addNewTraveler} />
+                        </form>
+                    </Dialog>
                 </div>
                 <div className="flex w-full mt-2 text-gray-700">
                     <div className="text-center text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
