@@ -41,7 +41,7 @@ class BudgetController extends AbstractController
                 'name' => 'Courses',
                 'value' => 100,
                 'date' => '2023-01-06',
-                'person' => 'Florian',
+                'traveler' => 1,
                 'budget' => 2,
             ],
             [
@@ -49,7 +49,7 @@ class BudgetController extends AbstractController
                 'name' => 'Train',
                 'value' => 150,
                 'date' => '2023-02-01',
-                'person' => 'Camille',
+                'traveler' => 2,
                 'budget' => 1,
             ],
             [
@@ -57,7 +57,7 @@ class BudgetController extends AbstractController
                 'name' => 'Essence',
                 'value' => 50,
                 'date' => '2023-02-06',
-                'person' => 'Florian',
+                'traveler' => 1,
                 'budget' => 2,
             ],
             [
@@ -65,7 +65,7 @@ class BudgetController extends AbstractController
                 'name' => 'Tennis',
                 'value' => 20,
                 'date' => '2023-03-01',
-                'person' => 'Florian',
+                'traveler' => 1,
                 'budget' => 3,
             ],
             [
@@ -73,7 +73,7 @@ class BudgetController extends AbstractController
                 'name' => 'Jetski',
                 'value' => 150,
                 'date' => '2023-01-01',
-                'person' => 'Camille',
+                'traveler' => 2,
                 'budget' => 3,
             ],
         ];
@@ -81,11 +81,14 @@ class BudgetController extends AbstractController
         $travel_id = $request->get('id');
         $travel = $travelRepo->find($travel_id);
 
+        $travelers = $travel->getTravelers();
+        $travelers = $travelers ? $travelers['travelers'] : [];
+
         return $this->render('budget/index.html.twig', [
             'travel_id' => $travel_id,
             'budgets' => $budgets,
             'expenses' => $expenses,
-            'travelers' => $travel->getTravelers()['travelers']
+            'travelers' => $travelers
         ]);
     }
 

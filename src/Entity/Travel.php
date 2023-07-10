@@ -32,7 +32,7 @@ class Travel
     private ?string $image = null;
 
     #[ORM\Column(nullable: true)]
-    private array $travelers = [];
+    private ?array $travelers = [];
 
     public function getId(): ?int
     {
@@ -109,7 +109,7 @@ class Travel
         return $this;
     }
 
-    public function getTravelers(): array
+    public function getTravelers(): ?array
     {
         return $this->travelers;
     }

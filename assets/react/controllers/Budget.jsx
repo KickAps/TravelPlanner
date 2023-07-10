@@ -14,7 +14,23 @@ class Budget extends Component {
         this.state = {
             travelers: props.travelers,
             travelers_modal: false,
+            travelers_select: {},
         };
+    }
+
+    componentDidMount() {
+        const { expenses, travelers } = this.props;
+        let travelers_select = {};
+
+        // Initialise la liste des SELECT pour les voyageurs 
+        expenses.map((expense, index) => {
+            const name = this.getTravelerName(expense.traveler);
+            travelers_select[expense.id] = { id: expense.traveler, name: name };
+        });
+
+        this.setState({
+            travelers_select: travelers_select,
+        });
     }
 
     openTravelersModal = (state) => {
@@ -69,6 +85,40 @@ class Budget extends Component {
         );
     }
 
+    // Retrouve le nom du voyageur via son ID
+    getTravelerName = (id) => {
+        const { travelers } = this.state;
+        return travelers.find(traveler => traveler.id === id).name;
+    }
+
+    updateTravelersSelect = (expense_id, traveler_id) => {
+        const { travelers_select } = this.state;
+
+        const name = this.getTravelerName(traveler_id);
+        travelers_select[expense_id] = { id: traveler_id, name: name };
+
+        this.setState({
+            travelers_select: travelers_select,
+        });
+    };
+
+    templateTraveler = (expense) => {
+        const { travelers, travelers_select } = this.state;
+
+        return (
+            <div className="card flex justify-content-center">
+                <Dropdown
+                    value={travelers_select[expense.id] ? travelers_select[expense.id].id : ""}
+                    onChange={(e) => this.updateTravelersSelect(expense.id, e.value)}
+                    options={travelers}
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Choisir"
+                    className="w-full" />
+            </div>
+        );
+    }
+
     templateDate = (expense) => {
         const date = new Date(expense.date);
         return format(date, 'dd/MM/yyyy');
@@ -100,8 +150,10 @@ class Budget extends Component {
                 traveler = {};
                 traveler['name'] = data[1];
             } else {
-                traveler['id'] = data[1];
-                new_travelers.push(traveler);
+                traveler['id'] = parseInt(data[1]);
+                if (traveler['name']) {
+                    new_travelers.push(traveler);
+                }
             }
         }
 
@@ -143,6 +195,8 @@ class Budget extends Component {
 
         return (
             <div className="p-8">
+
+                {/* VOYAGEURS */}
                 <div className="text-2xl ml-3 mb-2">
                     <i className="fa-solid fa-user-group text-gray-500"></i>
                     <span className="ml-2">Voyageurs</span>
@@ -175,27 +229,37 @@ class Budget extends Component {
                                     />
                                 </div>
                             ))}
-                            <Button name="plus" onClick={this.addNewTraveler} />
+                            {travelers.length < 2 ? (
+                                <Button name="plus" onClick={this.addNewTraveler} />
+                            ) : (
+                                <span>Le nombre de voyageurs est actuellement limité à 2</span>
+                            )}
+
                         </form>
                     </Dialog>
                 </div>
-                <div className="flex w-full mt-2 text-gray-700">
-                    <div className="text-center text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
-                        <span className="">{"Florian (170 €)"}</span>
+                {travelers.length === 2 && (
+                    <div>
+                        <div className="flex w-full mt-2 text-gray-700">
+                            <div className="text-center text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
+                                <span className="">{"Florian (170 €)"}</span>
+                            </div>
+                            <div className="text-center text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
+                                <span className="">{"Camille (300 €)"}</span>
+                            </div>
+                        </div>
+                        <div className="flex rounded-lg w-full mt-2 overflow-hidden">
+                            <div className="bg-blue-400 text-center text-white text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
+                                <span className="p-4">{this.getPercentage(170, 470, true)}</span>
+                            </div>
+                            <div className="bg-green-400 text-center text-white text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
+                                <span className="p-4">{this.getPercentage(300, 470, true)}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-center text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
-                        <span className="">{"Camille (300 €)"}</span>
-                    </div>
-                </div>
-                <div className="flex rounded-lg w-full mt-2 overflow-hidden">
-                    <div className="bg-blue-400 text-center text-white text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
-                        <span className="p-4">{this.getPercentage(170, 470, true)}</span>
-                    </div>
-                    <div className="bg-green-400 text-center text-white text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
-                        <span className="p-4">{this.getPercentage(300, 470, true)}</span>
-                    </div>
-                </div>
+                )}
 
+                {/* BUDGETS */}
                 <div className="text-2xl ml-3 mb-2 mt-5">
                     <i className="fa-solid fa-sack-dollar text-yellow-500"></i>
                     <span className="ml-2">Budgets</span>
@@ -207,6 +271,7 @@ class Budget extends Component {
                     <Column header="Pourcentage" body={this.templateProgress}></Column>
                 </DataTable>
 
+                {/* DEPENSES */}
                 <div className="text-2xl ml-3 mb-2 mt-5">
                     <i className="fa-solid fa-coins text-yellow-500"></i>
                     <span className="ml-2">Dépenses</span>
@@ -214,7 +279,7 @@ class Budget extends Component {
                 <DataTable value={expenses} stripedRows showGridlines cellSelection selectionMode="single" onCellSelect={this.onCellSelect}>
                     <Column field="name" header="Nom" sortable></Column>
                     <Column field="value" header="Valeur" body={this.templateValue} sortable></Column>
-                    <Column field="person" header="Voyageur" sortable></Column>
+                    <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="budget" header="Catégorie" /* body={this.templateSelect} */ sortable></Column>
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
                 </DataTable>
