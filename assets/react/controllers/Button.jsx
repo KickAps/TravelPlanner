@@ -30,7 +30,7 @@ class Button extends React.Component {
             case "delete":
                 bg_color = "bg-red-500";
                 bg_color_hover = "hover:bg-red-700";
-                fa_class = "fa-trash";
+                fa_class = "fa-trash-can";
                 label = "Supprimer";
                 break;
 
