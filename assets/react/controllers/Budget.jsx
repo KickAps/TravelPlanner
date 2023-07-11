@@ -31,7 +31,8 @@ class Budget extends Component {
             budgets: props.budgets,
             // Expenses
             expenses: props.expenses,
-            expenses_modal: false,
+            expenses_update_modal: false,
+            expenses_delete_modal: false,
             current_expense: this.empty_expense,
         };
     }
@@ -57,16 +58,30 @@ class Budget extends Component {
         });
     };
 
-    openExpensesModal = (expense) => {
+    openExpensesUpdateModal = (expense) => {
         this.setState({
-            expenses_modal: true,
+            expenses_update_modal: true,
             current_expense: expense
         });
     };
 
-    closeExpensesModal = () => {
+    closeExpensesUpdateModal = () => {
         this.setState({
-            expenses_modal: false,
+            expenses_update_modal: false,
+            current_expense: this.empty_expense,
+        });
+    };
+
+    openExpensesDeleteModal = (expense) => {
+        this.setState({
+            expenses_delete_modal: true,
+            current_expense: expense
+        });
+    };
+
+    closeExpensesDeleteModal = () => {
+        this.setState({
+            expenses_delete_modal: false,
             current_expense: this.empty_expense,
         });
     };
@@ -120,7 +135,12 @@ class Budget extends Component {
     // Retrouve le nom du voyageur via son ID
     getTravelerName = (id) => {
         const { travelers } = this.state;
-        return travelers.find(traveler => traveler.id === id).name;
+        const traveler = travelers.find(traveler => traveler.id === id);
+        if (traveler) {
+            return traveler.name;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -176,11 +196,11 @@ class Budget extends Component {
         return (
             <div>
                 <i
-                    onClick={() => this.openExpensesModal(expense)}
+                    onClick={() => this.openExpensesUpdateModal(expense)}
                     className="fa-solid fa-pen text-green-500 text-xl cursor-pointer hover:text-green-700 ml-2"
                 ></i>
                 <i
-                    onClick={() => this.openTravelersModal(expense.id)}
+                    onClick={() => this.openExpensesDeleteModal(expense)}
                     className="fa-solid fa-trash-can text-red-500 text-xl cursor-pointer hover:text-red-700 ml-4"
                 ></i>
             </div>
@@ -252,13 +272,43 @@ class Budget extends Component {
         });
     };
 
-    saveCurrentExpense = () => {
+    saveExpense = () => {
         const { expenses, current_expense } = this.state;
+        let update = false;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
                 expenses[i] = current_expense;
                 this.updateTravelersSelect(expenses[i].id, expenses[i].traveler);
+                update = true;
+                break;
+            }
+        }
+
+        // Création d'une nouvelle dépense
+        if (!update) {
+            this.setState({
+                expenses: [...expenses, current_expense],
+            });
+            // Ajout à la liste des SELECT Voyageurs
+        } else {
+            this.setState({
+                expenses: expenses,
+            });
+        }
+
+        this.closeExpensesUpdateModal();
+
+        // TODO : sauvegarde back
+        // Récupérer l'ID en cas de création, ensuite fermer la modal
+    }
+
+    deleteExpense = () => {
+        const { expenses, current_expense } = this.state;
+
+        for (let i = 0; i < expenses.length; i++) {
+            if (expenses[i].id === current_expense.id) {
+                expenses.splice(i, 1);
                 break;
             }
         }
@@ -267,13 +317,13 @@ class Budget extends Component {
             expenses: expenses,
         });
 
-        this.closeExpensesModal();
+        this.closeExpensesDeleteModal();
 
-        // TODO : sauvegarde back
+        // TODO : delete back
     }
 
     render() {
-        const { travelers, travelers_modal, budgets, expenses, expenses_modal, current_expense } = this.state;
+        const { travelers, travelers_modal, budgets, expenses, expenses_update_modal, expenses_delete_modal, current_expense } = this.state;
 
         const footerContent = (
             <div>
@@ -287,12 +337,24 @@ class Budget extends Component {
             </div>
         );
 
-        const expenses_modal_footer = (
+        const expenses_update_modal_footer = (
             <div>
                 <button
                     type="button"
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
-                    onClick={this.saveCurrentExpense}
+                    onClick={this.saveExpense}
+                >
+                    Confirmer
+                </button>
+            </div>
+        );
+
+        const expenses_delete_modal_footer = (
+            <div>
+                <button
+                    type="button"
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                    onClick={this.deleteExpense}
                 >
                     Confirmer
                 </button>
@@ -369,6 +431,10 @@ class Budget extends Component {
                 <div className="text-2xl ml-3 mb-2 mt-5">
                     <i className="fa-solid fa-sack-dollar text-yellow-500"></i>
                     <span className="ml-2">Budgets</span>
+                    <i
+                        onClick={() => this.openTravelersModal(true)}
+                        className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
+                    ></i>
                 </div>
                 <DataTable value={budgets} stripedRows showGridlines >
                     <Column field="name" header="Nom"></Column>
@@ -381,6 +447,10 @@ class Budget extends Component {
                 <div className="text-2xl ml-3 mb-2 mt-5">
                     <i className="fa-solid fa-coins text-yellow-500"></i>
                     <span className="ml-2">Dépenses</span>
+                    <i
+                        onClick={() => this.openExpensesUpdateModal(this.empty_expense)}
+                        className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
+                    ></i>
                 </div>
                 <DataTable value={expenses} stripedRows showGridlines cellSelection selectionMode="single" onCellSelect={this.onCellSelect}>
                     <Column field="name" header="Nom" sortable></Column>
@@ -390,7 +460,7 @@ class Budget extends Component {
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
                     <Column field="id" header="Actions" body={this.templateActions} sortable></Column>
                 </DataTable>
-                <Dialog visible={expenses_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expenses_modal_footer} onHide={this.closeExpensesModal}>
+                <Dialog visible={expenses_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expenses_update_modal_footer} onHide={this.closeExpensesUpdateModal}>
                     <div className="">
                         <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
                             Nom
@@ -447,6 +517,12 @@ class Budget extends Component {
                             className="block bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight w-auto mx-auto"
                             required
                         />
+                    </div>
+                </Dialog>
+                <Dialog visible={expenses_delete_modal} header="Supprimer une dépense" className="w-1/4" footer={expenses_delete_modal_footer} onHide={this.closeExpensesDeleteModal}>
+                    <div className="">
+                        <span>Confirmer la suppression de la dépense </span>
+                        <span className="font-bold">{current_expense.name}</span>
                     </div>
                 </Dialog>
             </div >
