@@ -32,6 +32,7 @@ class Budget extends Component {
             travelers_select: {},
             // Budgets
             budgets: props.budgets,
+            budgets_select: {},
             // Expenses
             expenses: props.expenses,
             expenses_update_modal: false,
@@ -42,6 +43,11 @@ class Budget extends Component {
     }
 
     componentDidMount() {
+        this.initTravelersSelect();
+        this.initBudgetsSelect();
+    }
+
+    initTravelersSelect = () => {
         const { expenses } = this.state;
         let travelers_select = {};
 
@@ -54,7 +60,22 @@ class Budget extends Component {
         this.setState({
             travelers_select: travelers_select,
         });
-    }
+    };
+
+    initBudgetsSelect = () => {
+        const { expenses } = this.state;
+        let budgets_select = {};
+
+        // Initialise la liste des SELECT pour les budgets 
+        expenses.map((expense, index) => {
+            const name = this.getBudgetName(expense.budget);
+            budgets_select[expense.id] = { id: expense.budget, name: name };
+        });
+
+        this.setState({
+            budgets_select: budgets_select,
+        });
+    };
 
     openTravelersModal = (state) => {
         this.setState({
@@ -137,6 +158,16 @@ class Budget extends Component {
         );
     };
 
+    getBudgetName = (id) => {
+        const { budgets } = this.state;
+        const budget = budgets.find(budget => budget.id === id);
+        if (budget) {
+            return budget.name;
+        } else {
+            return null;
+        }
+    };
+
     // Retrouve le nom du voyageur via son ID
     getTravelerName = (id) => {
         const { travelers } = this.state;
@@ -179,16 +210,52 @@ class Budget extends Component {
         const { travelers, travelers_select } = this.state;
 
         return (
-            <div className="card flex justify-content-center">
-                <Dropdown
-                    value={travelers_select[expense.id] ? travelers_select[expense.id].id : ""}
-                    onChange={(e) => this.updateTravelersSelect(expense.id, e.value)}
-                    options={travelers}
-                    optionLabel="name"
-                    optionValue="id"
-                    placeholder="Choisir"
-                    className="w-full" />
-            </div>
+            <Dropdown
+                value={travelers_select[expense.id] ? travelers_select[expense.id].id : ""}
+                onChange={(e) => this.updateTravelersSelect(expense.id, e.value)}
+                options={travelers}
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Choisir"
+                className="w-full"
+            />
+        );
+    };
+
+    updateBudgetsSelect = (expense_id, budget_id) => {
+        const { budgets_select, expenses } = this.state;
+
+        const name = this.getBudgetName(budget_id);
+        budgets_select[expense_id] = { id: budget_id, name: name };
+
+        this.setState({
+            budgets_select: budgets_select,
+        });
+
+        for (let i = 0; i < expenses.length; i++) {
+            if (expenses[i].id === expense_id) {
+                expenses[i].budget = budget_id;
+                this.setState({
+                    expenses: expenses,
+                });
+                break;
+            }
+        }
+    };
+
+    templateBudget = (expense) => {
+        const { budgets, budgets_select } = this.state;
+
+        return (
+            <Dropdown
+                value={budgets_select[expense.id] ? budgets_select[expense.id].id : ""}
+                onChange={(e) => this.updateBudgetsSelect(expense.id, e.value)}
+                options={budgets}
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Choisir"
+                className="w-full"
+            />
         );
     };
 
@@ -261,7 +328,7 @@ class Budget extends Component {
         });
     };
 
-    onInputChange = (e, name) => {
+    onExpenseChange = (e, name) => {
         const { current_expense } = this.state;
         const val = (e.target && e.target.value) || e.value;
         let expense = { ...current_expense };
@@ -282,7 +349,7 @@ class Budget extends Component {
         });
 
         // Si un des champs n'est pas renseigné
-        if (!current_expense.name || !current_expense.value || !current_expense.traveler || !current_expense.value) {
+        if (!current_expense.name || !current_expense.value || !current_expense.traveler || !current_expense.budget) {
             return;
         }
 
@@ -290,6 +357,7 @@ class Budget extends Component {
             if (expenses[i].id === current_expense.id) {
                 expenses[i] = current_expense;
                 this.updateTravelersSelect(expenses[i].id, expenses[i].traveler);
+                this.updateBudgetsSelect(expenses[i].id, expenses[i].budget);
                 update = true;
                 break;
             }
@@ -466,12 +534,12 @@ class Budget extends Component {
                     <Column field="name" header="Nom" sortable></Column>
                     <Column field="value" header="Valeur" body={this.templateValue} sortable></Column>
                     <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
-                    <Column field="budget" header="Catégorie" /* body={this.templateSelect} */ sortable></Column>
+                    <Column field="budget" header="Budget" body={this.templateBudget} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
                     <Column field="id" header="Actions" body={this.templateActions} sortable></Column>
                 </DataTable>
                 <Dialog visible={expenses_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expenses_update_modal_footer} onHide={this.closeExpensesUpdateModal}>
-                    <div className="columns-2 gap-4 mt-2">
+                    <div className="grid grid-cols-2 gap-x-4 mt-2">
                         <div>
                             <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
                                 Nom
@@ -479,7 +547,7 @@ class Budget extends Component {
                             <InputText
                                 id="name"
                                 value={current_expense.name}
-                                onChange={(e) => this.onInputChange(e, "name")}
+                                onChange={(e) => this.onExpenseChange(e, "name")}
                                 className={expense_submitted && !current_expense.name ? "p-invalid" : ""}
                             />
                             {expense_submitted && !current_expense.name && <small className="p-error">Le nom est obligatoire</small>}
@@ -491,7 +559,7 @@ class Budget extends Component {
                             <InputNumber
                                 id="value"
                                 value={current_expense.value}
-                                onChange={(e) => this.onInputChange(e, "value")}
+                                onChange={(e) => this.onExpenseChange(e, "value")}
                                 mode="currency"
                                 currency="EUR"
                                 locale="fr-FR"
@@ -506,14 +574,29 @@ class Budget extends Component {
                         </label>
                         <Dropdown
                             value={current_expense.traveler}
-                            onChange={(e) => this.onInputChange(e, "traveler")}
+                            onChange={(e) => this.onExpenseChange(e, "traveler")}
                             options={travelers}
                             optionLabel="name"
                             optionValue="id"
                             placeholder="Choisir"
-                            className={expense_submitted && !current_expense.value ? "w-full p-invalid" : "w-full"}
+                            className={expense_submitted && !current_expense.traveler ? "w-full p-invalid" : "w-full"}
                         />
                         {expense_submitted && !current_expense.traveler && <small className="p-error">Le voyageur est obligatoire</small>}
+                    </div>
+                    <div className="mt-2">
+                        <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="value">
+                            Budget
+                        </label>
+                        <Dropdown
+                            value={current_expense.budget}
+                            onChange={(e) => this.onExpenseChange(e, "budget")}
+                            options={budgets}
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Choisir"
+                            className={expense_submitted && !current_expense.budget ? "w-full p-invalid" : "w-full"}
+                        />
+                        {expense_submitted && !current_expense.budget && <small className="p-error">Le budget est obligatoire</small>}
                     </div>
                     <div className="mt-2">
                         <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="date">
@@ -525,7 +608,7 @@ class Budget extends Component {
                             type="date"
                             ref={(input) => (this.date_picker = input)}
                             onClick={() => this.date_picker.showPicker()}
-                            onChange={(e) => this.onInputChange(e, "date")}
+                            onChange={(e) => this.onExpenseChange(e, "date")}
                             className="block bg-white text-gray-700 p-inputtext cursor-pointer"
                         />
                     </div>

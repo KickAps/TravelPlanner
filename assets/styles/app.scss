@@ -158,6 +158,15 @@ body {
     @apply p-4;
 }
 
+.p-dropdown-panel .p-dropdown-items {
+    padding: 0;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+    @apply text-xl;
+    @apply font-normal;
+}
+
 // 
 // RESPONSIVE
 // 
