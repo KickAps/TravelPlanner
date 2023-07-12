@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { ProgressBar } from 'primereact/progressbar';
 import { Chip } from 'primereact/chip';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { format } from 'date-fns';
 import Button from './Button';
@@ -22,6 +23,8 @@ class Budget extends Component {
             budget: 0,
         };
 
+        this.date_picker = createRef();
+
         this.state = {
             // Travelers
             travelers: props.travelers,
@@ -34,6 +37,7 @@ class Budget extends Component {
             expenses_update_modal: false,
             expenses_delete_modal: false,
             current_expense: this.empty_expense,
+            expense_submitted: false,
         };
     }
 
@@ -69,6 +73,7 @@ class Budget extends Component {
         this.setState({
             expenses_update_modal: false,
             current_expense: this.empty_expense,
+            expense_submitted: false,
         });
     };
 
@@ -106,13 +111,13 @@ class Budget extends Component {
             return value;
         }
 
-    }
+    };
 
     templateProgress = (budget) => {
         return (
             <ProgressBar value={this.getPercentage(budget.current_value, budget.max_value)}></ProgressBar>
         );
-    }
+    };
 
     templateValue = (expense) => {
         return this.formatEuro(expense.value);
@@ -130,7 +135,7 @@ class Budget extends Component {
                     placeholder="Choisir" className="w-full md:w-14rem" />
             </div>
         );
-    }
+    };
 
     // Retrouve le nom du voyageur via son ID
     getTravelerName = (id) => {
@@ -141,7 +146,7 @@ class Budget extends Component {
         } else {
             return null;
         }
-    }
+    };
 
     /**
      * updateTravelersSelect
@@ -185,7 +190,7 @@ class Budget extends Component {
                     className="w-full" />
             </div>
         );
-    }
+    };
 
     templateDate = (expense) => {
         const date = new Date(expense.date);
@@ -207,10 +212,6 @@ class Budget extends Component {
         )
     };
 
-    onCellSelect = (e) => {
-        console.log(e);
-    }
-
     addNewTraveler = () => {
         const { travelers } = this.state;
         const new_traveler = { name: "", id: travelers.length + 1 };
@@ -218,7 +219,7 @@ class Budget extends Component {
         this.setState({
             travelers: [...travelers, new_traveler],
         });
-    }
+    };
 
     submitTravelersForm = () => {
         const { travel_id } = this.props;
@@ -258,11 +259,11 @@ class Budget extends Component {
                 throw new Error('Erreur lors de la requête.');
             }
         });
-    }
+    };
 
     onInputChange = (e, name) => {
         const { current_expense } = this.state;
-        const val = (e.target && e.target.value) || '';
+        const val = (e.target && e.target.value) || e.value;
         let expense = { ...current_expense };
 
         expense[name] = val;
@@ -275,6 +276,15 @@ class Budget extends Component {
     saveExpense = () => {
         const { expenses, current_expense } = this.state;
         let update = false;
+
+        this.setState({
+            expense_submitted: true,
+        });
+
+        // Si un des champs n'est pas renseigné
+        if (!current_expense.name || !current_expense.value || !current_expense.traveler || !current_expense.value) {
+            return;
+        }
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
@@ -301,7 +311,7 @@ class Budget extends Component {
 
         // TODO : sauvegarde back
         // Récupérer l'ID en cas de création, ensuite fermer la modal
-    }
+    };
 
     deleteExpense = () => {
         const { expenses, current_expense } = this.state;
@@ -320,10 +330,10 @@ class Budget extends Component {
         this.closeExpensesDeleteModal();
 
         // TODO : delete back
-    }
+    };
 
     render() {
-        const { travelers, travelers_modal, budgets, expenses, expenses_update_modal, expenses_delete_modal, current_expense } = this.state;
+        const { travelers, travelers_modal, budgets, expenses, expenses_update_modal, expenses_delete_modal, current_expense, expense_submitted } = this.state;
 
         const footerContent = (
             <div>
@@ -452,7 +462,7 @@ class Budget extends Component {
                         className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
                     ></i>
                 </div>
-                <DataTable value={expenses} stripedRows showGridlines cellSelection selectionMode="single" onCellSelect={this.onCellSelect}>
+                <DataTable value={expenses} stripedRows showGridlines>
                     <Column field="name" header="Nom" sortable></Column>
                     <Column field="value" header="Valeur" body={this.templateValue} sortable></Column>
                     <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
@@ -461,49 +471,51 @@ class Budget extends Component {
                     <Column field="id" header="Actions" body={this.templateActions} sortable></Column>
                 </DataTable>
                 <Dialog visible={expenses_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expenses_update_modal_footer} onHide={this.closeExpensesUpdateModal}>
-                    <div className="">
-                        <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
-                            Nom
-                        </label>
-                        <input
-                            id="name"
-                            value={current_expense.name}
-                            onChange={(e) => this.onInputChange(e, "name")}
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            type="text"
-                            autoFocus
-                            required
-                        />
+                    <div className="columns-2 gap-4 mt-2">
+                        <div>
+                            <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
+                                Nom
+                            </label>
+                            <InputText
+                                id="name"
+                                value={current_expense.name}
+                                onChange={(e) => this.onInputChange(e, "name")}
+                                className={expense_submitted && !current_expense.name ? "p-invalid" : ""}
+                            />
+                            {expense_submitted && !current_expense.name && <small className="p-error">Le nom est obligatoire</small>}
+                        </div>
+                        <div>
+                            <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="value">
+                                Montant
+                            </label>
+                            <InputNumber
+                                id="value"
+                                value={current_expense.value}
+                                onChange={(e) => this.onInputChange(e, "value")}
+                                mode="currency"
+                                currency="EUR"
+                                locale="fr-FR"
+                                className={expense_submitted && !current_expense.value ? "p-invalid" : ""}
+                            />
+                            {expense_submitted && !current_expense.value && <small className="p-error">Le montant est obligatoire</small>}
+                        </div>
                     </div>
-                    <div className="">
-                        <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="value">
-                            Montant
-                        </label>
-                        <input
-                            id="value"
-                            value={current_expense.value}
-                            onChange={(e) => this.onInputChange(e, "value")}
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            type="number"
-                            required
-                        />
-                    </div>
-                    <div className="">
+                    <div className="mt-2">
                         <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="value">
                             Voyageur
                         </label>
-                        <div className="card flex justify-content-center">
-                            <Dropdown
-                                value={current_expense.traveler}
-                                onChange={(e) => this.onInputChange(e, "traveler")}
-                                options={travelers}
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Choisir"
-                                className="w-full" />
-                        </div>
+                        <Dropdown
+                            value={current_expense.traveler}
+                            onChange={(e) => this.onInputChange(e, "traveler")}
+                            options={travelers}
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Choisir"
+                            className={expense_submitted && !current_expense.value ? "w-full p-invalid" : "w-full"}
+                        />
+                        {expense_submitted && !current_expense.traveler && <small className="p-error">Le voyageur est obligatoire</small>}
                     </div>
-                    <div className="">
+                    <div className="mt-2">
                         <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="date">
                             Date
                         </label>
@@ -511,11 +523,10 @@ class Budget extends Component {
                             id="date"
                             value={current_expense.date}
                             type="date"
-                            // ref={(input) => (this.dateRefs[id] = input)}
-                            // onClick={() => this.triggerDatePicker(id)}
+                            ref={(input) => (this.date_picker = input)}
+                            onClick={() => this.date_picker.showPicker()}
                             onChange={(e) => this.onInputChange(e, "date")}
-                            className="block bg-white text-gray-700 shadow rounded-lg lg:rounded py-2 px-3 leading-tight w-auto mx-auto"
-                            required
+                            className="block bg-white text-gray-700 p-inputtext cursor-pointer"
                         />
                     </div>
                 </Dialog>

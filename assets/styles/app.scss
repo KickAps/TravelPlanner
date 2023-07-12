@@ -152,6 +152,12 @@ body {
     box-shadow: none;
 }
 
+.p-dialog-draggable .p-dialog-header {
+    @extend .p-dialog-header;
+    @apply cursor-default;
+    @apply p-4;
+}
+
 // 
 // RESPONSIVE
 // 
