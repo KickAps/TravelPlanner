@@ -557,7 +557,7 @@ class Budget extends Component {
                         className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
                     ></i>
                 </div>
-                <DataTable value={expenses} stripedRows showGridlines>
+                <DataTable value={expenses} sortField="date" sortOrder={-1} stripedRows showGridlines>
                     <Column field="name" header="Nom" sortable></Column>
                     <Column field="value" header="Valeur" body={this.templateValue} sortable></Column>
                     <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
