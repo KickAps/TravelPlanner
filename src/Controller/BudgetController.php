@@ -72,4 +72,14 @@ class BudgetController extends AbstractController
             'id' => $expense->getId()
         ]);
     }
+
+    #[Route('/delete/expense', name: 'app_delete_expense')]
+    public function delete_expense(Request $request, ExpenseRepository $expenseRepo, BudgetRepository $budgetRepo)
+    {
+        $expense_id = $request->request->get("expense_id");
+        $expense = $expenseRepo->find($expense_id);
+        $expenseRepo->remove($expense, true);
+
+        return new Response();
+    }
 }

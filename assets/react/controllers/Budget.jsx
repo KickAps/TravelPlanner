@@ -384,13 +384,23 @@ class Budget extends Component {
             }
         }
 
-        this.setState({
-            expenses: expenses,
+        let form_data = new FormData();
+        form_data.append('expense_id', current_expense.id);
+
+        fetch(window.location.origin + '/delete/expense', {
+            method: 'POST',
+            body: form_data,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+
+            this.setState({
+                expenses: expenses,
+            });
+
+            this.closeExpensesDeleteModal();
         });
-
-        this.closeExpensesDeleteModal();
-
-        // TODO : delete back
     };
 
     render() {
