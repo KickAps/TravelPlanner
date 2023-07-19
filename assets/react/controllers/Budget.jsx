@@ -162,33 +162,39 @@ class Budget extends Component {
      * @param {*} traveler_id 
      * Met à jour la liste des SELECT Voyageurs
      */
-    updateTravelersSelect = (expense_id, traveler_id) => {
+    updateTravelersSelect = (expense_id, traveler_id, persist = true) => {
         const { travelers_select, expenses } = this.state;
-
-
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
                 expenses[i].traveler = traveler_id;
 
-                let form_data = new FormData();
-                form_data.append('expense', JSON.stringify(expenses[i]));
+                travelers_select[expense_id] = traveler_id;
 
-                fetch(window.location.origin + '/edit/expense', {
-                    method: 'POST',
-                    body: form_data,
-                }).then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur lors de la requête.');
-                    }
+                if (persist) {
+                    let form_data = new FormData();
+                    form_data.append('expense', JSON.stringify(expenses[i]));
 
-                    travelers_select[expense_id] = traveler_id;
+                    fetch(window.location.origin + '/edit/expense', {
+                        method: 'POST',
+                        body: form_data,
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la requête.');
+                        }
 
+                        this.setState({
+                            travelers_select: travelers_select,
+                            expenses: expenses,
+                        });
+                    });
+                } else {
                     this.setState({
                         travelers_select: travelers_select,
                         expenses: expenses,
                     });
-                });
+                }
+
 
                 break;
             }
@@ -211,31 +217,38 @@ class Budget extends Component {
         );
     };
 
-    updateBudgetsSelect = (expense_id, budget_id) => {
+    updateBudgetsSelect = (expense_id, budget_id, persist = true) => {
         const { budgets_select, expenses } = this.state;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
                 expenses[i].budget = budget_id;
 
-                let form_data = new FormData();
-                form_data.append('expense', JSON.stringify(expenses[i]));
+                budgets_select[expense_id] = budget_id;
 
-                fetch(window.location.origin + '/edit/expense', {
-                    method: 'POST',
-                    body: form_data,
-                }).then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur lors de la requête.');
-                    }
+                if (persist) {
+                    let form_data = new FormData();
+                    form_data.append('expense', JSON.stringify(expenses[i]));
 
-                    budgets_select[expense_id] = budget_id;
+                    fetch(window.location.origin + '/edit/expense', {
+                        method: 'POST',
+                        body: form_data,
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la requête.');
+                        }
 
+                        this.setState({
+                            budgets_select: budgets_select,
+                            expenses: expenses,
+                        });
+                    });
+                } else {
                     this.setState({
                         budgets_select: budgets_select,
                         expenses: expenses,
                     });
-                });
+                }
 
                 break;
             }
@@ -356,8 +369,8 @@ class Budget extends Component {
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
                 expenses[i] = current_expense;
-                this.updateTravelersSelect(expenses[i].id, expenses[i].traveler);
-                this.updateBudgetsSelect(expenses[i].id, expenses[i].budget);
+                this.updateTravelersSelect(expenses[i].id, expenses[i].traveler, false);
+                this.updateBudgetsSelect(expenses[i].id, expenses[i].budget, false);
                 update = true;
                 break;
             }
