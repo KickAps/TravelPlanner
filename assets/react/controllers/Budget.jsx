@@ -165,18 +165,31 @@ class Budget extends Component {
     updateTravelersSelect = (expense_id, traveler_id) => {
         const { travelers_select, expenses } = this.state;
 
-        travelers_select[expense_id] = traveler_id;
 
-        this.setState({
-            travelers_select: travelers_select,
-        });
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
                 expenses[i].traveler = traveler_id;
-                this.setState({
-                    expenses: expenses,
+
+                let form_data = new FormData();
+                form_data.append('expense', JSON.stringify(expenses[i]));
+
+                fetch(window.location.origin + '/edit/expense', {
+                    method: 'POST',
+                    body: form_data,
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la requête.');
+                    }
+
+                    travelers_select[expense_id] = traveler_id;
+
+                    this.setState({
+                        travelers_select: travelers_select,
+                        expenses: expenses,
+                    });
                 });
+
                 break;
             }
         }
@@ -201,18 +214,29 @@ class Budget extends Component {
     updateBudgetsSelect = (expense_id, budget_id) => {
         const { budgets_select, expenses } = this.state;
 
-        budgets_select[expense_id] = budget_id;
-
-        this.setState({
-            budgets_select: budgets_select,
-        });
-
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
                 expenses[i].budget = budget_id;
-                this.setState({
-                    expenses: expenses,
+
+                let form_data = new FormData();
+                form_data.append('expense', JSON.stringify(expenses[i]));
+
+                fetch(window.location.origin + '/edit/expense', {
+                    method: 'POST',
+                    body: form_data,
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la requête.');
+                    }
+
+                    budgets_select[expense_id] = budget_id;
+
+                    this.setState({
+                        budgets_select: budgets_select,
+                        expenses: expenses,
+                    });
                 });
+
                 break;
             }
         }
