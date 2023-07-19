@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TravelRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TravelRepository::class)]
@@ -33,6 +35,14 @@ class Travel
 
     #[ORM\Column(nullable: true)]
     private ?array $travelers = [];
+
+    #[ORM\OneToMany(mappedBy: 'travel', targetEntity: Budget::class, orphanRemoval: true)]
+    private Collection $budgets;
+
+    public function __construct()
+    {
+        $this->budgets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,5 +129,61 @@ class Travel
         $this->travelers = $travelers;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Budget>
+     */
+    public function getBudgets(): Collection
+    {
+        return $this->budgets;
+    }
+
+    public function getArrayBudgets(): array
+    {
+        $budgets = [];
+
+        foreach ($this->budgets as $budget) {
+            array_push($budgets, $budget->toArray());
+        }
+
+        return $budgets;
+    }
+
+    public function addBudget(Budget $budget): self
+    {
+        if (!$this->budgets->contains($budget)) {
+            $this->budgets->add($budget);
+            $budget->setTravel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBudget(Budget $budget): self
+    {
+        if ($this->budgets->removeElement($budget)) {
+            // set the owning side to null (unless already changed)
+            if ($budget->getTravel() === $this) {
+                $budget->setTravel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getArrayExpenses(): array
+    {
+        $expenses = [];
+
+        /** @var Budget $budget */
+        foreach ($this->budgets as $budget) {
+            /** @var Expense $expense */
+            foreach ($budget->getExpenses() as $expense) {
+                array_push($expenses, $expense->toArray());
+            }
+        }
+
+        return $expenses;
     }
 }

@@ -53,8 +53,7 @@ class Budget extends Component {
 
         // Initialise la liste des SELECT pour les voyageurs 
         expenses.map((expense, index) => {
-            const name = this.getTravelerName(expense.traveler);
-            travelers_select[expense.id] = { id: expense.traveler, name: name };
+            travelers_select[expense.id] = expense.traveler;
         });
 
         this.setState({
@@ -68,8 +67,7 @@ class Budget extends Component {
 
         // Initialise la liste des SELECT pour les budgets 
         expenses.map((expense, index) => {
-            const name = this.getBudgetName(expense.budget);
-            budgets_select[expense.id] = { id: expense.budget, name: name };
+            budgets_select[expense.id] = expense.budget;
         });
 
         this.setState({
@@ -158,27 +156,6 @@ class Budget extends Component {
         );
     };
 
-    getBudgetName = (id) => {
-        const { budgets } = this.state;
-        const budget = budgets.find(budget => budget.id === id);
-        if (budget) {
-            return budget.name;
-        } else {
-            return null;
-        }
-    };
-
-    // Retrouve le nom du voyageur via son ID
-    getTravelerName = (id) => {
-        const { travelers } = this.state;
-        const traveler = travelers.find(traveler => traveler.id === id);
-        if (traveler) {
-            return traveler.name;
-        } else {
-            return null;
-        }
-    };
-
     /**
      * updateTravelersSelect
      * @param {*} expense_id 
@@ -188,8 +165,7 @@ class Budget extends Component {
     updateTravelersSelect = (expense_id, traveler_id) => {
         const { travelers_select, expenses } = this.state;
 
-        const name = this.getTravelerName(traveler_id);
-        travelers_select[expense_id] = { id: traveler_id, name: name };
+        travelers_select[expense_id] = traveler_id;
 
         this.setState({
             travelers_select: travelers_select,
@@ -211,7 +187,7 @@ class Budget extends Component {
 
         return (
             <Dropdown
-                value={travelers_select[expense.id] ? travelers_select[expense.id].id : ""}
+                value={travelers_select[expense.id] ? travelers_select[expense.id] : ""}
                 onChange={(e) => this.updateTravelersSelect(expense.id, e.value)}
                 options={travelers}
                 optionLabel="name"
@@ -225,8 +201,7 @@ class Budget extends Component {
     updateBudgetsSelect = (expense_id, budget_id) => {
         const { budgets_select, expenses } = this.state;
 
-        const name = this.getBudgetName(budget_id);
-        budgets_select[expense_id] = { id: budget_id, name: name };
+        budgets_select[expense_id] = budget_id;
 
         this.setState({
             budgets_select: budgets_select,
@@ -248,7 +223,7 @@ class Budget extends Component {
 
         return (
             <Dropdown
-                value={budgets_select[expense.id] ? budgets_select[expense.id].id : ""}
+                value={budgets_select[expense.id] ? budgets_select[expense.id] : ""}
                 onChange={(e) => this.updateBudgetsSelect(expense.id, e.value)}
                 options={budgets}
                 optionLabel="name"
@@ -341,8 +316,9 @@ class Budget extends Component {
     };
 
     saveExpense = () => {
-        const { expenses, current_expense } = this.state;
+        const { travelers_select, budgets_select, expenses, current_expense } = this.state;
         let update = false;
+        let expense_id = 0;
 
         this.setState({
             expense_submitted: true,
@@ -363,22 +339,39 @@ class Budget extends Component {
             }
         }
 
-        // Création d'une nouvelle dépense
-        if (!update) {
-            this.setState({
-                expenses: [...expenses, current_expense],
-            });
-            // Ajout à la liste des SELECT Voyageurs
-        } else {
-            this.setState({
-                expenses: expenses,
-            });
-        }
+        let form_data = new FormData();
+        form_data.append('expense', JSON.stringify(current_expense));
 
-        this.closeExpensesUpdateModal();
+        fetch(window.location.origin + '/edit/expense', {
+            method: 'POST',
+            body: form_data,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            return response.json();
+        }).then((data) => {
+            expense_id = data['id'];
 
-        // TODO : sauvegarde back
-        // Récupérer l'ID en cas de création, ensuite fermer la modal
+            if (update) {
+                this.setState({
+                    expenses: expenses,
+                });
+            } else {
+                current_expense['id'] = expense_id;
+                travelers_select[expense_id] = current_expense.traveler;
+                budgets_select[expense_id] = current_expense.budget;
+
+                this.setState({
+                    expenses: [...expenses, current_expense],
+                    travelers_select: travelers_select,
+                    budgets_select: budgets_select,
+                });
+
+            }
+
+            this.closeExpensesUpdateModal();
+        });
     };
 
     deleteExpense = () => {
