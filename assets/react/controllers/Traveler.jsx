@@ -107,28 +107,32 @@ class Traveler extends Component {
         let bar = [];
 
         for (let i = 1; i <= travelers.length; i++) {
-            header.push(
-                <div key={i} className="text-center text-lg" style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
-                    <span className="">{this.getTravelerName(i) + " (" + total[i] + " €)"}</span>
-                </div>
-            );
+            if (total[i]) {
+                header.push(
+                    <div key={i} className="text-center text-lg p-progressbar-value-animate" style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
+                        <span className="">{this.getTravelerName(i) + " / " + total[i] + " €"}</span>
+                    </div>
+                );
+            }
         }
 
         for (let i = 1; i <= travelers.length; i++) {
             let color;
             switch (i) {
                 case 1:
-                    color = "bg-blue-400"
+                    color = "bg-blue-custom"
                     break;
                 case 2:
-                    color = "bg-green-400"
+                    color = "bg-green-custom"
                     break;
             }
-            bar.push(
-                <div key={i} className={color + " text-center text-white text-lg"} style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
-                    <span className="p-4">{utils.getPercentage(total[i], total['all'], true)}</span>
-                </div>
-            );
+            if (total[i]) {
+                bar.push(
+                    <div key={i} className={color + " text-center text-white text-lg p-progressbar-value-animate"} style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
+                        <span className="p-4">{utils.getPercentage(total[i], total['all'], true)}</span>
+                    </div>
+                );
+            }
         }
 
         return (
@@ -174,12 +178,12 @@ class Traveler extends Component {
                         </form>
                     </Dialog>
                 </div>
-                {travelers.length === 2 && (
+                {travelers.length === 2 && total['all'] > 0 && (
                     <div>
-                        <div className="flex w-full mt-2 text-gray-700">
+                        <div className="flex w-full mt-2 text-gray-700 p-progressbar-determinate">
                             {header}
                         </div>
-                        <div className="flex rounded-lg w-full mt-2 overflow-hidden">
+                        <div className="flex rounded-lg w-full mt-2 overflow-hidden p-progressbar-determinate">
                             {bar}
                         </div>
                     </div>

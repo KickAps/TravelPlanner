@@ -25,7 +25,6 @@ class Expense extends Component {
 
         this.state = {
             // Travelers
-            travelers: props.travelers,
             travelers_select: {},
             // Budgets
             budgets_select: {},
@@ -131,6 +130,7 @@ class Expense extends Component {
      */
     updateTravelersSelect = (expense_id, traveler_id, persist = true) => {
         const { travelers_select, expenses } = this.state;
+        const { refreshTotal } = this.props;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
@@ -154,6 +154,8 @@ class Expense extends Component {
                             travelers_select: travelers_select,
                             expenses: expenses,
                         });
+
+                        refreshTotal();
                     });
                 } else {
                     this.setState({
@@ -169,7 +171,8 @@ class Expense extends Component {
     };
 
     templateTraveler = (expense) => {
-        const { travelers, travelers_select } = this.state;
+        const { travelers_select } = this.state;
+        const { travelers } = this.props;
 
         return (
             <Dropdown
@@ -276,7 +279,7 @@ class Expense extends Component {
 
     saveExpense = () => {
         const { travelers_select, budgets_select, expenses, current_expense } = this.state;
-        const { refreshBudgets } = this.props;
+        const { refreshBudgets, refreshTotal } = this.props;
 
         let update = false;
         let expense_id = 0;
@@ -332,6 +335,7 @@ class Expense extends Component {
             }
 
             refreshBudgets();
+            refreshTotal();
 
             this.closeExpenseUpdateModal();
         });
@@ -339,7 +343,7 @@ class Expense extends Component {
 
     deleteExpense = () => {
         const { expenses, current_expense } = this.state;
-        const { refreshBudgets } = this.props;
+        const { refreshBudgets, refreshTotal } = this.props;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
@@ -364,14 +368,15 @@ class Expense extends Component {
             });
 
             refreshBudgets();
+            refreshTotal();
 
             this.closeExpenseDeleteModal();
         });
     };
 
     render() {
-        const { travelers, expenses, expense_update_modal, expense_delete_modal, current_expense, expense_submitted } = this.state;
-        const { budgets } = this.props;
+        const { expenses, expense_update_modal, expense_delete_modal, current_expense, expense_submitted } = this.state;
+        const { travelers, budgets } = this.props;
 
         const update_footer = (
             <div>

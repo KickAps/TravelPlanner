@@ -27,6 +27,7 @@ class Budget extends Component {
             // Travelers
             travelers: props.travelers,
             travelers_select: {},
+            total: props.total,
             // Budgets
             budgets: props.budgets,
             budgets_select: {},
@@ -114,6 +115,25 @@ class Budget extends Component {
             current_budget: budget,
         });
     };
+
+    refreshTotal = () => {
+        const { travel_id } = this.props;
+
+        fetch(window.location.origin + '/get/expenses/total?travel_id=' + travel_id, {
+            method: 'GET',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            return response.json();
+        }).then((data) => {
+            let total = data['total'];
+
+            this.setState({
+                total: total,
+            });
+        });
+    }
 
     refreshBudgets = () => {
         const { travel_id } = this.props;
@@ -213,14 +233,15 @@ class Budget extends Component {
             });
 
             this.expense_ref.refreshExpenses();
+            this.refreshTotal();
 
             this.closeBudgetDeleteModal();
         });
     };
 
     render() {
-        const { travelers, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses } = this.state;
-        const { travel_id, total } = this.props;
+        const { travelers, total, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses } = this.state;
+        const { travel_id } = this.props;
 
         const update_footer = (
             <div>
@@ -310,7 +331,7 @@ class Budget extends Component {
                 </Dialog>
 
                 {/* DEPENSES */}
-                <Expense travelers={travelers} expenses={expenses} budgets={budgets} travel_id={travel_id} refreshBudgets={this.refreshBudgets} ref={(ref) => { this.expense_ref = ref }} />
+                <Expense travelers={travelers} expenses={expenses} budgets={budgets} travel_id={travel_id} refreshBudgets={this.refreshBudgets} refreshTotal={this.refreshTotal} ref={(ref) => { this.expense_ref = ref }} />
             </div >
         );
     }
