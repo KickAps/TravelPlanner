@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Budget;
 use App\Entity\Expense;
 use App\Repository\BudgetRepository;
 use App\Repository\ExpenseRepository;
@@ -49,6 +50,51 @@ class BudgetController extends AbstractController
         return new Response();
     }
 
+    #[Route('/get/budgets', name: 'app_get_budgets')]
+    public function get_budgets(Request $request, TravelRepository $travelRepo)
+    {
+        $travel = $travelRepo->find($request->get('travel_id'));
+        $budgets = $travel->getArrayBudgets();
+
+        return new JsonResponse([
+            'budgets' => $budgets
+        ]);
+    }
+
+    #[Route('/edit/budget', name: 'app_edit_budget')]
+    public function edit_budget(Request $request, BudgetRepository $budgetRepo, TravelRepository $travelRepo)
+    {
+        $budget_array = json_decode($request->request->get('budget'), true);
+
+        if ($budget_array['id']) {
+            $budget = $budgetRepo->find($budget_array['id']);
+        } else {
+            $budget = new Budget();
+            $budget->setTravel($travelRepo->find($budget_array['travel']));
+            $budget->setCurrentValue(0);
+        }
+
+        $budget->setName($budget_array['name']);
+        $budget->setMaxValue($budget_array['max_value']);
+        $budget->updateCurrentValue();
+
+        $budgetRepo->save($budget, true);
+
+        return new JsonResponse([
+            'id' => $budget->getId()
+        ]);
+    }
+
+    #[Route('/delete/budget', name: 'app_delete_budget')]
+    public function delete_budget(Request $request, BudgetRepository $budgetRepo)
+    {
+        $budget_id = $request->request->get("budget_id");
+        $budget = $budgetRepo->find($budget_id);
+        $budgetRepo->remove($budget, true);
+
+        return new Response();
+    }
+
     #[Route('/edit/expense', name: 'app_edit_expense')]
     public function edit_expense(Request $request, ExpenseRepository $expenseRepo, BudgetRepository $budgetRepo)
     {
@@ -60,13 +106,17 @@ class BudgetController extends AbstractController
             $expense = new Expense();
         }
 
+        $budget = $budgetRepo->find($expense_array['budget']);
+
         $expense->setName($expense_array['name']);
         $expense->setValue($expense_array['value']);
         $expense->setDate(new DateTime($expense_array['date']));
         $expense->setTraveler($expense_array['traveler']);
-        $expense->setBudget($budgetRepo->find($expense_array['budget']));
-
+        $expense->setBudget($budget);
         $expenseRepo->save($expense, true);
+
+        $budget->updateCurrentValue();
+        $budgetRepo->save($budget, true);
 
         return new JsonResponse([
             'id' => $expense->getId()
@@ -78,6 +128,11 @@ class BudgetController extends AbstractController
     {
         $expense_id = $request->request->get("expense_id");
         $expense = $expenseRepo->find($expense_id);
+
+        $budget = $expense->getBudget();
+        $budget->updateCurrentValue();
+        $budgetRepo->save($budget, true);
+
         $expenseRepo->remove($expense, true);
 
         return new Response();

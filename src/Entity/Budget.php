@@ -129,4 +129,18 @@ class Budget
             'travel' => $this->getTravel()->getId(),
         ];
     }
+
+    public function updateCurrentValue(): self
+    {
+        $current_value = 0;
+
+        /** @var Expense $expense */
+        foreach ($this->getExpenses() as $expense) {
+            $current_value += $expense->getValue();
+        }
+
+        $this->setCurrentValue($current_value);
+
+        return $this;
+    }
 }

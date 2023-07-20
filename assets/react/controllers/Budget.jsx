@@ -14,6 +14,14 @@ class Budget extends Component {
     constructor(props) {
         super(props);
 
+        this.empty_budget = {
+            id: null,
+            name: "",
+            max_value: 0,
+            current_value: 0,
+            travel: props.travel_id,
+        };
+
         this.empty_expense = {
             id: null,
             name: "",
@@ -33,10 +41,14 @@ class Budget extends Component {
             // Budgets
             budgets: props.budgets,
             budgets_select: {},
+            budget_update_modal: false,
+            budget_delete_modal: false,
+            current_budget: this.empty_budget,
+            budget_submitted: false,
             // Expenses
             expenses: props.expenses,
-            expenses_update_modal: false,
-            expenses_delete_modal: false,
+            expense_update_modal: false,
+            expense_delete_modal: false,
             current_expense: this.empty_expense,
             expense_submitted: false,
         };
@@ -81,31 +93,60 @@ class Budget extends Component {
         });
     };
 
-    openExpensesUpdateModal = (expense) => {
+    openBudgetUpdateModal = (budget) => {
         this.setState({
-            expenses_update_modal: true,
+            budget_update_modal: true,
+            current_budget: budget
+        });
+    };
+
+    closeBudgetUpdateModal = () => {
+        this.setState({
+            budget_update_modal: false,
+            current_budget: this.empty_budget,
+            budget_submitted: false,
+        });
+    };
+
+    openBudgetDeleteModal = (budget) => {
+        this.setState({
+            budget_delete_modal: true,
+            current_budget: budget
+        });
+    };
+
+    closeBudgetDeleteModal = () => {
+        this.setState({
+            budget_delete_modal: false,
+            current_budget: this.empty_budget,
+        });
+    };
+
+    openExpenseUpdateModal = (expense) => {
+        this.setState({
+            expense_update_modal: true,
             current_expense: expense
         });
     };
 
-    closeExpensesUpdateModal = () => {
+    closeExpenseUpdateModal = () => {
         this.setState({
-            expenses_update_modal: false,
+            expense_update_modal: false,
             current_expense: this.empty_expense,
             expense_submitted: false,
         });
     };
 
-    openExpensesDeleteModal = (expense) => {
+    openExpenseDeleteModal = (expense) => {
         this.setState({
-            expenses_delete_modal: true,
+            expense_delete_modal: true,
             current_expense: expense
         });
     };
 
-    closeExpensesDeleteModal = () => {
+    closeExpenseDeleteModal = () => {
         this.setState({
-            expenses_delete_modal: false,
+            expense_delete_modal: false,
             current_expense: this.empty_expense,
         });
     };
@@ -276,15 +317,30 @@ class Budget extends Component {
         return format(date, 'dd/MM/yyyy');
     };
 
-    templateActions = (expense) => {
+    templateActionsBudget = (budget) => {
         return (
             <div>
                 <i
-                    onClick={() => this.openExpensesUpdateModal(expense)}
+                    onClick={() => this.openBudgetUpdateModal(budget)}
                     className="fa-solid fa-pen text-green-500 text-xl cursor-pointer hover:text-green-700 ml-2"
                 ></i>
                 <i
-                    onClick={() => this.openExpensesDeleteModal(expense)}
+                    onClick={() => this.openBudgetDeleteModal(budget)}
+                    className="fa-solid fa-trash-can text-red-500 text-xl cursor-pointer hover:text-red-700 ml-4"
+                ></i>
+            </div>
+        )
+    };
+
+    templateActionsExpense = (expense) => {
+        return (
+            <div>
+                <i
+                    onClick={() => this.openExpenseUpdateModal(expense)}
+                    className="fa-solid fa-pen text-green-500 text-xl cursor-pointer hover:text-green-700 ml-2"
+                ></i>
+                <i
+                    onClick={() => this.openExpenseDeleteModal(expense)}
                     className="fa-solid fa-trash-can text-red-500 text-xl cursor-pointer hover:text-red-700 ml-4"
                 ></i>
             </div>
@@ -340,6 +396,18 @@ class Budget extends Component {
         });
     };
 
+    onBudgetChange = (e, name) => {
+        const { current_budget } = this.state;
+        const val = (e.target && e.target.value) || e.value;
+        let budget = { ...current_budget };
+
+        budget[name] = val;
+
+        this.setState({
+            current_budget: budget,
+        });
+    };
+
     onExpenseChange = (e, name) => {
         const { current_expense } = this.state;
         const val = (e.target && e.target.value) || e.value;
@@ -349,6 +417,109 @@ class Budget extends Component {
 
         this.setState({
             current_expense: expense,
+        });
+    };
+
+    refreshBudgets = () => {
+        const { travel_id } = this.props;
+
+        fetch(window.location.origin + '/get/budgets?travel_id=' + travel_id, {
+            method: 'GET',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            return response.json();
+        }).then((data) => {
+            let budgets = data['budgets'];
+
+            this.setState({
+                budgets: budgets,
+            });
+        });
+    }
+
+    saveBudget = () => {
+        const { budgets, current_budget } = this.state;
+        let update = false;
+        let budget_id = 0;
+
+        this.setState({
+            budget_submitted: true,
+        });
+
+        // Si un des champs n'est pas renseigné
+        if (!current_budget.name || !current_budget.max_value) {
+            return;
+        }
+
+        for (let i = 0; i < budgets.length; i++) {
+            if (budgets[i].id === current_budget.id) {
+                budgets[i] = current_budget;
+                update = true;
+                break;
+            }
+        }
+
+        let form_data = new FormData();
+        form_data.append('budget', JSON.stringify(current_budget));
+
+        console.log(current_budget);
+
+        fetch(window.location.origin + '/edit/budget', {
+            method: 'POST',
+            body: form_data,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            return response.json();
+        }).then((data) => {
+            budget_id = data['id'];
+
+            if (update) {
+                this.setState({
+                    budgets: budgets,
+                });
+            } else {
+                current_budget['id'] = budget_id;
+
+                this.setState({
+                    budgets: [...budgets, current_budget],
+                });
+
+            }
+
+            this.closeBudgetUpdateModal();
+        });
+    };
+
+    deleteBudget = () => {
+        const { budgets, current_budget } = this.state;
+
+        for (let i = 0; i < budgets.length; i++) {
+            if (budgets[i].id === current_budget.id) {
+                budgets.splice(i, 1);
+                break;
+            }
+        }
+
+        let form_data = new FormData();
+        form_data.append('budget_id', current_budget.id);
+
+        fetch(window.location.origin + '/delete/budget', {
+            method: 'POST',
+            body: form_data,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+
+            this.setState({
+                budgets: budgets,
+            });
+
+            this.closeBudgetDeleteModal();
         });
     };
 
@@ -407,7 +578,9 @@ class Budget extends Component {
 
             }
 
-            this.closeExpensesUpdateModal();
+            this.refreshBudgets();
+
+            this.closeExpenseUpdateModal();
         });
     };
 
@@ -436,14 +609,14 @@ class Budget extends Component {
                 expenses: expenses,
             });
 
-            this.closeExpensesDeleteModal();
+            this.closeExpenseDeleteModal();
         });
     };
 
     render() {
-        const { travelers, travelers_modal, budgets, expenses, expenses_update_modal, expenses_delete_modal, current_expense, expense_submitted } = this.state;
+        const { travelers, travelers_modal, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses, expense_update_modal, expense_delete_modal, current_expense, expense_submitted } = this.state;
 
-        const footerContent = (
+        const travelers_update_modal_footer = (
             <div>
                 <button
                     type="button"
@@ -455,7 +628,31 @@ class Budget extends Component {
             </div>
         );
 
-        const expenses_update_modal_footer = (
+        const budget_update_modal_footer = (
+            <div>
+                <button
+                    type="button"
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                    onClick={this.saveBudget}
+                >
+                    Confirmer
+                </button>
+            </div>
+        );
+
+        const budget_delete_modal_footer = (
+            <div>
+                <button
+                    type="button"
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
+                    onClick={this.deleteBudget}
+                >
+                    Confirmer
+                </button>
+            </div>
+        );
+
+        const expense_update_modal_footer = (
             <div>
                 <button
                     type="button"
@@ -467,7 +664,7 @@ class Budget extends Component {
             </div>
         );
 
-        const expenses_delete_modal_footer = (
+        const expense_delete_modal_footer = (
             <div>
                 <button
                     type="button"
@@ -497,7 +694,7 @@ class Budget extends Component {
                             <Chip label={traveler.name} removable={false} />
                         </div>
                     ))}
-                    <Dialog header="Nom des voyageurs" visible={travelers_modal} className="w-1/2" onHide={() => this.openTravelersModal(false)} footer={footerContent}>
+                    <Dialog header="Nom des voyageurs" visible={travelers_modal} className="w-1/2" onHide={() => this.openTravelersModal(false)} footer={travelers_update_modal_footer}>
                         <form id="travelers_form">
                             {travelers.map((traveler, index) => (
                                 <div id={traveler.id} key={index}>
@@ -550,23 +747,64 @@ class Budget extends Component {
                     <i className="fa-solid fa-sack-dollar text-yellow-500"></i>
                     <span className="ml-2">Budgets</span>
                     <i
-                        onClick={() => this.openTravelersModal(true)}
+                        onClick={() => this.openBudgetUpdateModal(this.empty_budget)}
                         className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
                     ></i>
                 </div>
                 <DataTable value={budgets} stripedRows showGridlines >
                     <Column field="name" header="Nom"></Column>
-                    <Column field="current_value" header="Dépenses actuelles" body={this.templateCurrentValue}></Column>
                     <Column field="max_value" header="Budget" body={this.templateMaxValue}></Column>
+                    <Column field="current_value" header="Dépenses actuelles" body={this.templateCurrentValue}></Column>
                     <Column header="Pourcentage" body={this.templateProgress}></Column>
+                    <Column field="id" header="Actions" body={this.templateActionsBudget} sortable></Column>
                 </DataTable>
+                <Dialog visible={budget_update_modal} header="Ajouter ou modifier un budget" className="w-1/4" footer={budget_update_modal_footer} onHide={this.closeBudgetUpdateModal}>
+                    <div className="grid grid-cols-2 gap-x-4 mt-2">
+                        <div>
+                            <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
+                                Nom
+                            </label>
+                            <InputText
+                                id="name"
+                                value={current_budget.name}
+                                onChange={(e) => this.onBudgetChange(e, "name")}
+                                className={budget_submitted && !current_budget.name ? "p-invalid" : ""}
+                            />
+                            {budget_submitted && !current_budget.name && <small className="p-error">Le nom est obligatoire</small>}
+                        </div>
+                        <div>
+                            <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="max_value">
+                                Budget
+                            </label>
+                            <InputNumber
+                                id="max_value"
+                                value={current_budget.max_value}
+                                onChange={(e) => this.onBudgetChange(e, "max_value")}
+                                mode="currency"
+                                currency="EUR"
+                                locale="fr-FR"
+                                className={budget_submitted && !current_budget.max_value ? "p-invalid" : ""}
+                            />
+                            {budget_submitted && !current_budget.max_value && <small className="p-error">Le budget est obligatoire</small>}
+                        </div>
+                    </div>
+                </Dialog>
+                <Dialog visible={budget_delete_modal} header="Supprimer une dépense" className="w-1/4" footer={budget_delete_modal_footer} onHide={this.closeBudgetDeleteModal}>
+                    <div className="">
+                        <span>Confirmer la suppression de le budget </span>
+                        <span className="font-bold">{current_budget.name}</span>
+                    </div>
+                    <div className="text-sm text-red-500">
+                        <span>Toutes les dépenses associées seront également supprimées</span>
+                    </div>
+                </Dialog>
 
                 {/* DEPENSES */}
                 <div className="text-2xl ml-3 mb-2 mt-5">
                     <i className="fa-solid fa-coins text-yellow-500"></i>
                     <span className="ml-2">Dépenses</span>
                     <i
-                        onClick={() => this.openExpensesUpdateModal(this.empty_expense)}
+                        onClick={() => this.openExpenseUpdateModal(this.empty_expense)}
                         className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
                     ></i>
                 </div>
@@ -576,9 +814,9 @@ class Budget extends Component {
                     <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="budget" header="Budget" body={this.templateBudget} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
-                    <Column field="id" header="Actions" body={this.templateActions} sortable></Column>
+                    <Column field="id" header="Actions" body={this.templateActionsExpense} sortable></Column>
                 </DataTable>
-                <Dialog visible={expenses_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expenses_update_modal_footer} onHide={this.closeExpensesUpdateModal}>
+                <Dialog visible={expense_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={expense_update_modal_footer} onHide={this.closeExpenseUpdateModal}>
                     <div className="grid grid-cols-2 gap-x-4 mt-2">
                         <div>
                             <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
@@ -653,7 +891,7 @@ class Budget extends Component {
                         />
                     </div>
                 </Dialog>
-                <Dialog visible={expenses_delete_modal} header="Supprimer une dépense" className="w-1/4" footer={expenses_delete_modal_footer} onHide={this.closeExpensesDeleteModal}>
+                <Dialog visible={expense_delete_modal} header="Supprimer une dépense" className="w-1/4" footer={expense_delete_modal_footer} onHide={this.closeExpenseDeleteModal}>
                     <div className="">
                         <span>Confirmer la suppression de la dépense </span>
                         <span className="font-bold">{current_expense.name}</span>
