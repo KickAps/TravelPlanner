@@ -43,6 +43,25 @@ class Expense extends Component {
         this.initBudgetsSelect();
     }
 
+    refreshExpenses = () => {
+        const { travel_id } = this.props;
+
+        fetch(window.location.origin + '/get/expenses?travel_id=' + travel_id, {
+            method: 'GET',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la requête.');
+            }
+            return response.json();
+        }).then((data) => {
+            let expenses = data['expenses'];
+
+            this.setState({
+                expenses: expenses,
+            });
+        });
+    }
+
     initTravelersSelect = () => {
         const { expenses } = this.state;
         let travelers_select = {};
@@ -167,6 +186,7 @@ class Expense extends Component {
 
     updateBudgetsSelect = (expense_id, budget_id, persist = true) => {
         const { budgets_select, expenses } = this.state;
+        const { refreshBudgets } = this.props;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === expense_id) {
@@ -190,6 +210,8 @@ class Expense extends Component {
                             budgets_select: budgets_select,
                             expenses: expenses,
                         });
+
+                        refreshBudgets();
                     });
                 } else {
                     this.setState({
@@ -317,6 +339,7 @@ class Expense extends Component {
 
     deleteExpense = () => {
         const { expenses, current_expense } = this.state;
+        const { refreshBudgets } = this.props;
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
@@ -339,6 +362,8 @@ class Expense extends Component {
             this.setState({
                 expenses: expenses,
             });
+
+            refreshBudgets();
 
             this.closeExpenseDeleteModal();
         });

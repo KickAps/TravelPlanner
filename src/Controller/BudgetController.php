@@ -95,6 +95,17 @@ class BudgetController extends AbstractController
         return new Response();
     }
 
+    #[Route('/get/expenses', name: 'app_get_expenses')]
+    public function get_expenses(Request $request, TravelRepository $travelRepo)
+    {
+        $travel = $travelRepo->find($request->get('travel_id'));
+        $expenses = $travel->getArrayExpenses();
+
+        return new JsonResponse([
+            'expenses' => $expenses
+        ]);
+    }
+
     #[Route('/edit/expense', name: 'app_edit_expense')]
     public function edit_expense(Request $request, ExpenseRepository $expenseRepo, BudgetRepository $budgetRepo)
     {
@@ -106,17 +117,23 @@ class BudgetController extends AbstractController
             $expense = new Expense();
         }
 
-        $budget = $budgetRepo->find($expense_array['budget']);
+        $prev_budget = $expense->getBudget();
+        $next_budget = $budgetRepo->find($expense_array['budget']);
 
         $expense->setName($expense_array['name']);
         $expense->setValue($expense_array['value']);
         $expense->setDate(new DateTime($expense_array['date']));
         $expense->setTraveler($expense_array['traveler']);
-        $expense->setBudget($budget);
+        $expense->setBudget($next_budget);
         $expenseRepo->save($expense, true);
 
-        $budget->updateCurrentValue();
-        $budgetRepo->save($budget, true);
+        if ($prev_budget && $prev_budget !== $next_budget) {
+            $prev_budget->updateCurrentValue();
+            $budgetRepo->save($prev_budget, true);
+        }
+
+        $next_budget->updateCurrentValue();
+        $budgetRepo->save($next_budget, true);
 
         return new JsonResponse([
             'id' => $expense->getId()
@@ -128,12 +145,11 @@ class BudgetController extends AbstractController
     {
         $expense_id = $request->request->get("expense_id");
         $expense = $expenseRepo->find($expense_id);
-
         $budget = $expense->getBudget();
-        $budget->updateCurrentValue();
-        $budgetRepo->save($budget, true);
 
         $expenseRepo->remove($expense, true);
+        $budget->updateCurrentValue();
+        $budgetRepo->save($budget, true);
 
         return new Response();
     }

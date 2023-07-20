@@ -21,6 +21,8 @@ class Budget extends Component {
             travel: props.travel_id,
         };
 
+        this.expense_ref = null;
+
         this.state = {
             // Travelers
             travelers: props.travelers,
@@ -210,6 +212,8 @@ class Budget extends Component {
                 budgets: budgets,
             });
 
+            this.expense_ref.refreshExpenses();
+
             this.closeBudgetDeleteModal();
         });
     };
@@ -306,7 +310,7 @@ class Budget extends Component {
                 </Dialog>
 
                 {/* DEPENSES */}
-                <Expense travelers={travelers} expenses={expenses} budgets={budgets} refreshBudgets={this.refreshBudgets} />
+                <Expense travelers={travelers} expenses={expenses} budgets={budgets} travel_id={travel_id} refreshBudgets={this.refreshBudgets} ref={(ref) => { this.expense_ref = ref }} />
             </div >
         );
     }
