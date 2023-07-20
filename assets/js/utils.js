@@ -8,6 +8,15 @@ export function showUnsaved() {
     document.getElementById("unsaved_icon").classList.remove('hidden');
 }
 
+export function getPercentage(current, max, sign = false) {
+    let value = Math.round(current * 100 / max);
+    if (sign) {
+        return value + "%"
+    } else {
+        return value;
+    }
+}
+
 window.addEventListener('load', function () {
     const dropdown_btn = document.getElementById("dropdown_btn");
     const dropdown_menu = document.getElementById("dropdown_menu");

@@ -1,14 +1,14 @@
 import React, { Component, createRef } from 'react';
+import Traveler from './Traveler';
+import * as utils from '../../js/utils';
 import { DataTable } from 'primereact/datatable';
 import { ProgressBar } from 'primereact/progressbar';
-import { Chip } from 'primereact/chip';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { format } from 'date-fns';
-import Button from './Button';
 
 class Budget extends Component {
     constructor(props) {
@@ -36,7 +36,6 @@ class Budget extends Component {
         this.state = {
             // Travelers
             travelers: props.travelers,
-            travelers_modal: false,
             travelers_select: {},
             // Budgets
             budgets: props.budgets,
@@ -57,6 +56,12 @@ class Budget extends Component {
     componentDidMount() {
         this.initTravelersSelect();
         this.initBudgetsSelect();
+    }
+
+    updateTravelers = (travelers) => {
+        this.setState({
+            travelers: travelers,
+        });
     }
 
     initTravelersSelect = () => {
@@ -84,12 +89,6 @@ class Budget extends Component {
 
         this.setState({
             budgets_select: budgets_select,
-        });
-    };
-
-    openTravelersModal = (state) => {
-        this.setState({
-            travelers_modal: state,
         });
     };
 
@@ -163,38 +162,14 @@ class Budget extends Component {
         return this.formatEuro(budget.current_value);
     };
 
-    getPercentage = (current, max, sign = false) => {
-        let value = Math.round(current * 100 / max);
-        if (sign) {
-            return value + "%"
-        } else {
-            return value;
-        }
-
-    };
-
     templateProgress = (budget) => {
         return (
-            <ProgressBar value={this.getPercentage(budget.current_value, budget.max_value)}></ProgressBar>
+            <ProgressBar value={utils.getPercentage(budget.current_value, budget.max_value)}></ProgressBar>
         );
     };
 
     templateValue = (expense) => {
         return this.formatEuro(expense.value);
-    };
-
-    templateSelect = (expense) => {
-        const budgets = [
-            { name: 'Transport', code: 'NY' },
-            { name: 'Nourriture', code: 'RM' },
-            { name: 'Activité', code: 'LDN' },
-        ];
-        return (
-            <div className="card flex justify-content-center">
-                <Dropdown value={expense.budget} onChange={(e) => setSelectedCity(e.value)} options={budgets} optionLabel="name"
-                    placeholder="Choisir" className="w-full md:w-14rem" />
-            </div>
-        );
     };
 
     /**
@@ -345,55 +320,6 @@ class Budget extends Component {
                 ></i>
             </div>
         )
-    };
-
-    addNewTraveler = () => {
-        const { travelers } = this.state;
-        const new_traveler = { name: "", id: travelers.length + 1 };
-
-        this.setState({
-            travelers: [...travelers, new_traveler],
-        });
-    };
-
-    submitTravelersForm = () => {
-        const { travel_id } = this.props;
-        const form = document.getElementById('travelers_form');
-        let form_data = new FormData(form);
-
-        let traveler = {};
-        let new_travelers = [];
-
-        for (var data of form_data.entries()) {
-            if (data[0].startsWith("traveler_name_")) {
-                traveler = {};
-                traveler['name'] = data[1];
-            } else {
-                traveler['id'] = parseInt(data[1]);
-                if (traveler['name']) {
-                    new_travelers.push(traveler);
-                }
-            }
-        }
-
-        this.setState({
-            travelers: new_travelers,
-        });
-
-        this.openTravelersModal(false);
-
-        form_data = new FormData();
-        form_data.append('travel_id', travel_id);
-        form_data.append('travelers', JSON.stringify(new_travelers));
-
-        fetch(window.location.origin + '/edit/travelers', {
-            method: 'POST',
-            body: form_data,
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur lors de la requête.');
-            }
-        });
     };
 
     onBudgetChange = (e, name) => {
@@ -614,19 +540,8 @@ class Budget extends Component {
     };
 
     render() {
-        const { travelers, travelers_modal, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses, expense_update_modal, expense_delete_modal, current_expense, expense_submitted } = this.state;
-
-        const travelers_update_modal_footer = (
-            <div>
-                <button
-                    type="button"
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg lg:rounded mx-auto"
-                    onClick={this.submitTravelersForm}
-                >
-                    Confirmer
-                </button>
-            </div>
-        );
+        const { travelers, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses, expense_update_modal, expense_delete_modal, current_expense, expense_submitted } = this.state;
+        const { travel_id } = this.props;
 
         const budget_update_modal_footer = (
             <div>
@@ -680,67 +595,7 @@ class Budget extends Component {
             <div className="p-8">
 
                 {/* VOYAGEURS */}
-                <div className="text-2xl ml-3 mb-2">
-                    <i className="fa-solid fa-user-group text-gray-500"></i>
-                    <span className="ml-2">Voyageurs</span>
-                    <i
-                        onClick={() => this.openTravelersModal(true)}
-                        className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
-                    ></i>
-                </div>
-                <div className="card flex flex-wrap gap-2">
-                    {travelers.map((traveler, index) => (
-                        <div id={traveler.id} key={index}>
-                            <Chip label={traveler.name} removable={false} />
-                        </div>
-                    ))}
-                    <Dialog header="Nom des voyageurs" visible={travelers_modal} className="w-1/2" onHide={() => this.openTravelersModal(false)} footer={travelers_update_modal_footer}>
-                        <form id="travelers_form">
-                            {travelers.map((traveler, index) => (
-                                <div id={traveler.id} key={index}>
-                                    <input
-                                        name={"traveler_name_" + index}
-                                        type="text"
-                                        defaultValue={traveler.name}
-                                        className="bg-white border border-gray-500 rounded-lg lg:rounded px-2 py-1 leading-tight focus:outline-none mb-2"
-                                        required
-                                    />
-                                    <input
-                                        name={"traveler_id_" + index}
-                                        type="hidden"
-                                        defaultValue={traveler.id}
-                                    />
-                                </div>
-                            ))}
-                            {travelers.length < 2 ? (
-                                <Button name="plus" onClick={this.addNewTraveler} />
-                            ) : (
-                                <span>Le nombre de voyageurs est actuellement limité à 2</span>
-                            )}
-
-                        </form>
-                    </Dialog>
-                </div>
-                {travelers.length === 2 && (
-                    <div>
-                        <div className="flex w-full mt-2 text-gray-700">
-                            <div className="text-center text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
-                                <span className="">{"Florian (170 €)"}</span>
-                            </div>
-                            <div className="text-center text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
-                                <span className="">{"Camille (300 €)"}</span>
-                            </div>
-                        </div>
-                        <div className="flex rounded-lg w-full mt-2 overflow-hidden">
-                            <div className="bg-blue-400 text-center text-white text-lg" style={{ width: this.getPercentage(170, 470, true) }}>
-                                <span className="p-4">{this.getPercentage(170, 470, true)}</span>
-                            </div>
-                            <div className="bg-green-400 text-center text-white text-lg" style={{ width: this.getPercentage(300, 470, true) }}>
-                                <span className="p-4">{this.getPercentage(300, 470, true)}</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                <Traveler travelers={travelers} travel_id={travel_id} updateTravelers={this.updateTravelers} />
 
                 {/* BUDGETS */}
                 <div className="text-2xl ml-3 mb-2 mt-5">
