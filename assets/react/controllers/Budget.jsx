@@ -220,7 +220,7 @@ class Budget extends Component {
 
     render() {
         const { travelers, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses } = this.state;
-        const { travel_id } = this.props;
+        const { travel_id, total } = this.props;
 
         const update_footer = (
             <div>
@@ -250,7 +250,7 @@ class Budget extends Component {
             <div className="p-8">
 
                 {/* VOYAGEURS */}
-                <Traveler travelers={travelers} travel_id={travel_id} updateTravelers={this.updateTravelers} />
+                <Traveler travelers={travelers} travel_id={travel_id} total={total} updateTravelers={this.updateTravelers} />
 
                 {/* BUDGETS */}
                 <div className="text-2xl ml-3 mb-2 mt-5">

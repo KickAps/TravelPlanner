@@ -27,12 +27,14 @@ class BudgetController extends AbstractController
 
         $budgets = $travel->getArrayBudgets();
         $expenses = $travel->getArrayExpenses();
+        $total = $travel->getTotal();
 
         return $this->render('budget/index.html.twig', [
             'travel_id' => $travel_id,
             'budgets' => $budgets,
             'expenses' => $expenses,
-            'travelers' => $travelers
+            'travelers' => $travelers,
+            'total' => $total,
         ]);
     }
 
@@ -103,6 +105,18 @@ class BudgetController extends AbstractController
 
         return new JsonResponse([
             'expenses' => $expenses
+        ]);
+    }
+
+    #[Route('/get/expenses/total', name: 'app_get_expenses_total')]
+    public function get_expenses_total(Request $request, TravelRepository $travelRepo)
+    {
+        $total = [];
+        $travel = $travelRepo->find($request->get('travel_id'));
+        $total = $travel->getTotal();
+
+        return new JsonResponse([
+            'total' => $total
         ]);
     }
 

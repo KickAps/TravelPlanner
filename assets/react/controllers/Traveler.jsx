@@ -77,8 +77,19 @@ class Traveler extends Component {
         });
     };
 
+    getTravelerName = (id) => {
+        const { travelers } = this.state;
+        const traveler = travelers.find(traveler => traveler.id === id);
+        if (traveler) {
+            return traveler.name;
+        } else {
+            return null;
+        }
+    };
+
     render() {
         const { travelers, travelers_modal } = this.state;
+        const { total } = this.props;
 
         const footer = (
             <div>
@@ -91,6 +102,34 @@ class Traveler extends Component {
                 </button>
             </div>
         );
+
+        let header = [];
+        let bar = [];
+
+        for (let i = 1; i <= travelers.length; i++) {
+            header.push(
+                <div key={i} className="text-center text-lg" style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
+                    <span className="">{this.getTravelerName(i) + " (" + total[i] + " €)"}</span>
+                </div>
+            );
+        }
+
+        for (let i = 1; i <= travelers.length; i++) {
+            let color;
+            switch (i) {
+                case 1:
+                    color = "bg-blue-400"
+                    break;
+                case 2:
+                    color = "bg-green-400"
+                    break;
+            }
+            bar.push(
+                <div key={i} className={color + " text-center text-white text-lg"} style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
+                    <span className="p-4">{utils.getPercentage(total[i], total['all'], true)}</span>
+                </div>
+            );
+        }
 
         return (
             <div>
@@ -138,20 +177,10 @@ class Traveler extends Component {
                 {travelers.length === 2 && (
                     <div>
                         <div className="flex w-full mt-2 text-gray-700">
-                            <div className="text-center text-lg" style={{ width: utils.getPercentage(170, 470, true) }}>
-                                <span className="">{"Florian (170 €)"}</span>
-                            </div>
-                            <div className="text-center text-lg" style={{ width: utils.getPercentage(300, 470, true) }}>
-                                <span className="">{"Camille (300 €)"}</span>
-                            </div>
+                            {header}
                         </div>
                         <div className="flex rounded-lg w-full mt-2 overflow-hidden">
-                            <div className="bg-blue-400 text-center text-white text-lg" style={{ width: utils.getPercentage(170, 470, true) }}>
-                                <span className="p-4">{utils.getPercentage(170, 470, true)}</span>
-                            </div>
-                            <div className="bg-green-400 text-center text-white text-lg" style={{ width: utils.getPercentage(300, 470, true) }}>
-                                <span className="p-4">{utils.getPercentage(300, 470, true)}</span>
-                            </div>
+                            {bar}
                         </div>
                     </div>
                 )}

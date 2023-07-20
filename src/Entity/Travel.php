@@ -186,4 +186,28 @@ class Travel
 
         return $expenses;
     }
+
+    public function getTotal(): array
+    {
+        $total = [];
+
+        /** @var Budget $budget */
+        foreach ($this->getBudgets() as $budget) {
+            /** @var Expense $expense */
+            foreach ($budget->getExpenses() as $expense) {
+                if (key_exists('all', $total)) {
+                    $total['all'] += $expense->getValue();
+                } else {
+                    $total['all'] = $expense->getValue();
+                }
+                if (key_exists($expense->getTraveler(), $total)) {
+                    $total[$expense->getTraveler()] += $expense->getValue();
+                } else {
+                    $total[$expense->getTraveler()] = $expense->getValue();
+                }
+            }
+        }
+
+        return $total;
+    }
 }
