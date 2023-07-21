@@ -154,7 +154,7 @@ class Budget extends Component {
         });
     }
 
-    saveBudget = () => {
+    saveBudget = (e) => {
         const { budgets, current_budget } = this.state;
         let update = false;
         let budget_id = 0;
@@ -167,6 +167,10 @@ class Budget extends Component {
         if (!current_budget.name || !current_budget.max_value) {
             return;
         }
+
+        let btn_confirm = e.target;
+        btn_confirm.disabled = true;
+        btn_confirm.classList.add('cursor-wait');
 
         for (let i = 0; i < budgets.length; i++) {
             if (budgets[i].id === current_budget.id) {
@@ -200,8 +204,10 @@ class Budget extends Component {
                 this.setState({
                     budgets: [...budgets, current_budget],
                 });
-
             }
+
+            btn_confirm.disabled = false;
+            btn_confirm.classList.remove('cursor-wait');
 
             this.closeBudgetUpdateModal();
         });

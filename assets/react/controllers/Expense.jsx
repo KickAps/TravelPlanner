@@ -277,7 +277,7 @@ class Expense extends Component {
         });
     };
 
-    saveExpense = () => {
+    saveExpense = (e) => {
         const { travelers_select, budgets_select, expenses, current_expense } = this.state;
         const { refreshBudgets, refreshTotal } = this.props;
 
@@ -292,6 +292,10 @@ class Expense extends Component {
         if (!current_expense.name || !current_expense.value || !current_expense.traveler || !current_expense.budget) {
             return;
         }
+
+        let btn_confirm = e.target;
+        btn_confirm.disabled = true;
+        btn_confirm.classList.add('cursor-wait');
 
         for (let i = 0; i < expenses.length; i++) {
             if (expenses[i].id === current_expense.id) {
@@ -333,6 +337,9 @@ class Expense extends Component {
                 });
 
             }
+
+            btn_confirm.disabled = false;
+            btn_confirm.classList.remove('cursor-wait');
 
             refreshBudgets();
             refreshTotal();
