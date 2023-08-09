@@ -320,6 +320,7 @@ class Budget extends Component {
                                 mode="currency"
                                 currency="EUR"
                                 locale="fr-FR"
+                                minFractionDigits={0}
                                 className={budget_submitted && !current_budget.max_value ? "p-invalid" : ""}
                             />
                             {budget_submitted && !current_budget.max_value && <small className="p-error">Le budget est obligatoire</small>}
