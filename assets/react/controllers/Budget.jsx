@@ -317,10 +317,7 @@ class Budget extends Component {
                                 id="max_value"
                                 value={current_budget.max_value}
                                 onChange={(e) => this.onBudgetChange(e, "max_value")}
-                                mode="currency"
-                                currency="EUR"
                                 locale="fr-FR"
-                                minFractionDigits={0}
                                 className={budget_submitted && !current_budget.max_value ? "p-invalid" : ""}
                             />
                             {budget_submitted && !current_budget.max_value && <small className="p-error">Le budget est obligatoire</small>}

@@ -449,10 +449,7 @@ class Expense extends Component {
                                 id="value"
                                 value={current_expense.value}
                                 onChange={(e) => this.onExpenseChange(e, "value")}
-                                mode="currency"
-                                currency="EUR"
                                 locale="fr-FR"
-                                minFractionDigits={0}
                                 className={expense_submitted && !current_expense.value ? "p-invalid" : ""}
                             />
                             {expense_submitted && !current_expense.value && <small className="p-error">Le montant est obligatoire</small>}
