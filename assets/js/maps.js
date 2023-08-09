@@ -205,6 +205,13 @@ export function setGlobalPath() {
 export function removePath(index) {
     delete global_path[index];
     setGlobalPath();
+
+    // Update bounds
+    bounds = new google.maps.LatLngBounds();
+    for (const [key, pos] of Object.entries(global_path)) {
+        bounds.extend(pos);
+    }
+    map.fitBounds(bounds);
 }
 
 export function forceFitBounds() {
