@@ -425,7 +425,7 @@ class Expense extends Component {
                     <Column field="traveler" header="Voyageur" body={this.templateTraveler} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="budget" header="Budget" body={this.templateBudget} bodyStyle={{ padding: 0 }} sortable></Column>
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
-                    <Column field="id" header="Actions" body={this.templateActionsExpense} sortable></Column>
+                    <Column field="id" header="Actions" body={this.templateActionsExpense}></Column>
                 </DataTable>
                 <Dialog visible={expense_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={update_footer} onHide={this.closeExpenseUpdateModal}>
                     <div className="grid grid-cols-2 gap-x-4 mt-2">

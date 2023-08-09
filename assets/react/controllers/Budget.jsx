@@ -293,7 +293,7 @@ class Budget extends Component {
                     <Column field="max_value" header="Budget" body={this.templateMaxValue}></Column>
                     <Column field="current_value" header="Dépenses actuelles" body={this.templateCurrentValue}></Column>
                     <Column header="Pourcentage" body={this.templateProgress}></Column>
-                    <Column field="id" header="Actions" body={this.templateActionsBudget} sortable></Column>
+                    <Column field="id" header="Actions" body={this.templateActionsBudget}></Column>
                 </DataTable>
                 <Dialog visible={budget_update_modal} header="Ajouter ou modifier un budget" className="w-1/4" footer={update_footer} onHide={this.closeBudgetUpdateModal}>
                     <div className="grid grid-cols-2 gap-x-4 mt-2">
