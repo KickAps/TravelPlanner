@@ -173,10 +173,6 @@ class Day extends React.Component {
     };
 
     submitForm = () => {
-        let btn_submit_form = document.getElementById('submit_form');
-        btn_submit_form.disabled = true;
-        btn_submit_form.classList.add('cursor-wait');
-
         const inputs = document.getElementsByClassName("pac-input");
 
         for (let i = 0; i < inputs.length; i++) {
@@ -194,6 +190,10 @@ class Day extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+
+        let btn_submit_form = document.getElementById('submit_form');
+        btn_submit_form.disabled = true;
+        btn_submit_form.classList.add('cursor-wait');
 
         const form = e.target;
         const formData = new FormData(form);
