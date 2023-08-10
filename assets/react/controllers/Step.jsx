@@ -4,6 +4,7 @@ import * as utils from '../../js/utils';
 import DrapDrop from './DrapDrop';
 import Button from './Button';
 import Modal from './Modal';
+import { Checkbox } from "primereact/checkbox";
 
 class Step extends React.Component {
     constructor(props) {
@@ -14,6 +15,8 @@ class Step extends React.Component {
             expanded: true,
             modalOpen: false,
             step_id: 0,
+            home_check: false,
+            first_step_empty: true,
         };
         this.edit = props.edit || false;
     }
@@ -25,6 +28,12 @@ class Step extends React.Component {
     }
 
     deleteStep = (id) => {
+        if (this.state.steps[0].id === id) {
+            this.setState({
+                home_check: false,
+            });
+        }
+
         const updatedSteps = this.state.steps.filter(step => step.id !== id);
         this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id);
@@ -32,6 +41,12 @@ class Step extends React.Component {
             this.closeModal();
             utils.showUnsaved();
         });
+
+        if (updatedSteps.length === 0) {
+            this.setState({
+                first_step_empty: true,
+            });
+        }
     };
 
     deleteAllSteps = () => {
@@ -45,6 +60,13 @@ class Step extends React.Component {
     onDragEnd = (result) => {
         if (!result.destination) {
             return;
+        }
+
+        if (result.source.index === 0 || result.destination.index === 0) {
+            if (this.state.home_check) {
+                this.setState({ home_check: false });
+                maps.switchIcon(this.state.steps[0].id);
+            }
         }
 
         const steps = [...this.state.steps];
@@ -63,6 +85,16 @@ class Step extends React.Component {
         }));
     };
 
+    placeChange = (step_id) => {
+        if (this.state.steps.length === 0 || this.state.steps[0].id === step_id) {
+
+            this.setState({
+                first_step_empty: false
+            });
+        }
+        utils.showUnsaved();
+    }
+
     addStep = (index = null, data = null) => {
         const newStepCount = this.state.stepCount + 1;
 
@@ -70,6 +102,13 @@ class Step extends React.Component {
         let step_data = null;
         if (data) {
             step_data = data[index];
+
+            if (index === 0) {
+                this.setState({
+                    home_check: step_data.home === "true",
+                    first_step_empty: false,
+                });
+            }
         }
 
         const step_id = this.props.day_id + "_step" + newStepCount;
@@ -79,7 +118,6 @@ class Step extends React.Component {
         const url_id = this.props.day_id + "_url" + newStepCount;
         const desc_id = this.props.day_id + "_desc" + newStepCount;
         const name_id = this.props.day_id + "_name" + newStepCount;
-
 
         const content = (
             <div id={step_id} className="step">
@@ -101,13 +139,13 @@ class Step extends React.Component {
                         <div className="flex mb-2">
                             <div className="w-full md:mb-0">
                                 <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
-                                    Lieux
+                                    Lieu
                                 </label>
                                 <input
                                     id={place_id}
                                     name={place_id}
                                     defaultValue={step_data && step_data.place}
-                                    onChange={utils.showUnsaved}
+                                    onChange={() => this.placeChange(step_id)}
                                     readOnly={!this.edit}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
@@ -207,8 +245,23 @@ class Step extends React.Component {
         });
     };
 
+    setHomeCheck = (e) => {
+        this.setState({
+            home_check: e.checked,
+        });
+        utils.showUnsaved();
+
+        if (!maps.switchIcon(this.state.steps[0].id)) {
+            this.setState({
+                home_check: false,
+                first_step_empty: true,
+            });
+        }
+    };
+
     render() {
         const { modalOpen, step_id } = this.state;
+        const home_id = this.props.day_id + "_home";
 
         return (
             <div>
@@ -226,6 +279,20 @@ class Step extends React.Component {
                     </button>
                 </div>
                 <div className={this.state.expanded ? undefined : "hidden"}>
+                    <div className="h-4 lg:h-2"></div>
+                    {this.state.steps.length > 0 && (
+                        <div className="flex flex-wrap w-11/12 mx-auto">
+                            <Checkbox
+                                id={home_id + "_check"}
+                                inputId={home_id}
+                                name={home_id}
+                                onChange={this.setHomeCheck}
+                                checked={this.state.home_check}
+                                disabled={this.state.first_step_empty}
+                            />
+                            <label htmlFor={home_id} className={this.state.first_step_empty ? "ml-2 text-gray-500" : "ml-2 text-gray-700 cursor-pointer"}>Définir ce lieu comme logement</label>
+                        </div>
+                    )}
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
                     {this.edit && (
                         <div>

@@ -1,10 +1,13 @@
+import home_icon from '../logo/home_icon.png';
+import star_icon from '../logo/star_icon.png';
+
 let map;
-let global_markers = [];
+let global_home_markers = [];
+let global_star_markers = [];
 let bounds;
 let global_path = {};
 let polyline;
 let infowindow;
-const icon_url = "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png";
 
 function initMap() {
     let map_container = document.getElementById("map");
@@ -23,16 +26,16 @@ function initMap() {
     polyline = new google.maps.Polyline();
 }
 
-function createMarker(pos, name, address, url) {
+function createMarker(pos, name, address, url, home = false) {
     let scaledSize = new google.maps.Size(25, 25);
-    let anchor = new google.maps.Point(13, 34);
+    let anchor = new google.maps.Point(10, 8);
     if (navigator.userAgentData.mobile) {
         scaledSize = new google.maps.Size(60, 60);
         anchor = new google.maps.Point(25, 80);
     }
 
     const icon = {
-        url: icon_url,
+        url: home ? home_icon : star_icon,
         size: new google.maps.Size(71, 71),
         origin: new google.maps.Point(0, 0),
         anchor: anchor,
@@ -68,6 +71,10 @@ function createMarker(pos, name, address, url) {
     });
 
     return marker;
+}
+
+function getPos(marker) {
+    return { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
 }
 
 export function initInputSearch(step_count, day_id) {
@@ -120,10 +127,6 @@ export function initInputSearch(step_count, day_id) {
             let input_name = document.getElementById(day_id + "_name" + step_count);
             input_name.value = place.name;
 
-            // Path
-            global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
-            setGlobalPath();
-
             if (place.geometry.viewport) {
                 // Only geocodes have viewport.
                 bounds.union(place.geometry.viewport);
@@ -132,8 +135,9 @@ export function initInputSearch(step_count, day_id) {
             }
         });
 
-        // Zoom
-        global_markers[step_id] = markers;
+        global_star_markers[step_id] = markers;
+
+        // Update zoom
         map.fitBounds(bounds);
     });
 }
@@ -145,16 +149,21 @@ export function initTravel(data) {
         for (let i = 0; i < steps_data.length; i++) {
             let markers = [];
             let step_count = i + 1;
+            let home = steps_data[i].home === "true";
             const step_id = "day" + day_count + "_step" + step_count;
             let pos = { lat: parseFloat(steps_data[i].lat), lng: parseFloat(steps_data[i].lng) };
 
-            const marker = createMarker(pos, steps_data[i].name, steps_data[i].place, steps_data[i].url);
+            const marker = createMarker(pos, steps_data[i].name, steps_data[i].place, steps_data[i].url, home);
 
             markers.push(marker);
-            global_markers[step_id] = markers;
 
-            // Path
-            global_path[step_id] = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+            if (home) {
+                global_home_markers[step_id] = markers;
+                // Path
+                global_path[step_id] = getPos(marker);
+            } else {
+                global_star_markers[step_id] = markers;
+            }
 
             bounds.union(new google.maps.LatLngBounds(pos));
         }
@@ -163,8 +172,17 @@ export function initTravel(data) {
     map.fitBounds(bounds);
 }
 
-export function removeMarkers(index) {
-    let markers = global_markers[index];
+export function removeMarkers(step_id) {
+    const is_home = step_id in global_home_markers;
+    let markers;
+
+    if (is_home) {
+        markers = global_home_markers[step_id];
+        delete global_home_markers[step_id];
+    } else {
+        markers = global_star_markers[step_id];
+        delete global_star_markers[step_id];
+    }
 
     if (!markers) {
         return;
@@ -186,7 +204,7 @@ export function setGlobalPath() {
 
     polyline.setMap(null);
 
-    let strokeWeight = 2;
+    let strokeWeight = 3;
     if (navigator.userAgentData.mobile) {
         strokeWeight = 4;
     }
@@ -194,7 +212,7 @@ export function setGlobalPath() {
     polyline = new google.maps.Polyline({
         path: path_ordered,
         geodesic: true,
-        strokeColor: "#DB5C51",
+        strokeColor: "#D1372A",
         strokeOpacity: 1.0,
         strokeWeight: strokeWeight,
     });
@@ -202,20 +220,47 @@ export function setGlobalPath() {
     polyline.setMap(map);
 }
 
-export function removePath(index) {
-    delete global_path[index];
+export function removePath(step_id) {
+    delete global_path[step_id];
     setGlobalPath();
-
-    // Update bounds
-    bounds = new google.maps.LatLngBounds();
-    for (const [key, pos] of Object.entries(global_path)) {
-        bounds.extend(pos);
-    }
-    map.fitBounds(bounds);
 }
 
 export function forceFitBounds() {
     map.fitBounds(bounds);
+}
+
+export function switchIcon(step_id) {
+    const is_home = step_id in global_home_markers;
+    let marker;
+    let icon;
+
+    if (is_home) {
+        marker = global_home_markers[step_id][0];
+        icon = marker.icon;
+        icon.url = star_icon;
+        marker.setIcon(icon);
+
+        global_star_markers[step_id] = [marker];
+        delete global_home_markers[step_id];
+
+        this.removePath(step_id);
+    } else {
+        if (!global_star_markers[step_id]) {
+            return false;
+        }
+        marker = global_star_markers[step_id][0];
+        icon = marker.icon;
+        icon.url = home_icon;
+        marker.setIcon(icon);
+
+        global_home_markers[step_id] = [marker];
+        delete global_star_markers[step_id];
+
+        global_path[step_id] = getPos(marker);
+        setGlobalPath();
+    }
+
+    return true;
 }
 
 

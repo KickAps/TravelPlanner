@@ -191,6 +191,7 @@ class Day extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
+        // Cursor waiting
         let btn_submit_form = document.getElementById('submit_form');
         btn_submit_form.disabled = true;
         btn_submit_form.classList.add('cursor-wait');
@@ -206,6 +207,11 @@ class Day extends React.Component {
         }
 
         formData.append('steps_order', JSON.stringify(steps_order));
+
+        const home_checks = document.querySelectorAll('input[name$=_home]');
+        home_checks.forEach(function (check) {
+            formData.append(check.name, check.hasAttribute("checked"));
+        });
 
         const formJson = Object.fromEntries(formData.entries());
 

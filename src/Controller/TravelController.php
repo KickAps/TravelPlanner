@@ -46,6 +46,7 @@ class TravelController extends AbstractController
                 if (key_exists($date, $steps)) {
                     array_push($steps[$date], $step);
                 } else {
+                    $step['home'] = $formData[$day_id . '_home'];
                     $steps[$date] = [$step];
                 }
             }
