@@ -52,7 +52,7 @@ function createMarker(pos, name, address, url, home = false) {
         '<div class="text-3xl lg:text-base">' +
         '<p><b>' + name + '</b></p>' +
         '<p>' + address + '</p>' +
-        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none;">View on Google Maps</a>' +
+        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none; outline: none;">View on Google Maps</a>' +
         '</div>';
 
     marker.addListener("click", () => {
@@ -204,15 +204,15 @@ export function setGlobalPath() {
 
     polyline.setMap(null);
 
-    let strokeWeight = 3;
+    let strokeWeight = 4;
     if (navigator.userAgentData.mobile) {
-        strokeWeight = 4;
+        strokeWeight = 6;
     }
 
     polyline = new google.maps.Polyline({
         path: path_ordered,
         geodesic: true,
-        strokeColor: "#D1372A",
+        strokeColor: "#DC1100",
         strokeOpacity: 1.0,
         strokeWeight: strokeWeight,
     });
@@ -261,6 +261,20 @@ export function switchIcon(step_id) {
     }
 
     return true;
+}
+
+export function focusMarker(step_id) {
+    let marker;
+
+    if (step_id in global_home_markers) {
+        marker = global_home_markers[step_id][0];
+    } else {
+        marker = global_star_markers[step_id][0];
+    }
+
+    map.setCenter(getPos(marker));
+
+    new google.maps.event.trigger(marker, 'click');
 }
 
 

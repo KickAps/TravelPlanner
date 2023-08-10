@@ -5,6 +5,8 @@ import DrapDrop from './DrapDrop';
 import Button from './Button';
 import Modal from './Modal';
 import { Checkbox } from "primereact/checkbox";
+import home_icon from '../../logo/home_icon.png';
+import star_icon from '../../logo/star_icon.png';
 
 class Step extends React.Component {
     constructor(props) {
@@ -141,6 +143,13 @@ class Step extends React.Component {
                                 <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor={place_id}>
                                     Lieu
                                 </label>
+                                <img
+                                    className="place-icon cursor-pointer"
+                                    src={step_data && step_data.home === "true" ? home_icon : star_icon}
+                                    width={22}
+                                    height={22}
+                                    onClick={() => maps.focusMarker(step_id)}
+                                ></img>
                                 <input
                                     id={place_id}
                                     name={place_id}
@@ -257,6 +266,11 @@ class Step extends React.Component {
                 first_step_empty: true,
             });
         }
+
+        let step = document.getElementById(this.state.steps[0].id);
+        let img = step.querySelector(".place-icon");
+
+        img.src = e.checked ? home_icon : star_icon;
     };
 
     render() {
