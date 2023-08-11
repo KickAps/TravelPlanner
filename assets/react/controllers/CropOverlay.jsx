@@ -41,6 +41,10 @@ class CropOverlay extends Component {
                     src={image_url}
                     onMouseEnter={() => this.displayCropBtn(true)}
                     className="w-full"
+                    onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src = window.location.origin + '/uploads/default.jpg';
+                    }}
                 />
                 {display_crop_btn && (
                     <div
