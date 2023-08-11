@@ -45,11 +45,11 @@ class Button extends React.Component {
             <button
                 id={name + "_travel"}
                 type="button"
-                className={bg_color + " " + bg_color_hover + " text-white font-bold rounded-lg lg:rounded mx-auto block px-3 py-1"}
+                className={bg_color + " " + bg_color_hover + " text-white font-bold text-3xl lg:text-base py-3 px-5 lg:py-1 lg:px-3 rounded-lg lg:rounded mx-auto block"}
                 onClick={onClick}
             >
                 {label && (
-                    <span className="mr-2">{label}</span>
+                    <span className="mr-4 lg:mr-2">{label}</span>
                 )}
                 <i className={"fa-solid " + fa_class}></i>
             </button >
