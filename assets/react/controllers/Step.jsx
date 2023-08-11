@@ -294,7 +294,7 @@ class Step extends React.Component {
                 </div>
                 <div className={this.state.expanded ? undefined : "hidden"}>
                     <div className="h-4 lg:h-2"></div>
-                    {this.state.steps.length > 0 && (
+                    {this.state.steps.length > 0 && this.edit && (
                         <div className="flex flex-wrap w-11/12 mx-auto">
                             <Checkbox
                                 id={home_id + "_check"}
