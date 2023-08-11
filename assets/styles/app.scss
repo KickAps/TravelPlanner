@@ -212,4 +212,10 @@ body {
         @extend .p-progressbar;
         min-width: 300px;
     }
+
+    .place-icon {
+        position: absolute;
+        top: 16px;
+        left: 84px;
+    }
 }

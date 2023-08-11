@@ -121,6 +121,8 @@ class Step extends React.Component {
         const desc_id = this.props.day_id + "_desc" + newStepCount;
         const name_id = this.props.day_id + "_name" + newStepCount;
 
+        let icon_size = navigator.userAgentData.mobile ? 38 : 22;
+
         const content = (
             <div id={step_id} className="step">
                 <div className="h-4 lg:h-2"></div>
@@ -146,8 +148,8 @@ class Step extends React.Component {
                                 <img
                                     className="place-icon cursor-pointer"
                                     src={step_data && step_data.home === "true" ? home_icon : star_icon}
-                                    width={22}
-                                    height={22}
+                                    width={icon_size}
+                                    height={icon_size}
                                     onClick={() => maps.focusMarker(step_id)}
                                 ></img>
                                 <input

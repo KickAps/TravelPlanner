@@ -30,8 +30,8 @@ function createMarker(pos, name, address, url, home = false) {
     let scaledSize = new google.maps.Size(25, 25);
     let anchor = new google.maps.Point(10, 8);
     if (navigator.userAgentData.mobile) {
-        scaledSize = new google.maps.Size(60, 60);
-        anchor = new google.maps.Point(25, 80);
+        scaledSize = new google.maps.Size(45, 45);
+        anchor = new google.maps.Point(20, 10);
     }
 
     const icon = {
