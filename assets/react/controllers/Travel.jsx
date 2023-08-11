@@ -59,7 +59,7 @@ class Travel extends Component {
         const { modalOpen, travel_id } = this.state;
 
         return (
-            <div className="grid gap-8 grid-cols-3 mt-8 mx-8">
+            <div className="grid gap-8 grid-cols-1 lg:grid-cols-3 mt-8 mx-8">
                 {this.data.map((travel, index) => (
                     <div id={travel.id} key={index}>
                         <div className="rounded-lg lg:rounded shadow-lg bg-white p-3 text-gray-600 font-bold w-full text-2xl lg:text-base">
