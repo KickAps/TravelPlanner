@@ -306,7 +306,7 @@ class Step extends React.Component {
                                 checked={this.state.home_check}
                                 disabled={this.state.first_step_empty}
                             />
-                            <label htmlFor={home_id} className={this.state.first_step_empty ? "ml-2 text-gray-500" : "ml-2 text-gray-700 cursor-pointer"}>Définir ce lieu comme logement</label>
+                            <label htmlFor={home_id} style={{ marginTop: "1px" }} className={this.state.first_step_empty ? "ml-2 text-gray-500" : "ml-2 text-gray-700 cursor-pointer"}>Définir ce lieu comme logement</label>
                         </div>
                     )}
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
