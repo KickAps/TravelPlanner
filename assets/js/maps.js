@@ -243,7 +243,7 @@ export function switchIcon(step_id) {
         global_star_markers[step_id] = [marker];
         delete global_home_markers[step_id];
 
-        this.removePath(step_id);
+        removePath(step_id);
     } else {
         if (!global_star_markers[step_id]) {
             return false;
