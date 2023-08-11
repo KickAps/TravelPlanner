@@ -255,11 +255,11 @@ class Expense extends Component {
             <div>
                 <i
                     onClick={() => this.openExpenseUpdateModal(expense)}
-                    className="fa-solid fa-pen text-green-500 text-xl cursor-pointer hover:text-green-700 ml-2"
+                    className="fa-solid fa-pen text-green-500 text-3xl lg:text-xl cursor-pointer hover:text-green-700 ml-2"
                 ></i>
                 <i
                     onClick={() => this.openExpenseDeleteModal(expense)}
-                    className="fa-solid fa-trash-can text-red-500 text-xl cursor-pointer hover:text-red-700 ml-4"
+                    className="fa-solid fa-trash-can text-red-500 text-3xl lg:text-xl cursor-pointer hover:text-red-700 ml-4"
                 ></i>
             </div>
         )
@@ -411,12 +411,12 @@ class Expense extends Component {
 
         return (
             <div>
-                <div className="text-2xl ml-3 mb-2 mt-5">
+                <div className="text-4xl lg:text-2xl ml-3 mb-4 lg:mb-2 mt-7 lg:mt-5">
                     <i className="fa-solid fa-coins text-yellow-500"></i>
-                    <span className="ml-2">Dépenses</span>
+                    <span className="ml-4 lg:ml-2">Dépenses</span>
                     <i
                         onClick={() => this.openExpenseUpdateModal(this.empty_expense)}
-                        className="fa-solid fa-plus text-blue-500 text-xl cursor-pointer hover:text-blue-700 ml-2 pb-1"
+                        className="fa-solid fa-plus text-blue-500 cursor-pointer hover:text-blue-700 ml-4 lg:ml-2"
                     ></i>
                 </div>
                 <DataTable value={expenses} sortField="date" sortOrder={-1} stripedRows showGridlines>
@@ -427,7 +427,7 @@ class Expense extends Component {
                     <Column field="date" header="Date" body={this.templateDate} sortable></Column>
                     <Column field="id" header="Actions" body={this.templateActionsExpense}></Column>
                 </DataTable>
-                <Dialog visible={expense_update_modal} header="Ajouter ou modifier une dépense" className="w-1/4" footer={update_footer} onHide={this.closeExpenseUpdateModal}>
+                <Dialog visible={expense_update_modal} header="Ajouter ou modifier une dépense" className="w-2/3 lg:w-1/4" footer={update_footer} onHide={this.closeExpenseUpdateModal}>
                     <div className="grid grid-cols-2 gap-x-4 mt-2">
                         <div>
                             <label className="block uppercase tracking-wide text-gray-700 text-2xl lg:text-xs font-bold mb-2" htmlFor="name">
@@ -500,7 +500,7 @@ class Expense extends Component {
                         />
                     </div>
                 </Dialog>
-                <Dialog visible={expense_delete_modal} header="Supprimer une dépense" className="w-1/4" footer={delete_footer} onHide={this.closeExpenseDeleteModal}>
+                <Dialog visible={expense_delete_modal} header="Supprimer une dépense" className="w-2/3 lg:w-1/4" footer={delete_footer} onHide={this.closeExpenseDeleteModal}>
                     <div className="">
                         <span>Confirmer la suppression de la dépense </span>
                         <span className="font-bold">{current_expense.name}</span>

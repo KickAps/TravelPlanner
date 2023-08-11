@@ -211,6 +211,7 @@ body {
     .p-progressbar {
         @extend .p-progressbar;
         min-width: 300px;
+        @apply h-9;
     }
 
     .place-icon {
@@ -234,5 +235,19 @@ body {
                 height: 20px;
             }
         }
+    }
+
+    .p-component {
+        @extend .p-component;
+        @apply text-2xl;
+    }
+
+    .p-inputtext {
+        @extend .p-component;
+        @apply text-2xl;
+    }
+
+    .p-dialog .p-dialog-header .p-dialog-title {
+        @apply text-3xl;
     }
 }
