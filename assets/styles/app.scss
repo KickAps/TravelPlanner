@@ -269,4 +269,9 @@ body {
     .p-dialog .p-dialog-header .p-dialog-title {
         @apply text-3xl;
     }
+
+    .p-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
 }

@@ -325,11 +325,11 @@ class Budget extends Component {
                     </div>
                 </Dialog>
                 <Dialog visible={budget_delete_modal} header="Supprimer une dépense" className="w-2/3 lg:w-1/4" footer={delete_footer} onHide={this.closeBudgetDeleteModal}>
-                    <div className="">
+                    <div className="text-2xl lg:text-base">
                         <span>Confirmer la suppression de le budget </span>
                         <span className="font-bold">{current_budget.name}</span>
                     </div>
-                    <div className="text-sm text-red-500">
+                    <div className="text-xl lg:text-sm text-red-500">
                         <span>Toutes les dépenses associées seront également supprimées</span>
                     </div>
                 </Dialog>
