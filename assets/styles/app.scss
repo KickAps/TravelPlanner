@@ -181,6 +181,25 @@ body {
     left: 45px;
 }
 
+.fill-available {
+    width: -moz-available;
+    /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;
+    /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+}
+
+.p-inputtext {
+    @extend .p-inputtext;
+    @apply fill-available;
+}
+
+.p-inputnumber {
+    @extend .p-inputtext;
+    @apply fill-available;
+}
+
+
 // 
 // RESPONSIVE
 // 
@@ -243,7 +262,7 @@ body {
     }
 
     .p-inputtext {
-        @extend .p-component;
+        @extend .p-inputtext;
         @apply text-2xl;
     }
 
