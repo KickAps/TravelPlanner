@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $google_id = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Travel::class)]
+    #[ORM\ManyToMany(targetEntity: Travel::class, inversedBy: 'users')]
     private Collection $travels;
 
     public function __construct()
@@ -149,7 +149,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->travels->contains($travel)) {
             $this->travels->add($travel);
-            $travel->setUser($this);
         }
 
         return $this;
@@ -157,12 +156,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeTravel(Travel $travel): self
     {
-        if ($this->travels->removeElement($travel)) {
-            // set the owning side to null (unless already changed)
-            if ($travel->getUser() === $this) {
-                $travel->setUser(null);
-            }
-        }
+        $this->travels->removeElement($travel);
 
         return $this;
     }

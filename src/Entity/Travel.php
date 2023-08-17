@@ -26,10 +26,6 @@ class Travel
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'travels')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -39,9 +35,13 @@ class Travel
     #[ORM\OneToMany(mappedBy: 'travel', targetEntity: Budget::class, orphanRemoval: true)]
     private Collection $budgets;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'travels')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->budgets = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,18 +81,6 @@ class Travel
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
 
         return $this;
     }
@@ -209,5 +197,32 @@ class Travel
         }
 
         return $total;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addTravel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeTravel($this);
+        }
+
+        return $this;
     }
 }

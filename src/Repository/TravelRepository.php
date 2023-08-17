@@ -42,12 +42,16 @@ class TravelRepository extends ServiceEntityRepository
 
     public function findByUser(User $user): array
     {
-        return $this->createQueryBuilder('t')
-            ->select('t.id', 't.name', 't.image')
-            ->where('t.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('t.id', 'DESC')
-            ->getQuery()
-            ->getArrayResult();
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->select('travel.id', 'travel.name', 'travel.image')
+            ->from('App\Entity\Travel', 'travel')
+            ->join('travel.users', 'user')
+            ->where('user.id = :user_id')
+            ->setParameter('user_id', $user->getId())
+            ->orderBy('travel.id', 'DESC');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

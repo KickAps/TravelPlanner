@@ -58,7 +58,7 @@ class TravelController extends AbstractController
                 // Création d'un nouveau voyage
                 $travel = new Travel();
                 $travel->setImage(null);
-                $travel->setUser($user);
+                $travel->addUser($user);
             }
 
             $travel->setName($formData['travel_name']);
