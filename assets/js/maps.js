@@ -106,6 +106,7 @@ export function initInputSearch(step_count, day_id) {
         markers = [];
 
         const step_id = day_id + "_step" + step_count;
+        const home = step_id in global_home_markers;
 
         // For each place, get the icon, name and location.
         places.forEach((place) => {
@@ -114,7 +115,7 @@ export function initInputSearch(step_count, day_id) {
                 return;
             }
 
-            const marker = createMarker(place.geometry.location, place.name, place.formatted_address, place.url);
+            const marker = createMarker(place.geometry.location, place.name, place.formatted_address, place.url, home);
 
             markers.push(marker);
 
@@ -135,7 +136,16 @@ export function initInputSearch(step_count, day_id) {
             }
         });
 
-        global_star_markers[step_id] = markers;
+        // Si l'étape est définie en tant que logement
+        if (step_id in global_home_markers) {
+            removeMarkers(step_id);
+            global_home_markers[step_id] = markers;
+            // Path
+            global_path[step_id] = getPos(markers[0]);
+            setGlobalPath();
+        } else {
+            global_star_markers[step_id] = markers;
+        }
 
         // Update zoom
         map.fitBounds(bounds);
