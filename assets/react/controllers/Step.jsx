@@ -64,10 +64,17 @@ class Step extends React.Component {
             return;
         }
 
+        // Si le drag and drop concerne la première étape
         if (result.source.index === 0 || result.destination.index === 0) {
             if (this.state.home_check) {
+                let first_step_id = this.state.steps[0].id;
                 this.setState({ home_check: false });
-                maps.switchIcon(this.state.steps[0].id);
+                maps.switchIcon(first_step_id);
+
+                let step = document.getElementById(first_step_id);
+                let img = step.querySelector(".place-icon");
+
+                img.src = star_icon;
             }
         }
 
@@ -78,6 +85,14 @@ class Step extends React.Component {
         this.setState({ steps }, () => {
             maps.setGlobalPath();
             utils.showUnsaved();
+        });
+
+        // Vérifie si l'input de la première étape est vide pour contrôler l'état de la checkbox
+        let step = document.getElementById(steps[0].id);
+        let input = step.querySelector(".pac-input");
+
+        this.setState({
+            first_step_empty: !input.value
         });
     };
 
@@ -306,7 +321,7 @@ class Step extends React.Component {
                                 checked={this.state.home_check}
                                 disabled={this.state.first_step_empty}
                             />
-                            <label htmlFor={home_id} style={{ marginTop: "1px" }} className={this.state.first_step_empty ? "ml-2 text-gray-500" : "ml-2 text-gray-700 cursor-pointer"}>Définir ce lieu comme logement</label>
+                            <label htmlFor={home_id} style={{ marginTop: "1px" }} className={this.state.first_step_empty ? "ml-2 text-gray-500 select-none" : "ml-2 text-gray-700 select-none cursor-pointer"}>Définir ce lieu comme logement</label>
                         </div>
                     )}
                     <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
