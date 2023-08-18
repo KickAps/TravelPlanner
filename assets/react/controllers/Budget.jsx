@@ -274,11 +274,11 @@ class Budget extends Component {
     };
 
     progressBarPadding = () => {
+        let padding = {};
         if (navigator.userAgentData.mobile) {
-            return { padding: 0 };
-        } else {
-            return {};
+            padding = { padding: 0 };
         }
+        return padding;
     };
 
     render() {
@@ -315,7 +315,7 @@ class Budget extends Component {
                     <Column footer="Total" />
                     <Column footer={utils.formatEuro(this.getTotalBudgets())} />
                     <Column footer={utils.formatEuro(this.getTotalExpenses())} />
-                    <Column footer={this.getTotalProgressBar()} />
+                    <Column footer={this.getTotalProgressBar()} footerStyle={this.progressBarPadding()} />
                     <Column colSpan={1} />
                 </Row>
             </ColumnGroup>
@@ -340,7 +340,7 @@ class Budget extends Component {
                     <Column field="name" header="Nom"></Column>
                     <Column field="max_value" header="Budget" body={this.templateMaxValue}></Column>
                     <Column field="current_value" header="Dépenses" body={this.templateCurrentValue}></Column>
-                    <Column header="Pourcentage" body={this.templateProgress} bodyStyle={this.progressBarPadding}></Column>
+                    <Column header="Pourcentage" body={this.templateProgress} bodyStyle={this.progressBarPadding()}></Column>
                     <Column field="id" header="Actions" body={this.templateActionsBudget}></Column>
                 </DataTable>
                 <Dialog visible={budget_update_modal} header="Ajouter ou modifier un budget" className="w-2/3 lg:w-1/4" footer={update_footer} onHide={this.closeBudgetUpdateModal}>
