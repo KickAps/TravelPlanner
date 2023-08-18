@@ -8,6 +8,8 @@ import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 
 class Budget extends Component {
     constructor(props) {
@@ -245,6 +247,40 @@ class Budget extends Component {
         });
     };
 
+    getTotalBudgets = () => {
+        const { budgets } = this.state;
+        let total_budgets = 0;
+        budgets.map((item, index) => {
+            total_budgets += item['max_value'];
+        });
+
+        return total_budgets;
+    }
+
+    getTotalExpenses = () => {
+        const { budgets } = this.state;
+        let total_expenses = 0;
+        budgets.map((item, index) => {
+            total_expenses += item['current_value'];
+        });
+
+        return total_expenses;
+    }
+
+    getTotalProgressBar = () => {
+        return (
+            <ProgressBar value={utils.getPercentage(this.getTotalExpenses(), this.getTotalBudgets())}></ProgressBar>
+        );
+    };
+
+    progressBarPadding = () => {
+        if (navigator.userAgentData.mobile) {
+            return { padding: 0 };
+        } else {
+            return {};
+        }
+    };
+
     render() {
         const { travelers, total, budgets, budget_update_modal, budget_delete_modal, current_budget, budget_submitted, expenses } = this.state;
         const { travel_id } = this.props;
@@ -273,6 +309,18 @@ class Budget extends Component {
             </div>
         );
 
+        const footerGroup = (
+            <ColumnGroup>
+                <Row>
+                    <Column footer="Total" />
+                    <Column footer={utils.formatEuro(this.getTotalBudgets())} />
+                    <Column footer={utils.formatEuro(this.getTotalExpenses())} />
+                    <Column footer={this.getTotalProgressBar()} />
+                    <Column colSpan={1} />
+                </Row>
+            </ColumnGroup>
+        );
+
         return (
             <div className="pt-5 lg:p-8">
 
@@ -288,11 +336,11 @@ class Budget extends Component {
                         className="fa-solid fa-plus text-blue-500 cursor-pointer hover:text-blue-700 ml-4 lg:ml-2"
                     ></i>
                 </div>
-                <DataTable value={budgets} stripedRows showGridlines >
+                <DataTable value={budgets} footerColumnGroup={footerGroup} stripedRows showGridlines >
                     <Column field="name" header="Nom"></Column>
                     <Column field="max_value" header="Budget" body={this.templateMaxValue}></Column>
                     <Column field="current_value" header="Dépenses" body={this.templateCurrentValue}></Column>
-                    <Column header="Pourcentage" body={this.templateProgress} bodyStyle={{ padding: 0 }}></Column>
+                    <Column header="Pourcentage" body={this.templateProgress} bodyStyle={this.progressBarPadding}></Column>
                     <Column field="id" header="Actions" body={this.templateActionsBudget}></Column>
                 </DataTable>
                 <Dialog visible={budget_update_modal} header="Ajouter ou modifier un budget" className="w-2/3 lg:w-1/4" footer={update_footer} onHide={this.closeBudgetUpdateModal}>
