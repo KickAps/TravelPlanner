@@ -90,11 +90,13 @@ class Traveler extends Component {
     getSummary = () => {
         const { total } = this.props;
         let summary = "";
+        let total_1 = total[1] ?? 0;
+        let total_2 = total[2] ?? 0;
 
-        if (total[1] - total[2] > 0) {
-            summary = this.getTravelerName(2) + " doit " + utils.formatEuro((total[1] - total[2]) / 2) + " à " + this.getTravelerName(1);
-        } else if (total[2] - total[1] > 0) {
-            summary = this.getTravelerName(1) + " doit " + utils.formatEuro((total[2] - total[1]) / 2) + " à " + this.getTravelerName(2);
+        if (total_1 - total_2 > 0) {
+            summary = this.getTravelerName(2) + " doit " + utils.formatEuro((total_1 - total_2) / 2) + " à " + this.getTravelerName(1);
+        } else if (total_2 - total_1 > 0) {
+            summary = this.getTravelerName(1) + " doit " + utils.formatEuro((total_2 - total_1) / 2) + " à " + this.getTravelerName(2);
         }
 
         return summary;
