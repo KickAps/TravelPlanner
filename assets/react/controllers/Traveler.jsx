@@ -87,6 +87,19 @@ class Traveler extends Component {
         }
     };
 
+    getSummary = () => {
+        const { total } = this.props;
+        let summary = "";
+
+        if (total[1] - total[2] > 0) {
+            summary = this.getTravelerName(2) + " doit " + utils.formatEuro((total[1] - total[2]) / 2) + " à " + this.getTravelerName(1);
+        } else if (total[2] - total[1] > 0) {
+            summary = this.getTravelerName(1) + " doit " + utils.formatEuro((total[2] - total[1]) / 2) + " à " + this.getTravelerName(2);
+        }
+
+        return summary;
+    };
+
     render() {
         const { travelers, travelers_modal } = this.state;
         const { total } = this.props;
@@ -110,7 +123,8 @@ class Traveler extends Component {
             if (total[i]) {
                 header.push(
                     <div key={i} className="text-center text-2xl lg:text-lg p-progressbar-value-animate" style={{ width: utils.getPercentage(total[i], total['all'], true) }}>
-                        <span className="">{this.getTravelerName(i) + " / " + total[i] + " €"}</span>
+                        <span className="mr-2">{this.getTravelerName(i)}</span>
+                        <Chip label={utils.formatEuro(total[i])} removable={false} />
                     </div>
                 );
             }
@@ -120,10 +134,10 @@ class Traveler extends Component {
             let color;
             switch (i) {
                 case 1:
-                    color = "bg-blue-custom"
+                    color = "bg-custom-1"
                     break;
                 case 2:
-                    color = "bg-green-custom"
+                    color = "bg-custom-2"
                     break;
             }
             if (total[i]) {
@@ -188,6 +202,10 @@ class Traveler extends Component {
                         </div>
                     </div>
                 )}
+                <div className="mt-2">
+                    <i class="fa-solid fa-circle-exclamation text-orange-800 text-2xl lg:text-base mr-2"></i>
+                    <span className="text-2xl lg:text-base text-gray-700 italic">{this.getSummary()}</span>
+                </div>
             </div >
         );
     }
