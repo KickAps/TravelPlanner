@@ -139,7 +139,19 @@ class TravelController extends AbstractController
         $travel->deleteImage($this->getParameter('images_dir'));
 
         $filename = hash("md5", $travel->getName() . uniqid()) . '.jpg';
-        $request->files->get('blob')->move($this->getParameter('images_dir'), $filename);
+        $file = $request->files->get('blob');
+
+        $info = getimagesize($file);
+
+        switch ($info['mime']) {
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($file);
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($file);
+        }
+
+        imagejpeg($image, $this->getParameter('images_dir') . $filename, 60);
 
         $travel->setImage($filename);
         $travelRepo->save($travel, true);
