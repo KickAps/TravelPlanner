@@ -100,7 +100,7 @@ class Travel
     public function deleteImage(string $folder): self
     {
         // Supprime l'image associée dans le dossier des images
-        if ($this->getImage() !== $this::DEFAULT_JPG) {
+        if ($this->getImage() !== $this::DEFAULT_JPG && file_exists($folder . $this->getImage())) {
             unlink($folder . $this->getImage());
         }
 
