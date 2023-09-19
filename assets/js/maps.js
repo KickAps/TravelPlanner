@@ -52,7 +52,7 @@ function createMarker(pos, name, address, url, home = false) {
         '<div class="text-3xl lg:text-base">' +
         '<p><b>' + name + '</b></p>' +
         '<p>' + address + '</p>' +
-        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none; outline: none;">View on Google Maps</a>' +
+        '<a href="' + url + '" target="_blank" rel="noopener" style="cursor: pointer; color: rgb(66, 127, 237); text-decoration: none; outline: none;">Voir sur Google Maps</a>' +
         '</div>';
 
     marker.addListener("click", () => {

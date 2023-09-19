@@ -222,7 +222,7 @@ class Step extends React.Component {
                                     readOnly={!this.edit}
                                     rows="4"
                                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    placeholder="Nous allons..."
+                                    placeholder="Détails, horaire, tarif..."
                                     form="steps_form"
                                 >
                                 </textarea>
