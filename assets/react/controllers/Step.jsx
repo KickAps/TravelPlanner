@@ -4,7 +4,6 @@ import * as utils from '../../js/utils';
 import DrapDrop from './DrapDrop';
 import Button from './Button';
 import Modal from './Modal';
-import { Checkbox } from "primereact/checkbox";
 import home_icon from '../../logo/home_icon.png';
 import star_icon from '../../logo/star_icon.png';
 
@@ -17,8 +16,6 @@ class Step extends React.Component {
             expanded: true,
             modalOpen: false,
             step_id: 0,
-            home_check: false,
-            first_step_empty: true,
         };
         this.edit = props.edit || false;
     }
@@ -30,12 +27,6 @@ class Step extends React.Component {
     }
 
     deleteStep = (id) => {
-        if (this.state.steps[0].id === id) {
-            this.setState({
-                home_check: false,
-            });
-        }
-
         const updatedSteps = this.state.steps.filter(step => step.id !== id);
         this.setState({ steps: updatedSteps }, () => {
             maps.removeMarkers(id);
@@ -43,12 +34,6 @@ class Step extends React.Component {
             this.closeModal();
             utils.showUnsaved();
         });
-
-        if (updatedSteps.length === 0) {
-            this.setState({
-                first_step_empty: true,
-            });
-        }
     };
 
     deleteAllSteps = () => {
@@ -64,20 +49,6 @@ class Step extends React.Component {
             return;
         }
 
-        // Si le drag and drop concerne la première étape
-        if (result.source.index === 0 || result.destination.index === 0) {
-            if (this.state.home_check) {
-                let first_step_id = this.state.steps[0].id;
-                this.setState({ home_check: false });
-                maps.switchIcon(first_step_id);
-
-                let step = document.getElementById(first_step_id);
-                let img = step.querySelector(".place-icon");
-
-                img.src = star_icon;
-            }
-        }
-
         const steps = [...this.state.steps];
         const [removed] = steps.splice(result.source.index, 1);
         steps.splice(result.destination.index, 0, removed);
@@ -85,14 +56,6 @@ class Step extends React.Component {
         this.setState({ steps }, () => {
             maps.setGlobalPath();
             utils.showUnsaved();
-        });
-
-        // Vérifie si l'input de la première étape est vide pour contrôler l'état de la checkbox
-        let step = document.getElementById(steps[0].id);
-        let input = step.querySelector(".pac-input");
-
-        this.setState({
-            first_step_empty: !input.value
         });
     };
 
@@ -102,13 +65,35 @@ class Step extends React.Component {
         }));
     };
 
-    placeChange = (step_id) => {
-        if (this.state.steps.length === 0 || this.state.steps[0].id === step_id) {
+    placeUnselected = (step_id) => {
+        let steps = this.state.steps;
 
-            this.setState({
-                first_step_empty: false
-            });
-        }
+        var step = steps.find(s => {
+            return s.id === step_id;
+        });
+
+        step.homeCheck.disabled = true;
+        step.homeCheck.checked = false;
+
+        this.setState({ steps });
+
+        utils.showUnsaved();
+
+        let stepDOM = document.getElementById(step_id);
+        let img = stepDOM.querySelector(".place-icon");
+        img.src = star_icon;
+    }
+
+    placeSelected = (step_id) => {
+        let steps = this.state.steps;
+        var step = steps.find(s => {
+            return s.id === step_id;
+        });
+
+        step.homeCheck.disabled = false;
+
+        this.setState({ steps });
+
         utils.showUnsaved();
     }
 
@@ -119,13 +104,6 @@ class Step extends React.Component {
         let step_data = null;
         if (data) {
             step_data = data[index];
-
-            if (index === 0) {
-                this.setState({
-                    home_check: step_data.home === "true",
-                    first_step_empty: false,
-                });
-            }
         }
 
         const step_id = this.props.day_id + "_step" + newStepCount;
@@ -171,7 +149,7 @@ class Step extends React.Component {
                                     id={place_id}
                                     name={place_id}
                                     defaultValue={step_data && step_data.place}
-                                    onChange={() => this.placeChange(step_id)}
+                                    onChange={() => this.placeUnselected(step_id)}
                                     readOnly={!this.edit}
                                     className="pac-input appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg lg:rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     type="text"
@@ -228,6 +206,7 @@ class Step extends React.Component {
                                 </textarea>
                             </div>
                         </div>
+                        <div className="h-8 lg:h-6"></div>
                     </div>
                 </div>
             </div>
@@ -236,6 +215,11 @@ class Step extends React.Component {
         const newStep = {
             id: step_id,
             content: content,
+            homeCheck: {
+                id: step_id + '_home',
+                checked: step_data && step_data.home === "true",
+                disabled: !(step_data && step_data.place),
+            }
         };
 
         const updatedSteps = [...this.state.steps, newStep];
@@ -245,7 +229,7 @@ class Step extends React.Component {
             stepCount: newStepCount,
         }), () => {
             if (this.edit) {
-                maps.initInputSearch(newStepCount, this.props.day_id);
+                maps.initInputSearch(newStepCount, this.props.day_id, this.placeSelected);
                 utils.showUnsaved();
             }
 
@@ -271,28 +255,30 @@ class Step extends React.Component {
         });
     };
 
-    setHomeCheck = (e) => {
-        this.setState({
-            home_check: e.checked,
+    setHomeCheck = (e, step_id) => {
+        let steps = this.state.steps;
+
+        steps.map(step => {
+            let stepDOM = document.getElementById(step.id);
+            let img = stepDOM.querySelector(".place-icon");
+
+            if (step_id !== step.id && step.homeCheck.checked) {
+                console.log('ok');
+                maps.switchIcon(step.id);
+            }
+
+            step.homeCheck.checked = e.checked && step_id === step.id;
+            img.src = e.checked && step_id === step.id ? home_icon : star_icon;
         });
+
+        maps.switchIcon(step_id);
+
+        this.setState({ steps });
         utils.showUnsaved();
-
-        if (!maps.switchIcon(this.state.steps[0].id)) {
-            this.setState({
-                home_check: false,
-                first_step_empty: true,
-            });
-        }
-
-        let step = document.getElementById(this.state.steps[0].id);
-        let img = step.querySelector(".place-icon");
-
-        img.src = e.checked ? home_icon : star_icon;
     };
 
     render() {
         const { modalOpen, step_id } = this.state;
-        const home_id = this.props.day_id + "_home";
 
         return (
             <div>
@@ -311,20 +297,15 @@ class Step extends React.Component {
                 </div>
                 <div className={this.state.expanded ? undefined : "hidden"}>
                     <div className="h-4 lg:h-2"></div>
-                    {this.state.steps.length > 0 && this.edit && (
-                        <div className="flex flex-wrap w-11/12 mx-auto">
-                            <Checkbox
-                                id={home_id + "_check"}
-                                inputId={home_id}
-                                name={home_id}
-                                onChange={this.setHomeCheck}
-                                checked={this.state.home_check}
-                                disabled={this.state.first_step_empty}
-                            />
-                            <label htmlFor={home_id} style={{ marginTop: "1px" }} className={this.state.first_step_empty ? "ml-2 text-gray-500 select-none" : "ml-2 text-gray-700 select-none cursor-pointer"}>Définir ce lieu comme logement</label>
-                        </div>
-                    )}
-                    <DrapDrop data={this.state.steps} onDragEnd={this.onDragEnd} size="w-11/12 mx-auto" edit={this.edit}></DrapDrop>
+                    <DrapDrop
+                        data={this.state.steps}
+                        onDragEnd={this.onDragEnd}
+                        size="w-11/12 mx-auto"
+                        edit={this.edit}
+                        checkbox={true}
+                        homeCheck={this.state.homeCheck}
+                        setHomeCheck={this.setHomeCheck}
+                    ></DrapDrop>
                     {this.edit && (
                         <div>
                             <div className="h-4 lg:h-2"></div>

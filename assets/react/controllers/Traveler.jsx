@@ -205,7 +205,7 @@ class Traveler extends Component {
                     </div>
                 )}
                 <div className="mt-2">
-                    <i class="fa-solid fa-circle-exclamation text-orange-800 text-2xl lg:text-base mr-2"></i>
+                    <i className="fa-solid fa-circle-exclamation text-orange-800 text-2xl lg:text-base mr-2"></i>
                     <span className="text-2xl lg:text-base text-gray-700 italic">{this.getSummary()}</span>
                 </div>
             </div >

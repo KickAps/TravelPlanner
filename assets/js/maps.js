@@ -77,7 +77,7 @@ function getPos(marker) {
     return { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
 }
 
-export function initInputSearch(step_count, day_id) {
+export function initInputSearch(step_count, day_id, callbackSelected) {
     // Create the search box and link it to the UI element.
     const input = document.getElementById(day_id + "_place" + step_count);
 
@@ -149,6 +149,8 @@ export function initInputSearch(step_count, day_id) {
 
         // Update zoom
         map.fitBounds(bounds);
+
+        callbackSelected(step_id);
     });
 }
 
@@ -255,9 +257,6 @@ export function switchIcon(step_id) {
 
         removePath(step_id);
     } else {
-        if (!global_star_markers[step_id]) {
-            return false;
-        }
         marker = global_star_markers[step_id][0];
         icon = marker.icon;
         icon.url = home_icon;

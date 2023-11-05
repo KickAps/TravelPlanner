@@ -41,12 +41,12 @@ class TravelController extends AbstractController
                     'lng' => $formData[$day_id . '_lng' . $step_number],
                     'url' => $formData[$day_id . '_url' . $step_number],
                     'desc' => $formData[$day_id . '_desc' . $step_number],
+                    'home' => $formData[$day_id . '_' . $step_id . '_home'],
                 ];
 
                 if (key_exists($date, $steps)) {
                     array_push($steps[$date], $step);
                 } else {
-                    $step['home'] = $formData[$day_id . '_home'];
                     $steps[$date] = [$step];
                 }
             }

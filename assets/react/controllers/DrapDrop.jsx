@@ -1,9 +1,10 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Checkbox } from "primereact/checkbox";
 
 class DrapDrop extends React.Component {
     render() {
-        const { data, onDragEnd, size, edit } = this.props;
+        const { data, onDragEnd, size, edit, checkbox, setHomeCheck } = this.props;
 
         return (edit ? (
             <DragDropContext onDragEnd={onDragEnd} droppableId="group-input">
@@ -25,6 +26,24 @@ class DrapDrop extends React.Component {
                                                         <i className="fas fa-grip-lines" />
                                                     </div>
                                                     {item.content}
+                                                    {checkbox &&
+                                                        <div className="absolute bottom-2 left-3">
+                                                            <div className="flex flex-wrap">
+                                                                <Checkbox
+                                                                    inputId={item.homeCheck.id}
+                                                                    name={item.homeCheck.id}
+                                                                    onChange={(e) => setHomeCheck(e, item.id)}
+                                                                    checked={item.homeCheck.checked}
+                                                                    disabled={item.homeCheck.disabled}
+                                                                />
+                                                                <label
+                                                                    htmlFor={item.homeCheck.id}
+                                                                    style={{ marginTop: "1px" }}
+                                                                    className={item.homeCheck.disabled ? "ml-2 text-gray-500 select-none" : "ml-2 text-gray-700 select-none cursor-pointer"}
+                                                                >Définir comme logement</label>
+                                                            </div>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         )}
